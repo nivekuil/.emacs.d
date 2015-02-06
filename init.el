@@ -18,7 +18,7 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
+    ("c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
  '(electric-layout-mode t)
  '(electric-pair-mode t)
  '(fringe-mode 0 nil (fringe))
@@ -30,7 +30,6 @@
 
 ;;; Key bindings
 ;; Switch keys for better Dvorak compatibility.
-;; This way more fingers are kept on the home row.
 (keyboard-translate ?\C-x ?\C-h)        ;x for eXplain
 (keyboard-translate ?\C-h ?\C-x)        ;h for hang on, I have more input
 (keyboard-translate ?\C-t ?\C-f)        ;f for Flip two letters
@@ -47,13 +46,17 @@
                             (local-set-key (kbd "M-n") 'next-line)))
 
 ;; Define some keys.
-(global-set-key (kbd "C-'") 'universal-argument)
-(global-set-key (kbd "C-,") 'open-previous-line) ;like vi O
-(global-set-key (kbd "C-.") 'other-window)
+(global-set-key (kbd "M-m") 'mark-this-line)
 (global-set-key (kbd "C-o") 'open-next-line) ;like vi o
+(global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
+
+(global-set-key (kbd "C-.") 'other-window)
 (global-set-key (kbd "C-u") 'undo)
-(global-set-key (kbd "C-s") 'helm-swoop)
+(global-set-key (kbd "C-/") 'universal-argument)
+(global-set-key (kbd "C-z") 'zap-to-char)
 (global-set-key (kbd "C-x p") 'pop-to-mark-command)
+
+(global-set-key (kbd "C-s") 'helm-swoop)
 (global-set-key (kbd "C-x g") 'magit-status)
 
 ;; Load and activate packages before using them.
@@ -90,23 +93,61 @@
 
 ;;; Custom functions
 ;; Behave like vi's o command
-(defun open-next-line (arg)
+;; Binding: C-o
+(defun open-next-line ()
   "Open a new line after the current one."
-  (interactive "p")
-  (end-of-line)
-  (open-line arg)
-  (forward-line)
-  (indent-according-to-mode))
+  (interactive)
+  (end-of-line) (open-line 1) (forward-line) (indent-according-to-mode))
 
 ;; Behave like vi's O command
-(defun open-previous-line (arg)
+;; Binding: M-o
+(defun open-previous-line ()
   "Open a new line before the current one."
-  (interactive "p")
-  (beginning-of-line)
-  (open-line arg)
-  (indent-according-to-mode))
+  (interactive)
+  (beginning-of-line) (open-line 1) (indent-according-to-mode))
+
+;; Binding: M-m
+(defun mark-this-line ()
+  "Mark the current line from indentation to end, leaving cursor at end."
+  (interactive)
+  (back-to-indentation) (set-mark-command nil) (end-of-line))
+
+(defun insert-parentheses-backward ()
+  "Insert parentheses around the sexp near point. Move parentheses backward by
+ sexp if used repeatedly. Keycode 40 = (, 41 = )"
+  (interactive)
+  (cond ((equal (char-before) 41)
+         (backward-sexp) (insert-parentheses-backward))
+        ((equal (char-after) 40)
+         (if (equal (char-before) 40)
+             (list (backward-char) (insert-parentheses 1))
+           (delete-char 1) (backward-sexp) (insert-char 40) (backward-char)))
+        ((string-match-p "\\\W" (char-to-string (char-before)))
+         (insert-parentheses 1) (backward-char))
+        ((string-match-p "\\\W" (char-to-string (char-after)))
+         (forward-char) (insert-parentheses 1) (backward-char))
+        (t (backward-sexp) (insert-parentheses 1) (backward-char))))
 
 
+(defun insert-parentheses-forward ()
+  "Insert parentheses around the sexp around point. Move parentheses forward by
+sexp if used repeatedly. Keycode 40 = (, 41 = )"
+  (interactive)
+  (cond ((equal (char-before) 41)
+         (if (equal (char-after) 41)
+             (list (forward-char) (insert-parentheses-forward))
+           (delete-char -1) (forward-sexp) (insert-char 41)))
+        ((equal (char-after) 40)
+         (forward-sexp) (insert-parentheses-forward))
+        ((string-match-p "\\\W" (char-to-string (char-before)))
+         (insert-parentheses 1) (forward-sexp) (forward-char))
+        ((string-match-p "\\\W" (char-to-string (char-after)))
+         (backward-sexp) (insert-parentheses 1) (forward-sexp) (forward-char))
+        (t (backward-sexp) (insert-parentheses 1)
+           (forward-sexp) (forward-char))))
+
+(global-set-key (kbd "M-9") 'insert-parentheses-backward)
+(global-set-key (kbd "M-0") 'insert-parentheses-forward)
 ;;;
 ;;; Major modes
 ;;;
@@ -128,13 +169,22 @@
 ;; Use flycheck for syntax checking.
 (add-hook 'after-init-hook 'global-flycheck-mode) ;start with emacs
 
+;; use delete selection mode to replace marked text on text input
+(delete-selection-mode 1)
+
+;; use winner-mode (C-c left to undo window changes)
+(winner-mode 1)
+
+;; use hl line mode in dired
+(add-hook 'dired-mode-hook 'hl-line-mode)
+
 ;; use ace jump mode
 (global-set-key (kbd "C-r") 'ace-jump-char-mode)
 (global-set-key (kbd "M-r") 'ace-jump-word-mode)
 
 ;; Use smart mode line.
 (sml/setup)
-(sml/apply-theme 'dark)
+(sml/apply-theme 'respectful)
 (setq rm-blacklist '(" 80col"           ;hide lighters from mode-line
                      " Helm"
                      " AI"
@@ -145,9 +195,10 @@
 ;;; use helm
 (helm-mode)
 (global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (global-set-key (kbd "C-x C-f") 'helm-find-files)
 (global-set-key (kbd "C-x b") 'helm-mini)
-(global-set-key (kbd "C-x C-b") 'helm-mini)
+(global-set-key (kbd "C-x C-b") 'helm-for-files)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 ;; Swap <tab> and C-z
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
@@ -159,7 +210,7 @@
 (setq helm-swoop-pre-input-function (lambda () "")) ;disable pre-input on swoop
 
 ;; use auto indent mode
-(add-hook 'prog-mode-hook 'auto-indent-mode)
+(auto-indent-global-mode 1)
 (setq auto-indent-assign-indent-level 2)
 
 ;; use electric pair mode
@@ -173,14 +224,15 @@
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (yas-global-mode 1)
 
-;; use winner-mode (C-c left to undo window changes)
-(winner-mode 1)
-
 ;; use rpg-mode
 (add-to-list 'load-path "/home/nivekuil/code/rpg-mode/")
 (require 'rpg-mode)
 (rpg-mode)
 
+(defun do-on-startup ()
+  "Stuff to do after the init file is loaded."
+  (split-window-horizontally))
+(do-on-startup)
 
 
 
