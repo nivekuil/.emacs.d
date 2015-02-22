@@ -252,6 +252,35 @@ sexp if used repeatedly. Keycode 40 = (, 41 = )"
 #+END_SRC
 *** For web development
 #+BEGIN_SRC emacs-lisp
+  ;; Use skewer mode which allows real time preview
+  (add-hook 'js2-mode-hook 'skewer-mode)
+  (add-hook 'css-mode-hook 'skewer-css-mode)
+  (add-hook 'html-mode-hook 'skewer-html-mode)
+  ;; use js2 mode for editing .js files
+  (add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode)) ;use js2 mode
+#+END_SRC
+*** Python
+#+BEGIN_SRC emacs-lisp
+  ;;; Modes for python
+  ;; use jedi for autocomplete
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (setq jedi:complete-on-dot t)
+#+END_SRC
+*** CC mode
+#+BEGIN_SRC emacs-lisp
+  ;; Irony mode for C, C++, and Obj-c
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (add-hook 'objc-mode-hook 'irony-mode)
+  ;; replace the `completion-at-point' and `complete-symbol' bindings in
+  ;; irony-mode's buffers by irony-mode's function
+  (defun my-irony-mode-hook ()
+    (define-key irony-mode-map [remap completion-at-point]
+      'irony-completion-at-point-async)
+    (define-key irony-mode-map [remap complete-symbol]
+      'irony-completion-at-point-async))
+  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 #+END_SRC
 
 * Other
