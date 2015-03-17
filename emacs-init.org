@@ -1,32 +1,31 @@
 * Custom Variables
 #+BEGIN_SRC emacs-lisp
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 151 :width normal)))))
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 151 :width normal)))))
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auto-indent-blank-lines-on-move nil)
- '(auto-save-interval 0)
- '(auto-save-timeout 10)
- '(blink-cursor-mode nil)
- '(column-number-mode t)
- '(custom-safe-themes
-   (quote
-    ("c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
- '(electric-layout-mode t)
- '(electric-pair-mode t)
- '(fringe-mode 0 nil (fringe))
- '(inhibit-startup-screen t)
- '(menu-bar-mode nil)
- '(python-indent-guess-indent-offset nil)
- '(tool-bar-mode nil))
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(auto-indent-blank-lines-on-move nil)
+   '(auto-save-interval 0)
+   '(auto-save-timeout 10)
+   '(blink-cursor-mode nil)
+   '(column-number-mode t)
+   '(custom-safe-themes
+     (quote
+      ("c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
+   '(electric-pair-mode t)
+   '(fringe-mode 0 nil (fringe))
+   '(inhibit-startup-screen t)
+   '(menu-bar-mode nil)
+   '(python-indent-guess-indent-offset nil)
+   '(tool-bar-mode nil))
 #+END_SRC
 * Key Bindings
 ** Switch keys for better Dvorak compatibility
@@ -37,25 +36,28 @@
 (keyboard-translate ?\C-f ?\C-t)        ;t for Toward the end of the line/file
 (define-key key-translation-map (kbd "C-M-f") (kbd "C-M-t"))
 (define-key key-translation-map (kbd "C-M-t") (kbd "C-M-f"))
-(define-key key-translation-map (kbd "C-M-F") (kbd "C-M-T"))
-(define-key key-translation-map (kbd "C-M-T") (kbd "C-M-F"))
+(define-key key-translation-map (kbd "C-M-S-f") (kbd "C-M-S-t"))
+(define-key key-translation-map (kbd "C-M-S-t") (kbd "C-M-S-f"))
 (define-key key-translation-map (kbd "M-t") (kbd "M-f"))
 (define-key key-translation-map (kbd "M-f") (kbd "M-t"))
 (define-key key-translation-map (kbd "M-F") (kbd "M-T"))
 (define-key key-translation-map (kbd "M-T") (kbd "M-F"))
+#+END_SRC
+
+** Key bindings to functions
+#+BEGIN_SRC emacs-lisp
 (add-hook 'prog-mode-hook (lambda ()
                             (local-set-key (kbd "M-p") 'previous-line)
                             (local-set-key (kbd "M-n") 'next-line)))
 (add-hook 'org-mode-hook (lambda ()
                            (local-set-key (kbd "M-p") 'previous-line)
                            (local-set-key (kbd "M-n") 'next-line)))
-#+END_SRC
 
-** Define some keys
-#+BEGIN_SRC emacs-lisp
+  
 (global-set-key (kbd "M-m") 'mark-this-line)
+  
 (global-set-key (kbd "C-o") 'open-next-line) ;like vi o
-(global-set-key (kbd "C-,") 'open-previous-line) ;like vi O
+(global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
 
 (global-set-key (kbd "C-.") 'other-window)
 (global-set-key (kbd "C-u") 'undo)
@@ -65,14 +67,17 @@
 (global-set-key (kbd "M-s") 'query-replace)
 (global-set-key (kbd "C-M-s") 'replace-regexp)
 
-;; Keybindings for external modes
+;; Keybindings for external packages
 (global-set-key (kbd "C-s") 'helm-swoop)
 (global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-x o") 'switch-window)
 
+;; Keybindings for custom defined functions
 (global-set-key (kbd "M-9") 'insert-parentheses-backward)
 (global-set-key (kbd "M-0") 'insert-parentheses-forward)
 #+END_SRC
 * Settings
+** Package Management
 #+BEGIN_SRC emacs-lisp
 ;; Load and activate packages before using them.
 (package-initialize)
@@ -80,27 +85,32 @@
 ;; Use melpa package repository.
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
-
+#+END_SRC
+** Autosave
+#+BEGIN_SRC emacs-lisp
 ;; Set autosave directory so emacs doesn't leave autosave files everywhere.
 (setq backup-directory-alist `(("." . "~/.emacs.d/backup"))
       auto-save-list-file-prefix "~/.emacs.d/autosave/"
       auto-save-file-name-transforms `((".*" , "~/.emacs.d/autosave/" t)))
-
+#+END_SRC
+** Appearance
+#+BEGIN_SRC emacs-lisp
 ;; Set the theme.
 (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
 (load-theme 'grandshell t)
 (set-cursor-color "white")
+#+END_SRC
+** Editor behavior
+#+BEGIN_SRC emacs-lisp
 ;; smooth scrolling
 ;; Note that scroll-conservatively does not work correctly with hl line mode
 ;; when at bottom of buffer
 (setq scroll-margin 7
       scroll-conservatively 10000)
-
+;; mouse scroll amount
+(setq mouse-wheel-scroll-amount '(2 ((shift) . 1) ((control) . 8)))
 ;; tab inserts spaces
 (setq-default indent-tabs-mode nil)
-
-;; use switch-window https://github.com/dimitri/switch-window
-(global-set-key (kbd "C-x o") 'switch-window)
 
 ;; use bash as shell
 (setq shell-file-name "bash"
@@ -116,7 +126,7 @@
   (end-of-line) (open-line 1) (forward-line) (indent-according-to-mode))
 
 ;; Behave like vi's O command
-;; Binding: C-,
+;; Binding: M-o
 (defun open-previous-line ()
   "Open a new line before the current one."
   (interactive)
@@ -130,7 +140,7 @@
 
 (defun insert-parentheses-backward ()
   "Insert parentheses around the sexp near point. Move parentheses backward by
-   sexp if used repeatedly. Keycode 40 = (, 41 = )"
+     sexp if used repeatedly. Keycode 40 = (, 41 = )"
   (interactive)
   (cond ((string-match-p "\\\w" (char-to-string (char-after)))
          (forward-char) (insert-parentheses-backward))
@@ -151,7 +161,7 @@
 
 (defun insert-parentheses-forward ()
   "Insert parentheses around the sexp around point. Move parentheses forward by
-  sexp if used repeatedly. Keycode 40 = (, 41 = )"
+    sexp if used repeatedly. Keycode 40 = (, 41 = )"
   (interactive)
   (cond ((equal (char-before) 41)
          (if (equal (char-after) 41)
@@ -167,6 +177,23 @@
          (backward-sexp) (insert-parentheses 1) (forward-sexp) (forward-char))
         (t (backward-sexp) (insert-parentheses 1)
            (forward-sexp) (forward-char))))
+
+
+(defun add-carets-to-correct-exponent-formatting-in-region (start end)
+  (interactive "*r")
+  (save-excursion
+    (save-restriction
+      (let ((character (read-string "Enter variable to add carets around: ")))
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (while (re-search-forward (concat "[" character ")]") nil t)
+          (if (looking-at-p "[[:digit:]]") (insert "^")
+            (progn (backward-char)
+                   (when (and (looking-at-p character)
+                              (looking-back "[[:digit:]]"))
+                     (insert "^"))
+                   (forward-char))))))))
+  
 #+END_SRC
 
 * Mode Settings
@@ -175,7 +202,8 @@
 ;; use company-mode for text completion
 (add-hook 'after-init-hook
           (lambda () (global-company-mode)
-            (add-to-list 'company-backends 'company-anaconda)))
+            (add-to-list 'company-backends 'company-anaconda))
+          (setq company-idle-delay 0))
 
 ;; Use subword mode in programming languages to move by camelCase.
 (add-hook 'prog-mode-hook 'subword-mode)
@@ -237,9 +265,6 @@
 ;; use yasnippet
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (yas-global-mode 1) ;; Activate global mode before defining keys
-(define-key yas-minor-mode-map (kbd "M-o") 'yas-next-field-or-maybe-expand)
-(define-key yas-minor-mode-map (kbd "M-O") 'yas-prev-field)
-
 
 ;; use rpg-mode
 (add-to-list 'load-path "/home/nivekuil/code/rpg-mode/")
