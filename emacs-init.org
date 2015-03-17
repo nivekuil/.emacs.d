@@ -179,7 +179,11 @@
            (forward-sexp) (forward-char))))
 
 
-(defun add-carets-to-correct-exponent-formatting-in-region (start end)
+(defun correct-exponent-formatting-in-region (start end)
+  "When yanking formatted text, the formatting of exponents will be lost,
+ appearing as regular numbers instead. This function adds carets to properly
+denote that they are exponents, including exponents of parenthetical
+ expressions."
   (interactive "*r")
   (save-excursion
     (save-restriction
@@ -187,13 +191,7 @@
         (narrow-to-region start end)
         (goto-char (point-min))
         (while (re-search-forward (concat "[" character ")]") nil t)
-          (if (looking-at-p "[[:digit:]]") (insert "^")
-            (progn (backward-char)
-                   (when (and (looking-at-p character)
-                              (looking-back "[[:digit:]]"))
-                     (insert "^"))
-                   (forward-char))))))))
-  
+          (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 
 * Mode Settings
