@@ -49,8 +49,8 @@
                                       (other-window -1)))))
 
 (global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
-(global-set-key (kbd "M-p") 'previous-line)
-(global-set-key (kbd "M-n") 'next-line)
+(global-set-key (kbd "M-p") 'beginning-of-defun)
+(global-set-key (kbd "M-n") 'end-of-defun)
 (global-set-key (kbd "M-m") 'mark-this-line)
 
 (global-set-key (kbd "C-,") (lambda () (interactive) (other-window -1)))
@@ -82,7 +82,6 @@
   (global-set-key (kbd "C-x C-f") 'helm-find-files)
   (global-set-key (kbd "C-x C-b") 'helm-mini)
   (global-set-key (kbd "C-x C-n") 'helm-mini)
-  (global-set-key (kbd "C-l") 'helm-mini)
   (global-set-key (kbd "C-h a") 'helm-apropos)
 #+END_SRC
 
@@ -92,6 +91,7 @@
   (global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
   (global-set-key (kbd "M-9") 'insert-parentheses-backward)
   (global-set-key (kbd "M-0") 'insert-parentheses-forward)
+  (global-set-key (kbd "C-x C-r") 'find-file-root-user)
 #+END_SRC
 
 * Settings
@@ -138,6 +138,32 @@
 *** Yanking (pasting)
 #+BEGIN_SRC emacs-lisp
 (setq save-interprogram-paste-before-kill t)
+#+END_SRC
+
+** Built-in minor modes
+#+BEGIN_SRC emacs-lisp
+  ;; Use subword mode in prog mode to move by camelCase.
+  (add-hook 'prog-mode-hook 'subword-mode)
+
+  ;; use winner-mode (C-c left to undo window changes)
+  (winner-mode 1)
+
+  ;; use hl line mode in dired
+  (add-hook 'dired-mode-hook 'hl-line-mode)
+
+  ;; use electric pair mode
+  (electric-pair-mode 1)
+
+  ;; use mouse avoidance mode
+  (setq mouse-avoidance-mode 'banish)
+
+  ;; tab inserts spaces only
+  (setq-default indent-tabs-mode nil)
+
+  ;; use auto-revert-mode for log files to update the output automatically
+  (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
+
+(setq recentf-max-menu-items 50)
 #+END_SRC
 
 * Custom Functions
@@ -232,6 +258,21 @@
           (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 
+** find-file-root-user
+#+BEGIN_SRC emacs-lisp
+(defun find-file-root-user (&optional arg)
+  "Edit currently visited file as root.
+
+With a prefix ARG prompt for a file to visit.
+Will also prompt for a file to visit if current
+buffer is not visiting a file."
+  (interactive "P")
+  (if (or arg (not buffer-file-name))
+      (find-file (concat "/sudo:root@localhost:"
+                         (ido-read-file-name "Find file(as root): ")))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
+#+END_SRC
+
 * Packages
 ** Ace jump mode
 ** Ace window
@@ -297,9 +338,8 @@
 (setq helm-split-window-in-side-p t)
 (setq helm-split-window-default-side 'below)
 #+END_SRC
-*** Use fuzzy matching
+*** Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
-(setq helm-buffers-fuzzy-matching t)
 (setq helm-apropos-fuzzy-match t)
 #+END_SRC
 ** Ivy (swiper)
@@ -351,47 +391,22 @@
 ;; (rpg-mode)
 #+END_SRC
 
-* Mode Settings
-** Built-in minor modes
-#+BEGIN_SRC emacs-lisp
-  ;; Use subword mode in prog mode to move by camelCase.
-  (add-hook 'prog-mode-hook 'subword-mode)
-
-  ;; use winner-mode (C-c left to undo window changes)
-  (winner-mode 1)
-
-  ;; use hl line mode in dired
-  (add-hook 'dired-mode-hook 'hl-line-mode)
-
-  ;; use electric pair mode
-  (electric-pair-mode 1)
-
-  ;; use mouse avoidance mode
-  (setq mouse-avoidance-mode 'banish)
-
-  ;; tab inserts spaces only
-  (setq-default indent-tabs-mode nil)
-
-  ;; use auto-revert-mode for log files to update the output automatically
-  (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
-
-#+END_SRC
-
-** Major modes
-*** Assembly
+* Major Mode Settings
+** Assembly
 Use ! as the comment char for SPARC assembly and use tabs.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'asm-mode-hook (lambda () (setq indent-tabs-mode t)))
 (setq asm-comment-char 33)
 #+END_SRC
-*** Comint (shell)
+
+** Comint (shell)
 #+BEGIN_SRC emacs-lisp
 (setq shell-file-name "bash")
 
 (setq comint-prompt-read-only t)
 #+END_SRC
 
-*** Eww
+** Eww
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "eww"
   '(progn (define-key eww-mode-map "n" 'next-line)
@@ -401,25 +416,25 @@ Use ! as the comment char for SPARC assembly and use tabs.
           (define-key eww-mode-map "P" 'eww-previou1rs-url)))
 #+END_SRC
 
-*** ERC
+** ERC
 Autojoin channels in ERC
 #+BEGIN_SRC emacs-lisp
 (setq erc-autojoin-channels-alist
-      '(("freenode.net" "#emacs")))
+      '(("freenode.net" "#emacs" "#archlinux")))
 #+END_SRC
 
-*** Help
+** Help
 #+BEGIN_SRC emacs-lisp
 (add-hook 'help-mode-hook 'visual-line-mode)
 #+END_SRC
 
-*** Org-mode
+** Org
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'visual-line-mode)
 (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
 
-*** Javascript/HTML/CSS
+** Javascript/HTML/CSS
 #+BEGIN_SRC emacs-lisp
 ;; use js2 mode for editing .js files
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
@@ -429,7 +444,7 @@ Autojoin channels in ERC
 (add-hook 'html-mode-hook 'skewer-html-mode)
 #+END_SRC
 
-*** Python
+** Python
 #+BEGIN_SRC emacs-lisp
 (add-hook 'python-mode-hook 'anaconda-mode)
 #+END_SRC

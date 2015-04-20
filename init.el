@@ -26,7 +26,7 @@
  '(main-line-color1 "#191919" t)
  '(main-line-color2 "#111111" t)
  '(menu-bar-mode nil)
- '(org-agenda-files (quote ("~/docs/todo.org" "~/docs/sp15/todo.org")))
+ '(org-agenda-files (quote ("~/docs/todo.org")))
  '(powerline-color1 "#191919" t)
  '(powerline-color2 "#111111" t)
  '(python-indent-guess-indent-offset nil)
