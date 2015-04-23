@@ -87,6 +87,7 @@
 
 ** Keybindings for custom defined functions
 #+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "M-RET") 'open-next-line)
   (global-set-key (kbd "C-o") 'open-next-line) ;like vi o
   (global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
   (global-set-key (kbd "M-9") 'insert-parentheses-backward)
@@ -114,7 +115,6 @@
 ** Appearance
 #+BEGIN_SRC emacs-lisp
   ;; Set the theme.
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
   (setq favorite-themes
        '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright  deeper-blue material sanityinc-tomorrow-blue soothe))
   (load-theme 'grandshell t)
@@ -162,12 +162,15 @@
 
   ;; use auto-revert-mode for log files to update the output automatically
   (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
-
-(setq recentf-max-menu-items 50)
+#+END_SRC
+*** which-func-mode
+#+BEGIN_SRC emacs-lisp
+(which-func-mode 1)
 #+END_SRC
 
 * Custom Functions
-** open-next-line
+** Commands
+*** open-next-line
 #+BEGIN_SRC emacs-lisp
   ;; Behave like vi's o command
   ;; Binding: C-o
@@ -177,7 +180,7 @@
     (end-of-line) (open-line 1) (forward-line) (indent-according-to-mode))
 #+END_SRC
 
-** open-previous-line
+*** open-previous-line
 #+BEGIN_SRC emacs-lisp
 ;; Behave like vi's O command
 ;; Binding: M-o
@@ -187,7 +190,7 @@
   (beginning-of-line) (open-line 1) (indent-according-to-mode))
 #+END_SRC
 
-** mark-this-line
+*** mark-this-line
 #+BEGIN_SRC emacs-lisp
   ;; Binding: M-m
   (defun mark-this-line ()
@@ -196,7 +199,7 @@
     (back-to-indentation) (set-mark-command nil) (end-of-line))
 #+END_SRC
 
-** insert-parentheses-backward
+*** insert-parentheses-backward
 #+BEGIN_SRC emacs-lisp
 (defun insert-parentheses-backward ()
   "Insert parentheses around the sexp near point. Move parentheses backward by
@@ -218,7 +221,7 @@
          (forward-char) (insert-parentheses 1) (backward-char))
         (t (backward-sexp) (insert-parentheses 1) (backward-char))))
 #+END_SRC
-** insert-parentheses-forward
+*** insert-parentheses-forward
 #+BEGIN_SRC emacs-lisp
 (defun insert-parentheses-forward ()
   "Insert parentheses around the sexp around point. Move parentheses forward by
@@ -239,8 +242,7 @@
         (t (backward-sexp) (insert-parentheses 1)
            (forward-sexp) (forward-char))))
 #+END_SRC
-
-** correct-exponent-formatting-in-region
+*** correct-exponent-formatting-in-region
 #+BEGIN_SRC emacs-lisp
 (defun correct-exponent-formatting-in-region (start end)
   "When yanking formatted text, the formatting of exponents will be lost,
@@ -257,21 +259,18 @@
         (while (re-search-forward (concat "[" character ")]") nil t)
           (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
-
-** find-file-root-user
+** Advices
+*** find-file
+Automatically opens file as root user if necessary. Taken from http://emacsredux.com/blog/2013/04/21/edit-files-as-root/
 #+BEGIN_SRC emacs-lisp
-(defun find-file-root-user (&optional arg)
-  "Edit currently visited file as root.
-
-With a prefix ARG prompt for a file to visit.
-Will also prompt for a file to visit if current
-buffer is not visiting a file."
-  (interactive "P")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:"
-                         (ido-read-file-name "Find file(as root): ")))
+(defadvice find-file (after find-file-sudo activate)
+  "Find file as root if necessary."
+  (unless (and buffer-file-name
+               (file-writable-p buffer-file-name))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+END_SRC
+
+
 
 * Packages
 ** Ace jump mode
@@ -295,12 +294,18 @@ buffer is not visiting a file."
 #+END_SRC
 
 ** Company mode
+Use company mode for text and code completion. There should be no delay  completion pop up.
 #+BEGIN_SRC emacs-lisp
-;; use company-mode for text completion
-(add-hook 'after-init-hook
-          (lambda () (global-company-mode)
-            (add-to-list 'company-backends 'company-anaconda))
-          (setq company-idle-delay 0.3))
+(global-company-mode)
+(add-to-list 'company-backends 'company-anaconda)
+(setq company-idle-delay 0)
+#+END_SRC
+
+The dabbrev backends should only look for candidates in buffers with the same major mode, and should not downcase candidates automatically.
+#+BEGIN_SRC emacs-lisp
+(setq company-dabbrev-other-buffers t)
+(setq company-dabbrev-code-other-buffers t)
+(setq company-dabbrev-downcase nil)
 #+END_SRC
 
 ** Eww lnum
@@ -363,6 +368,7 @@ buffer is not visiting a file."
                      " FlyC-"
                      " Helm"
                      " AI"
+                     " MRev"            ; magit auto-revert mode
                      " yas"
                      " WLR"
                      " Abbrev"))
@@ -390,7 +396,6 @@ buffer is not visiting a file."
 ;; (require 'rpg-mode)
 ;; (rpg-mode)
 #+END_SRC
-
 * Major Mode Settings
 ** Assembly
 Use ! as the comment char for SPARC assembly and use tabs.
