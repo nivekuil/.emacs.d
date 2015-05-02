@@ -43,46 +43,45 @@
 
 ** Global key bindings
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook
-          (lambda () (local-set-key (kbd "C-,")
-                                    (lambda () (interactive) 
-                                      (other-window -1)))))
+  (add-hook 'org-mode-hook
+            (lambda () (local-set-key (kbd "C-,")
+                                      (lambda () (interactive) 
+                                        (other-window -1)))))
 
-(global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
-(global-set-key (kbd "M-p") 'beginning-of-defun)
-(global-set-key (kbd "M-n") 'end-of-defun)
-(global-set-key (kbd "M-m") 'mark-this-line)
+  (global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
+  (global-set-key (kbd "M-p") 'backward-paragraph)
+  (global-set-key (kbd "M-n") 'forward-paragraph)
+  (global-set-key (kbd "M-m") 'mark-this-line)
 
-(global-set-key (kbd "C-,") (lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "C-.") 'other-window)
-(global-set-key (kbd "C-u") 'undo)
-(global-set-key (kbd "C-/") 'universal-argument)
-(global-set-key (kbd "C-z") 'zap-to-char)
-(global-set-key (kbd "C-x p") 'pop-to-mark-command)
-(global-set-key (kbd "C-x s") 'shell)
-(global-set-key (kbd "C-h x") 'helm-google-suggest)
-(global-set-key (kbd "M-s") 'query-replace)
-(global-set-key (kbd "C-M-s") 'replace-regexp)
-(global-set-key (kbd "C-x b") 'bookmark-jump)
-(global-set-key (kbd "C-x w") 'eww)
+  (global-set-key (kbd "C-,") (lambda () (interactive) (other-window -1)))
+  (global-set-key (kbd "C-.") 'other-window)
+  (global-set-key (kbd "C-u") 'undo)
+  (global-set-key (kbd "C-/") 'universal-argument)
+  (global-set-key (kbd "C-z") 'zap-to-char)
+  (global-set-key (kbd "C-x p") 'pop-to-mark-command)
+  (global-set-key (kbd "C-x s") 'shell)
+  (global-set-key (kbd "C-h x") 'helm-google-suggest)
+  (global-set-key (kbd "M-r") 'query-replace)
+  (global-set-key (kbd "C-M-r") 'replace-regexp)
+  (global-set-key (kbd "C-x b") 'bookmark-jump)
+  (global-set-key (kbd "C-x w") 'eww)
 #+END_SRC
 
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-s") 'swiper)
+  ;;  (global-set-key (kbd "C-s") 'swiper)
   (global-set-key (kbd "C-x g") 'magit-status)
-  (global-set-key (kbd "C-x m") 'helm-emms)
-  (global-set-key (kbd "M-r") 'ace-jump-word-mode)
-  (global-set-key (kbd "C-x j") 'ace-jump-word-mode)
-  (global-set-key (kbd "C-r") 'ace-window)
-  (global-set-key (kbd "C-M-r") 'er/expand-region)
-  ;; helm
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  (global-set-key (kbd "C-x C-b") 'helm-mini)
-  (global-set-key (kbd "C-x C-n") 'helm-mini)
-  (global-set-key (kbd "C-h a") 'helm-apropos)
+      (global-set-key (kbd "C-x m") 'helm-emms)
+    (global-set-key (kbd "M-s") 'ace-jump-word-mode)
+    (global-set-key (kbd "C-x j") 'ace-jump-word-mode)
+      (global-set-key (kbd "C-r") 'ace-window)
+      ;; helm
+      (global-set-key (kbd "M-x") 'helm-M-x)
+    (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+      (global-set-key (kbd "C-x C-f") 'helm-find-files)
+      (global-set-key (kbd "C-x C-b") 'helm-mini)
+      (global-set-key (kbd "C-x C-n") 'helm-mini)
+      (global-set-key (kbd "C-h a") 'helm-apropos)
 #+END_SRC
 
 ** Keybindings for custom defined functions
@@ -121,55 +120,85 @@
   ;; (set-cursor-color "white")
   (set-face-attribute 'vertical-border 
                       nil 
-                      :foreground "#333333")
+                      :foreground "#4d4d4d")
 #+END_SRC
 ** Editor behavior
 *** Scrolling
 #+BEGIN_SRC emacs-lisp
-;; Smooth scrolling
-;; Note that scroll-conservatively does not work correctly with hl line mode
-;; when at bottom of buffer
-(setq scroll-margin 7
-      scroll-conservatively 10000)
-;; scroll amount
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
+  ;; Smooth scrolling
+  ;; Note that scroll-conservatively does not work correctly with hl line mode
+  ;; when at bottom of buffer
+  (setq scroll-margin 7
+        scroll-conservatively 10000)
+  ;; scroll amount
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
 #+END_SRC
 
 *** Yanking (pasting)
+If we copy something from outside emacs, save it in the kill ring so it doesn't get lost after a kill.
 #+BEGIN_SRC emacs-lisp
 (setq save-interprogram-paste-before-kill t)
 #+END_SRC
 
+*** Find read-only file as root user automatically
+#+BEGIN_SRC emacs-lisp
+(add-hook 'find-file-hook 'find-file-sudo)
+#+END_SRC
+
+*** Increase garbage collection memory threshold
+By default Emacs GC'd every .76MB allocated, which is far too aggressive for a modern machine.
+#+BEGIN_SRC emacs-lisp
+(setq gc-cons-threshold 20000000)
+#+END_SRC
+
 ** Built-in minor modes
 #+BEGIN_SRC emacs-lisp
-  ;; Use subword mode in prog mode to move by camelCase.
-  (add-hook 'prog-mode-hook 'subword-mode)
+        ;; Use subword mode in prog mode to move by camelCase.
+        (add-hook 'prog-mode-hook 'subword-mode)
 
-  ;; use winner-mode (C-c left to undo window changes)
-  (winner-mode 1)
+        ;; use winner-mode (C-c left to undo window changes)
+        (winner-mode t)
 
-  ;; use hl line mode in dired
-  (add-hook 'dired-mode-hook 'hl-line-mode)
+    ;; use delete selection mode
+  (delete-selection-mode t)
 
-  ;; use electric pair mode
-  (electric-pair-mode 1)
+  ;; use semantic
+  (semantic-mode t)
 
-  ;; use mouse avoidance mode
-  (setq mouse-avoidance-mode 'banish)
+      ;; use hl line mode in dired
+        (add-hook 'dired-mode-hook 'hl-line-mode)
 
-  ;; tab inserts spaces only
-  (setq-default indent-tabs-mode nil)
+        ;; use electric pair mode
+        (electric-pair-mode t)
 
-  ;; use auto-revert-mode for log files to update the output automatically
+        ;; use mouse avoidance mode
+        (setq mouse-avoidance-mode 'banish)
+
+        ;; tab inserts spaces only
+        (setq-default indent-tabs-mode nil)
+
+        ;; use auto-revert-mode for log files to update the output automatically
   (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 #+END_SRC
-*** which-func-mode
+* Custom Functions
+** Hooks
+Called after find-file to check if the file is writable. If not, open as root.
 #+BEGIN_SRC emacs-lisp
-(which-func-mode 1)
+  (defun find-file-sudo ()
+    "Reopen the current file with sudo privileges."
+    (when (and buffer-file-name
+               (not (file-writable-p buffer-file-name)))
+      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 #+END_SRC
 
-* Custom Functions
 ** Commands
+*** change-theme
+Changes the theme, disabling the current theme first.
+#+BEGIN_SRC emacs-lisp
+(defun change-theme ()
+;;todo
+)
+#+END_SRC
 *** open-next-line
 #+BEGIN_SRC emacs-lisp
   ;; Behave like vi's o command
@@ -201,25 +230,25 @@
 
 *** insert-parentheses-backward
 #+BEGIN_SRC emacs-lisp
-(defun insert-parentheses-backward ()
-  "Insert parentheses around the sexp near point. Move parentheses backward by
-        sexp if used repeatedly. Keycode 40 = (, 41 = )"
-  (interactive)
-  (cond ((string-match-p "\\\w" (char-to-string (char-after)))
-         (forward-char) (insert-parentheses-backward))
-        ((equal (char-before) 41)
-         (backward-sexp) (insert-parentheses-backward))
-        ((equal (char-after) 40)
-         (if (equal (char-before) 40)
-             (list (backward-char) (insert-parentheses 1))
-           (delete-char 1) (backward-sexp) (insert-char 40) (backward-char)))
-        ((equal (char-before) 40)
-         (insert-parentheses 1) (backward-char))
-        ((string-match-p "\\^_\W" (char-to-string (char-before)))
-         (insert-parentheses 1) (backward-char))
-        ((string-match-p "\\^_\W" (char-to-string (char-after)))
-         (forward-char) (insert-parentheses 1) (backward-char))
-        (t (backward-sexp) (insert-parentheses 1) (backward-char))))
+  (defun insert-parentheses-backward ()
+    "Insert parentheses around the sexp near point. Move parentheses backward by
+          sexp if used repeatedly. Keycode 40 = (, 41 = )"
+    (interactive)
+    (cond ((string-match-p "\\\w" (char-to-string (char-after)))
+           (forward-char) (insert-parentheses-backward))
+          ((equal (char-before) 41)
+           (backward-sexp) (insert-parentheses-backward))
+          ((equal (char-after) 40)
+           (if (equal (char-before) 40)
+               (list (backward-char) (insert-parentheses 1))
+             (delete-char 1) (backward-sexp) (insert-char 40) (backward-char)))
+          ((equal (char-before) 40)
+           (insert-parentheses 1) (backward-char))
+          ((string-match-p "\\^_\W" (char-to-string (char-before)))
+           (insert-parentheses 1) (backward-char))
+          ((string-match-p "\\^_\W" (char-to-string (char-after)))
+           (forward-char) (insert-parentheses 1) (backward-char))
+          (t (backward-sexp) (insert-parentheses 1) (backward-char))))
 #+END_SRC
 *** insert-parentheses-forward
 #+BEGIN_SRC emacs-lisp
@@ -244,68 +273,65 @@
 #+END_SRC
 *** correct-exponent-formatting-in-region
 #+BEGIN_SRC emacs-lisp
-(defun correct-exponent-formatting-in-region (start end)
-  "When yanking formatted text, the formatting of exponents will be lost,
-    appearing as regular numbers instead. This function adds carets to properly
-   denote that they are exponents, including exponents of parenthetical
-    expressions. This function assumes that the input variable is never an
-  exponent itself."
-  (interactive "*r")
-  (save-excursion
-    (save-restriction
-      (let ((character (read-string "Enter variable to add carets around: ")))
-        (narrow-to-region start end)
-        (goto-char (point-min))
-        (while (re-search-forward (concat "[" character ")]") nil t)
-          (when (looking-at-p "[[:digit:]]") (insert "^")))))))
+  (defun correct-exponent-formatting-in-region (start end)
+    "When yanking formatted text, the formatting of exponents will be lost,
+      appearing as regular numbers instead. This function adds carets to properly
+     denote that they are exponents, including exponents of parenthetical
+      expressions. This function assumes that the input variable is never an
+    exponent itself."
+    (interactive "*r")
+    (save-excursion
+      (save-restriction
+        (let ((character (read-string "Enter variable to add carets around: ")))
+
+          (narrow-to-region start end)
+          (goto-char (point-min))
+          (while (re-search-forward (concat "[" character ")]") nil t)
+            (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
-** Advices
-*** find-file
-Automatically opens file as root user if necessary. Taken from http://emacsredux.com/blog/2013/04/21/edit-files-as-root/
-#+BEGIN_SRC emacs-lisp
-(defadvice find-file (after find-file-sudo activate)
-  "Find file as root if necessary."
-  (unless (and buffer-file-name
-               (file-writable-p buffer-file-name))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-#+END_SRC
-
-
-
 * Packages
+** Ace isearch
+#+BEGIN_SRC emacs-lisp
+(global-ace-isearch-mode t)
+(setq ace-isearch-input-length 2)
+#+END_SRC
 ** Ace jump mode
 ** Ace window
 #+BEGIN_SRC emacs-lisp
-(setq aw-background nil)
+(setq aw-Background nil)
 #+END_SRC
 
 ** Auto indent mode
 #+BEGIN_SRC emacs-lisp
 ;; use auto indent mode
-(auto-indent-global-mode 1)
+(auto-indent-global-mode t)
 (setq auto-indent-assign-indent-level 2)
 #+END_SRC
 
 ** Column enforce mode
+Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
-
-;; Use column enforce mode to mark text past column 80.
 (add-hook 'prog-mode-hook 'column-enforce-mode)
 #+END_SRC
 
 ** Company mode
-Use company mode for text and code completion. There should be no delay  completion pop up.
+Use company mode for text and code completion.  There should be no delay  completion pop up.
 #+BEGIN_SRC emacs-lisp
-(global-company-mode)
-(add-to-list 'company-backends 'company-anaconda)
-(setq company-idle-delay 0)
+  (global-company-mode)
+  (add-to-list 'company-backends 'company-anaconda)
+  (setq company-idle-delay 0.2)
 #+END_SRC
 
-The dabbrev backends should only look for candidates in buffers with the same major mode, and should not downcase candidates automatically.
+The dabbrev backends should only look for candidates in buffers with the same major mode.
 #+BEGIN_SRC emacs-lisp
-(setq company-dabbrev-other-buffers t)
-(setq company-dabbrev-code-other-buffers t)
-(setq company-dabbrev-downcase nil)
+  (setq company-dabbrev-other-buffers t)
+  (setq company-dabbrev-code-other-buffers t)
+#+END_SRC
+
+Autocomplete should preserve the original case as much as possible.
+#+BEGIN_SRC emacs-lisp
+  (setq company-dabbrev-downcase nil)
+  (setq company-dabbrev-ignore-case nil)
 #+END_SRC
 
 ** Eww lnum
@@ -331,7 +357,7 @@ The dabbrev backends should only look for candidates in buffers with the same ma
 
 ** Helm
 #+BEGIN_SRC emacs-lisp
-  (helm-mode 1)
+  (helm-mode t)
 #+END_SRC
 *** Swap <tab> and C-z in helm buffers
 #+BEGIN_SRC emacs-lisp
@@ -340,53 +366,76 @@ The dabbrev backends should only look for candidates in buffers with the same ma
 #+END_SRC
 *** Make helm buffers appear on the bottom half of the window
 #+BEGIN_SRC emacs-lisp
-(setq helm-split-window-in-side-p t)
-(setq helm-split-window-default-side 'below)
+  (setq helm-split-window-in-side-p t)
+  (setq helm-split-window-default-side 'below)
 #+END_SRC
 *** Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
-(setq helm-apropos-fuzzy-match t)
+  (setq helm-apropos-fuzzy-match t)
 #+END_SRC
-** Ivy (swiper)
+
+** Helm swoop
+Disable pre-input on using swoop.
 #+BEGIN_SRC emacs-lisp
-(setq ivy-on-del-error-function nil)
+  ;;(setq helm-swoop-pre-input-function (lambda () nil))
 #+END_SRC
 
 ** Neotree
 #+BEGIN_SRC emacs-lisp
-(setq neo-keymap-style 'concise)
+  (setq neo-keymap-style 'concise)
 #+END_SRC
 
 ** Smart mode line
 #+BEGIN_SRC emacs-lisp
-;; Use smart mode line.
-(sml/setup)
-(sml/apply-theme 'respectful)
-(setq rm-blacklist '(" ,"
-                     " 80col"           ;hide lighters from mode-line
-                     " company"
-                     " FlyC-"
-                     " Helm"
-                     " AI"
-                     " MRev"            ; magit auto-revert mode
-                     " yas"
-                     " WLR"
-                     " Abbrev"))
+  ;; Use smart mode line.
+  (sml/setup)
+  (sml/apply-theme 'respectful)
+  (setq rm-blacklist '(" ,"             ; Subword mode
+                       " 80col"         ; Column enforce mode
+                       " company"       ; Company mode
+                       " Helm"          ; Helm mode
+                       " AI"            ; Auto indent mode
+                       " MRev"          ; Magit auto revert mode
+                       " yas"           ; Yasnippet
+                       " WLR"           ; Whole line or region mode
+                       " FlyC-"         ; Flycheck (no errors)
+                       " Ind"           ; Org indent mode
+                       " ⛓"            ; Shackle
+                       " Abbrev"))
+#+END_SRC
+
+** Shackle
+Make helm buffers appear as popups above the minibuffer.
+#+BEGIN_SRC emacs-lisp
+(shackle-mode t)
+(setq shackle-rules 
+      '(("*Helm Swoop*" :align below :ratio 0.2)
+        ("*Help*" :align below :ratio 0.4)))
+#+END_SRC
+
+** Swiper
+#+BEGIN_SRC emacs-lisp
+(setq ivy-on-del-error-function nil)
 #+END_SRC
 
 ** Whole line or region
 #+BEGIN_SRC emacs-lisp
-;; use whole line or region so C-w and M-w without selection deletes
-;; the line. When yanking, it places it as a line
-(whole-line-or-region-mode 1)
+  ;; use whole line or region so C-w and M-w without selection deletes
+  ;; the line. When yanking, it places it as a line
+  (whole-line-or-region-mode t)
 #+END_SRC
 
 ** Yasnippet
 #+BEGIN_SRC emacs-lisp
 ;; use yasnippet
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-(yas-global-mode 1) ;; Activate global mode before defining keys
-(add-hook 'term-mode-hook (lambda () (setq yas-dont-activate t)))
+(yas-global-mode t) ;; Activate global mode before defining keys
+#+END_SRC
+
+Yasnippet blocks shell tab completion, so disable it in comint and term modes.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'comint-mode-hook (lambda () (yas-minor-mode -1)))
+(add-hook 'term-mode-hook (lambda () (yas-minor-mode -1)))
 #+END_SRC
 
 ** RPG mode
@@ -398,27 +447,29 @@ The dabbrev backends should only look for candidates in buffers with the same ma
 #+END_SRC
 * Major Mode Settings
 ** Assembly
-Use ! as the comment char for SPARC assembly and use tabs.
+Configuration for SPARC assembly. Use ! as the comment char and use tabs.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'asm-mode-hook (lambda () (setq indent-tabs-mode t)))
 (setq asm-comment-char 33)
 #+END_SRC
 
-** Comint (shell)
+** Comint
 #+BEGIN_SRC emacs-lisp
-(setq shell-file-name "bash")
+  (add-hook 'comint-mode-hook (lambda ()
+                                (set (make-local-variable 'scroll-margin) 0)))
+  (setq shell-file-name "bash")
 
-(setq comint-prompt-read-only t)
+  (setq comint-prompt-read-only t)
 #+END_SRC
 
 ** Eww
 #+BEGIN_SRC emacs-lisp
-(eval-after-load "eww"
-  '(progn (define-key eww-mode-map "n" 'next-line)
-          (define-key eww-mode-map "m" 'eww-follow-link)
-          (define-key eww-mode-map "p" 'previous-line)
-          (define-key eww-mode-map "N" 'eww-next-url)
-          (define-key eww-mode-map "P" 'eww-previou1rs-url)))
+  (eval-after-load "eww"
+    '(progn (define-key eww-mode-map "n" 'next-line)
+            (define-key eww-mode-map "m" 'eww-follow-link)
+            (define-key eww-mode-map "p" 'previous-line)
+            (define-key eww-mode-map "N" 'eww-next-url)
+            (define-key eww-mode-map "P" 'eww-previou1rs-url)))
 #+END_SRC
 
 ** ERC
@@ -435,23 +486,30 @@ Autojoin channels in ERC
 
 ** Org
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook 'visual-line-mode)
-(setq org-latex-create-formula-image-program 'imagemagick)
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
 
 ** Javascript/HTML/CSS
 #+BEGIN_SRC emacs-lisp
-;; use js2 mode for editing .js files
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-;; Use skewer mode which allows real time preview
-(add-hook 'js2-mode-hook 'skewer-mode)
-(add-hook 'css-mode-hook 'skewer-css-mode)
-(add-hook 'html-mode-hook 'skewer-html-mode)
+  ;; use js2 mode for editing .js files
+  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+  ;; Use skewer mode which allows real time preview
+  (add-hook 'js2-mode-hook 'skewer-mode)
+  (add-hook 'css-mode-hook 'skewer-css-mode)
+  (add-hook 'html-mode-hook 'skewer-html-mode)
 #+END_SRC
 
 ** Python
 #+BEGIN_SRC emacs-lisp
 (add-hook 'python-mode-hook 'anaconda-mode)
+#+END_SRC
+
+** Term
+Set scroll margin in terminal to 0.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'term-mode-hook (lambda ()
+                            (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
 * Other

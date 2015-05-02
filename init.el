@@ -30,6 +30,11 @@
  '(powerline-color1 "#191919" t)
  '(powerline-color2 "#111111" t)
  '(python-indent-guess-indent-offset nil)
+ '(safe-local-variable-values
+   (quote
+    ((company-clang-arguments "-I/home/nivekuil/code/ucsd/cs30/pa2/" "-I/home/nivekuil/code/ucsd/cs30/pa3/")
+     (company-clang-arguments "-I/home/nivekuil/code/ucsd/cs30/pa2" "-I/home/nivekuil/code/ucsd/cs30/pa3")
+     (company-clang-arguments "/home/nivekuil/code/ucsd/cs30/pa2" "/home/nivekuil/code/ucsd/cs30/pa3"))))
  '(scroll-bar-mode nil)
  '(sml/position-percentage-format "")
  '(tool-bar-mode nil)
