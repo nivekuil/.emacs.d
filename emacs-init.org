@@ -10,7 +10,6 @@
    (quote
     ("cd540cb356cb169fa1493791bd4cbb183c5ad1c672b8d1be7b23e5e8c8178991" "bc40f613df8e0d8f31c5eb3380b61f587e1b5bc439212e03d4ea44b26b4f408a" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
  '(electric-pair-mode t)
- '(fringe-mode 0 nil (fringe))
  '(inhibit-startup-screen t)
  '(menu-bar-mode nil)
  '(python-indent-guess-indent-offset nil)
@@ -60,12 +59,17 @@
 (global-set-key (kbd "C-/") 'universal-argument)
 (global-set-key (kbd "C-z") 'zap-to-char)
 (global-set-key (kbd "C-x p") 'pop-to-mark-command)
-(global-set-key (kbd "C-x s") 'shell)
+(global-set-key (kbd "C-x s") 'eshell)
+(global-set-key (kbd "C-x d")
+                (lambda () (interactive)
+                  (neotree-dir (file-name-directory (buffer-file-name)))
+                  (next-line 4)))
 (global-set-key (kbd "C-h x") 'helm-google-suggest)
-(global-set-key (kbd "M-r") 'query-replace)
+(global-set-key (kbd "M-r") 'query-replace-regexp)
 (global-set-key (kbd "C-M-r") 'replace-regexp)
 (global-set-key (kbd "C-x b") 'bookmark-jump)
 (global-set-key (kbd "C-x w") 'eww)
+(global-set-key (kbd "C-x m") 'man)
 (global-set-key (kbd "C-'") 'semantic-ia-show-summary)
 #+END_SRC
 
@@ -73,8 +77,7 @@
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "M-s") 'ace-jump-word-mode)
-(global-set-key (kbd "C-x j") 'ace-jump-word-mode)
+(global-set-key (kbd "M-s") 'avy-goto-char-2)
 (global-set-key (kbd "C-r") 'ace-window)
 ;; helm
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -106,25 +109,32 @@
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
 #+END_SRC
-** Autosave
-#+BEGIN_SRC emacs-lisp
-;; Set autosave directory so emacs doesn't leave autosave files everywhere.
-(setq backup-directory-alist `(("." . "~/.emacs.d/backup"))
-      auto-save-list-file-prefix "~/.emacs.d/autosave/"
-      auto-save-file-name-transforms `((".*" , "~/.emacs.d/autosave/" t)))
-#+END_SRC
 ** Appearance
+*** Theme
 #+BEGIN_SRC emacs-lisp
-;; Set the theme.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright  deeper-blue material sanityinc-tomorrow-blue soothe))
-(load-theme 'grandshell t)
+(load-theme 'sanityinc-tomorrow-blue t)
 ;; (set-cursor-color "white")
 (set-face-attribute 'vertical-border
                     nil
                     :foreground "#4d4d4d")
 #+END_SRC
+*** Fringes
+#+BEGIN_SRC emacs-lisp
+;;(fringe-mode '(3 . 0))
+#+END_SRC
+
 ** Editor behavior
+*** Autosave
+Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
+#+BEGIN_SRC emacs-lisp
+(setq backup-directory-alist `(("." . "/home/nivekuil/.emacs.d/backup")))
+(setq auto-save-list-file-prefix "/home/nivekuil/.emacs.d/autosave/")
+(setq auto-save-file-name-transforms
+      `((".*" , "/home/nivekuil/.emacs.d/autosave/" t)))
+#+END_SRC
+
 *** Scrolling
 #+BEGIN_SRC emacs-lisp
 ;; Smooth scrolling
@@ -148,6 +158,11 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 (setq gc-cons-threshold 20000000)
 #+END_SRC
 
+*** Increase undo limit
+#+BEGIN_SRC emacs-lisp
+(setq undo-limit 800000)
+(setq undo-strong-limit 1200000)
+#+END_SRC
 ** Built-in minor modes
 #+BEGIN_SRC emacs-lisp
 ;; Use subword mode in prog mode to move by camelCase.
@@ -155,9 +170,6 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 
 ;; use winner-mode (C-c left to undo window changes)
 (winner-mode t)
-
-;; use delete selection mode
-(delete-selection-mode t)
 
 ;; use semantic
 (semantic-mode t)
@@ -286,7 +298,6 @@ Changes the theme, disabling the current theme first.
           (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 * Packages
-** Ace jump mode
 ** Ace window
 #+BEGIN_SRC emacs-lisp
 (setq aw-background t)
@@ -299,6 +310,13 @@ Changes the theme, disabling the current theme first.
 (setq auto-indent-assign-indent-level 2)
 #+END_SRC
 
+** Avy
+#+BEGIN_SRC emacs-lisp
+(setq avy-keys '(?a ?b ?c ?d ?e ?h ?i ?k ?m ?n ?o ?s ?t ?u))
+(setq avy-style 'pre)
+(setq avy-background t)
+#+END_SRC
+
 ** Column enforce mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
@@ -306,7 +324,7 @@ Use column enforce mode to mark text past column 80.
 #+END_SRC
 
 ** Company mode
-Use company mode for text and code completion.	There should be no delay  completion pop up.
+Use company mode for text and code completion.  There should be no delay  completion pop up.
 #+BEGIN_SRC emacs-lisp
 (global-company-mode)
 (add-to-list 'company-backends 'company-anaconda)
@@ -320,23 +338,21 @@ The dabbrev backends should only look for candidates in buffers with the same ma
 #+END_SRC
 
 Autocomplete should preserve the original case as much as possible.
-#+BEGIN_SRC emacs-lisp
+#+Begin_SRC emacs-lisp
 (setq company-dabbrev-downcase nil)
 (setq company-dabbrev-ignore-case nil)
 #+END_SRC
 
 ** Eww lnum
-#+BEGIN_SRC emacs-lisp
+#+Begin_SRC emacs-lisp
 (eval-after-load "eww"
   '(progn (define-key eww-mode-map "t" 'eww-lnum-follow)
           (define-key eww-mode-map "T" 'eww-lnum-universal)
           (define-key eww-mode-map "j" 'next-line)
           (define-key eww-mode-map "k" 'previous-line)))
-#+END_SRC
-
-** Flycheck
+#+END_SRC** Flycheck
+Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
-;; Use flycheck for syntax checking.
 (add-hook 'after-init-hook 'global-flycheck-mode) ;start with emacs
 #+END_SRC
 
@@ -349,20 +365,35 @@ Autocomplete should preserve the original case as much as possible.
 (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z") 'helm-select-action)
 #+END_SRC
+
 *** Make helm buffers appear on the bottom half of the window
 #+BEGIN_SRC emacs-lisp
 (setq helm-split-window-in-side-p t)
 (setq helm-split-window-default-side 'below)
 #+END_SRC
+
 *** Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
 (setq helm-apropos-fuzzy-match t)
 #+END_SRC
 
+
+** Helm swoop
+Overwrite helm-swoop-split-window-function to use display-buffer so swoop plays nice with shackle.
+#+BEGIN_SRC emacs-lisp
+(setq helm-swoop-split-window-function
+      (lambda ($buf)
+        (display-buffer $buf)))
+
+#+END_SRC
 ** Magit
 #+BEGIN_SRC emacs-lisp
 (setq magit-last-seen-setup-instructions "1.4.0")
 #+END_SRC
+** Multiple cursors
+#+BEGIN_SRC emacs-lisp
+#+END_SRC
+
 ** Neotree
 #+BEGIN_SRC emacs-lisp
 (setq neo-keymap-style 'concise)
@@ -373,16 +404,16 @@ Autocomplete should preserve the original case as much as possible.
 ;; Use smart mode line.
 (sml/setup)
 (sml/apply-theme 'respectful)
-(setq rm-blacklist '(" ," 	; Subword mode
-                     " 80col"		; Column enforce mode
-                     " company"	; Company mode
-                     " Helm"		; Helm mode
-                     " AI"		; Auto indent mode
-                     " MRev"		; Magit auto revert mode
-                     " yas"		; Yasnippet
-                     " WLR"		; Whole line or region mode
-                     " FlyC-"		; Flycheck (no errors)
-                     " Ind"		; Org indent mode
+(setq rm-blacklist '(" ,"       ; Subword mode
+                     " 80col"           ; Column enforce mode
+                     " company" ; Company mode
+                     " Helm"            ; Helm mode
+                     " AI"              ; Auto indent mode
+                     " MRev"            ; Magit auto revert mode
+                     " yas"             ; Yasnippet
+                     " WLR"             ; Whole line or region mode
+                     " FlyC-"           ; Flycheck (no errors)
+                     " Ind"             ; Org indent mode
                      " WSC"          ; Whitespace cleanup
                      " WSC!"         ; Whitespace cleanup
                      " ⛓"            ; Shackle
@@ -394,10 +425,14 @@ Make help buffers appear as popups above the minibuffer.
 #+BEGIN_SRC emacs-lisp
 (shackle-mode t)
 (setq shackle-rules
-      '(("*Help*" :align below :ratio 0.4)))
+      '(("*Help*" :align below :ratio 0.3)
+        ;;("*helm.*?" :regexp t :align below :ratio 0.4)
+        ))
+
 #+END_SRC
 
 ** Swiper
+Backspace should not end swiper.
 #+BEGIN_SRC emacs-lisp
 (setq ivy-on-del-error-function nil)
 #+END_SRC
@@ -406,6 +441,7 @@ Make help buffers appear as popups above the minibuffer.
 #+BEGIN_SRC emacs-lisp
 (global-whitespace-cleanup-mode t)
 #+END_SRC
+
 ** Whole line or region
 #+BEGIN_SRC emacs-lisp
 ;; use whole line or region so C-w and M-w without selection deletes
