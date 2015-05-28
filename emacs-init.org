@@ -74,7 +74,7 @@
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "M-s") 'avy-goto-char-2)
+(global-set-key (kbd "M-s") 'avy-goto-word-1)
 (global-set-key (kbd "C-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
 #+END_SRC
@@ -111,11 +111,13 @@
 
 * Settings
 ** Package Management
+Load and activate packages before using them.
 #+BEGIN_SRC emacs-lisp
-;; Load and activate packages before using them.
 (package-initialize)
+#+END_SRC
 
-;; Use melpa package repository.
+Use melpa as the package repository.
+#+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
 #+END_SRC
@@ -125,22 +127,23 @@
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook
           (lambda () (setq frame-title-format 'mode-line-format)))
-#+END_SRC  (add-hook 'after-init-hook
+#+END_SRC
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe))
-  (load-theme 'sanityinc-tomorrow-blue t)
+  (load-theme 'lush t)
   ;; (set-cursor-color "white")
   (set-face-attribute 'vertical-border
                       nil
                       :foreground "#4d4d4d")
 #+END_SRC
+
 *** Fringes
 #+BEGIN_SRC emacs-lisp
-;;(fringe-mode '(3 . 0))
+(fringe-mode '(2 . 0))
 #+END_SRC
 
 ** Editor behavior
@@ -262,49 +265,6 @@ Binding: M-m
   (back-to-indentation) (set-mark-command nil) (end-of-line))
 #+END_SRC
 
-*** insert-parentheses-backward
-#+BEGIN_SRC emacs-lisp
-(defun insert-parentheses-backward ()
-  "Insert parentheses around the sexp near point.
-Move parentheses backward by sexp if used repeatedly."
-  (interactive)
-  (cond ((string-match-p "\\\w" (char-to-string (char-after)))
-         (forward-char) (insert-parentheses-backward))
-        ((equal (char-before) 41)
-         (backward-sexp) (insert-parentheses-backward))
-        ((equal (char-after) 40)
-         (if (equal (char-before) 40)
-             (list (backward-char) (insert-parentheses 1))
-           (delete-char 1) (backward-sexp) (insert-char 40) (backward-char)))
-        ((equal (char-before) 40)
-         (insert-parentheses 1) (backward-char))
-        ((string-match-p "\\^_\W" (char-to-string (char-before)))
-         (insert-parentheses 1) (backward-char))
-        ((string-match-p "\\^_\W" (char-to-string (char-after)))
-         (forward-char) (insert-parentheses 1) (backward-char))
-        (t (backward-sexp) (insert-parentheses 1) (backward-char))))
-#+END_SRC
-*** insert-parentheses-forward
-#+BEGIN_SRC emacs-lisp
-(defun insert-parentheses-forward ()
-  "Insert parentheses around the sexp around point.
-Move parentheses forward by sexp if used repeatedly."
-  (interactive)
-  (cond ((equal (char-before) 41)
-         (if (equal (char-after) 41)
-             (list (forward-char) (insert-parentheses-forward))
-           (delete-char -1) (forward-sexp) (insert-char 41)))
-        ((equal (char-after) 40)
-         (forward-sexp) (insert-parentheses-forward))
-        ((equal (char-before) 40)
-         (insert-parentheses 1) (forward-sexp) (forward-char))
-        ((string-match-p "\\^_\W" (char-to-string (char-before)))
-         (insert-parentheses 1) (forward-sexp) (forward-char))
-        ((string-match-p "\\^_\W" (char-to-string (char-after)))
-         (backward-sexp) (insert-parentheses 1) (forward-sexp) (forward-char))
-        (t (backward-sexp) (insert-parentheses 1)
-           (forward-sexp) (forward-char))))
-#+END_SRC
 *** correct-exponent-formatting-in-region
 #+BEGIN_SRC emacs-lisp
   (defun correct-exponent-formatting-in-region (start end)
@@ -386,7 +346,8 @@ Autocomplete should preserve the original case as much as possible.
           (define-key eww-mode-map "T" 'eww-lnum-universal)
           (define-key eww-mode-map "j" 'next-line)
           (define-key eww-mode-map "k" 'previous-line)))
-#+END_SRC** Flycheck
+#+END_SRC
+** Flycheck
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook 'global-flycheck-mode) ;start with emacs
@@ -482,13 +443,13 @@ Backspace should not end swiper.
 #+END_SRC
 
 ** Whole line or region
+Use whole line or region so C-w and M-w without an active mark kills the line.
 #+BEGIN_SRC emacs-lisp
-;; use whole line or region so C-w and M-w without selection deletes
-;; the line. When yanking, it places it as a line
 (whole-line-or-region-mode t)
 #+END_SRC
 
 ** Ws butler
+Automatically and non-disruptively clean up whitespace on save.
 #+BEGIN_SRC emacs-lisp
 (ws-butler-global-mode t)
 #+END_SRC
@@ -516,14 +477,15 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 
 ** sr-speedbar
 #+BEGIN_SRC emacs-lisp
-(setq sr-speedbar-default-width 25)
-(setq sr-speedbar-right-side nil)
-(add-hook 'after-init-hook
-          (lambda () (speedbar-set-timer 1)))
+  (setq sr-speedbar-default-width 25)
+  (setq sr-speedbar-right-side nil)
+  (add-hook 'after-init-hook
+            (lambda () (speedbar-set-timer 1)))
+
 #+END_SRC
 * Major Mode Settings
 ** Assembly
-Configuration for SPARC assembly. Use ! as the comment char and use tabs.
+Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
 #+BEGIN_SRC emacs-lisp
 (setq asm-comment-char 33)
 (setq asm-mode-hook
@@ -571,8 +533,8 @@ Autojoin channels in ERC
 #+END_SRC
 
 ** Javascript/HTML/CSS
+Use js2-minor-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
-;; use js2 minor mode for editing .js files
 (add-hook 'javascript-mode-hook 'js2-minor-mode)
 ;; Use skewer mode which allows real time preview
 (add-hook 'javascript-mode-hook 'skewer-mode)
@@ -603,7 +565,6 @@ Set scroll margin in terminal to 0.
 
   (defun do-on-startup-terminal ()
     (split-window-horizontally))
-
   (if (display-graphic-p) (do-on-startup-graphical)
     (do-on-startup-terminal))
 #+END_SRC
