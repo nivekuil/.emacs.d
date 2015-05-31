@@ -1,6 +1,4 @@
-(org-babel-load-file
- (expand-file-name "emacs-init.org"
-                   user-emacs-directory))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -67,3 +65,7 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 151 :width normal)))))
 (put 'narrow-to-region 'disabled nil)
+
+(org-babel-load-file
+ (expand-file-name "emacs-init.org"
+                   user-emacs-directory))

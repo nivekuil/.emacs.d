@@ -1,28 +1,3 @@
-* Custom Variables
-#+BEGIN_SRC emacs-lisp
-(custom-set-variables
- '(auto-indent-blank-lines-on-move nil)
- '(auto-save-interval 0)
- '(auto-save-timeout 10)
- '(blink-cursor-mode nil)
- '(column-number-mode t)
- '(custom-safe-themes
-   (quote
-    ("cd540cb356cb169fa1493791bd4cbb183c5ad1c672b8d1be7b23e5e8c8178991" "bc40f613df8e0d8f31c5eb3380b61f587e1b5bc439212e03d4ea44b26b4f408a" "3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "c5a044ba03d43a725bd79700087dea813abcb6beb6be08c7eb3303ed90782482" "6a37be365d1d95fad2f4d185e51928c789ef7a4ccf17e7ca13ad63a8bf5b922f" "756597b162f1be60a12dbd52bab71d40d6a2845a3e3c2584c6573ee9c332a66e" default)))
- '(electric-pair-mode t)
- '(inhibit-startup-screen t)
- '(menu-bar-mode nil)
- '(python-indent-guess-indent-offset nil)
- '(scroll-bar-mode nil)
- '(sml/position-percentage-format "")
- '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 151 :width normal)))))
-#+END_SRC
 * Key Bindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -42,34 +17,33 @@
 
 ** Global key bindings
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook
-          (lambda () (local-set-key (kbd "C-,")
-                                    (lambda () (interactive)
-                                      (other-window -1)))))
+  (add-hook 'org-mode-hook
+            (lambda () (local-set-key (kbd "C-,")
+                                      (lambda () (interactive)
+                                        (other-window -1)))))
 
-(global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
-(global-set-key (kbd "M-p") 'backward-paragraph)
-(global-set-key (kbd "M-n") 'forward-paragraph)
+  (global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
+  (global-set-key (kbd "M-p") 'backward-paragraph)
+  (global-set-key (kbd "M-n") 'forward-paragraph)
 
-(global-set-key (kbd "C-,")
-                (lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "C-.") 'other-window)
-(global-set-key (kbd "C-u") 'undo)
-(global-set-key (kbd "C-/") 'universal-argument)
-(global-set-key (kbd "C-z") 'zap-to-char)
-(global-set-key (kbd "C-x p") 'pop-to-mark-command)
-(global-set-key (kbd "C-x s") 'eshell)
-(global-set-key (kbd "C-x d") 'sr-speedbar-select-window)
-(global-set-key (kbd "C-h x") 'helm-google-suggest)
-(global-set-key (kbd "M-r") 'query-replace-regexp)
-(global-set-key (kbd "C-M-r") 'replace-regexp)
-(global-set-key (kbd "C-M-d") 'kill-sexp)
-(global-set-key (kbd "C-x b") 'bookmark-jump)
-(global-set-key (kbd "C-x w") 'eww)
-(global-set-key (kbd "C-x m") 'man)
-(global-set-key (kbd "C-'") 'semantic-ia-show-summary)
+  (global-set-key (kbd "C-,")
+                  (lambda () (interactive) (other-window -1)))
+  (global-set-key (kbd "C-.") 'other-window)
+  (global-set-key (kbd "C-u") 'undo)
+  (global-set-key (kbd "C-/") 'universal-argument)
+  (global-set-key (kbd "C-z") 'zap-to-char)
+  (global-set-key (kbd "C-x s") 'eshell)
+  (global-set-key (kbd "C-x d") 'sr-speedbar-select-window)
+  (global-set-key (kbd "C-x p") 'pop-to-mark-command)
+  (global-set-key (kbd "C-h x") 'helm-google-suggest)
+  (global-set-key (kbd "M-r") 'query-replace-regexp)
+  (global-set-key (kbd "C-M-r") 'replace-regexp)
+  (global-set-key (kbd "C-M-d") 'kill-sexp)
+  (global-set-key (kbd "C-x b") 'bookmark-jump)
+  (global-set-key (kbd "C-x w") 'eww)
+  (global-set-key (kbd "C-x m") 'man)
+  (global-set-key (kbd "C-'") 'semantic-ia-show-summary)
 #+END_SRC
-
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-s") 'swiper)
@@ -116,10 +90,12 @@ Load and activate packages before using them.
 (package-initialize)
 #+END_SRC
 
-Use melpa as the package repository.
+Use melpa and marmalade as package repositories.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 #+END_SRC
 
 ** Appearance
@@ -163,13 +139,14 @@ fill commands should create rows up to to 78 characters long.
 #+END_SRC
 
 *** Scrolling
+Make scrolling behave smoothly.  Note that scrolling does not work correctly with hl-line-mode after cursor goes to the bottom of the buffer.
 #+BEGIN_SRC emacs-lisp
-;; Smooth scrolling
-;; Note that scroll-conservatively does not work correctly with hl line mode
-;; when at bottom of buffer
 (setq scroll-margin 7
       scroll-conservatively 10000)
-;; scroll amount
+#+END_SRC
+
+Change how many lines mouse wheel scrolls by - 1 line at a time with no modifiers.
+#+BEGIN_SRC emacs-lisp
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
 #+END_SRC
 
@@ -180,7 +157,7 @@ If we copy something from outside emacs, save it in the kill ring so it doesn't 
 #+END_SRC
 
 *** Increase garbage collection memory threshold
-By default Emacs GC'd every .76MB allocated, which is far too aggressive for a modern machine.
+By default Emacs GC'd every .76MB allocated, which is far too aggressive for a modern machine.  Raise this to a much bigger number.
 #+BEGIN_SRC emacs-lisp
 (setq gc-cons-threshold 20000000)
 #+END_SRC
@@ -221,13 +198,6 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 
 * Custom Functions
 ** Commands
-*** change-theme
-Changes the theme, disabling the current theme first.
-#+BEGIN_SRC emacs-lisp
-(defun change-theme ()
-  ;;todo
-  )
-#+END_SRC
 *** file-file-sudo
 #+BEGIN_SRC emacs-lisp
 (defun find-file-sudo ()
@@ -302,7 +272,7 @@ Binding: M-m
 ** Avy
 #+BEGIN_SRC emacs-lisp
 (setq avy-keys '(?a ?b ?c ?d ?e ?h ?i ?k ?m ?n ?o ?s ?t ?u))
-(setq avy-style 'pre)
+(setq avy-style 'at-full)
 (setq avy-background t)
 #+END_SRC
 
@@ -350,7 +320,7 @@ Autocomplete should preserve the original case as much as possible.
 ** Flycheck
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook 'global-flycheck-mode) ;start with emacs
+(add-hook 'after-init-hook #'global-flycheck-mode)
 #+END_SRC
 
 ** Helm
@@ -402,13 +372,9 @@ Overwrite helm-swoop-split-window-function to use display-buffer so swoop plays 
             (quail-defrule (cadr x) (car (cddr x)))))
       (append math-symbol-list-basic math-symbol-list-extended))
 #+END_SRC
-** Multiple cursors
-#+BEGIN_SRC emacs-lisp
-#+END_SRC
-
 ** Smart mode line
+Use smart mode line, and don't display most minor mode lighters from the mode line.
 #+BEGIN_SRC emacs-lisp
-;; Use smart mode line.
 (sml/setup)
 (setq rm-blacklist '(" ,"       ; Subword mode
                      " 80col"           ; Column enforce mode
@@ -418,22 +384,10 @@ Overwrite helm-swoop-split-window-function to use display-buffer so swoop plays 
                      " MRev"            ; Magit auto revert mode
                      " yas"             ; Yasnippet
                      " WLR"             ; Whole line or region mode
-                     " FlyC-"           ; Flycheck (no errors)
+                     " FlyC-"           ; Flycheck (inactive)
                      " Ind"             ; Org indent mode
                      " wb"              ; Ws butler
-                     " ⛓"            ; Shackle
                      " Abbrev"))
-#+END_SRC
-
-** Shackle
-Currently not doing anything.
-#+BEGIN_SRC emacs-lisp
-(shackle-mode t)
-;;(setq shackle-rules
-      ;;'(("*Help*" :align below :ratio 0.3)
-        ;;("*helm.*?" :regexp t :align below :ratio 0.4)
-;;        ))
-
 #+END_SRC
 
 ** Swiper
@@ -527,11 +481,14 @@ Autojoin channels in ERC
 #+END_SRC
 
 ** Org
+Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'visual-line-mode)
 (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
-
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-export-backends 'md)
+#+END_SRC
 ** Javascript/HTML/CSS
 Use js2-minor-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
@@ -565,6 +522,7 @@ Set scroll margin in terminal to 0.
 
   (defun do-on-startup-terminal ()
     (split-window-horizontally))
+
   (if (display-graphic-p) (do-on-startup-graphical)
     (do-on-startup-terminal))
 #+END_SRC
