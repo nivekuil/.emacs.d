@@ -26,31 +26,41 @@
   (global-set-key (kbd "M-p") 'backward-paragraph)
   (global-set-key (kbd "M-n") 'forward-paragraph)
 
-  (global-set-key (kbd "C-,")
+  (global-set-key (kbd "M-,")
                   (lambda () (interactive) (other-window -1)))
-  (global-set-key (kbd "C-.") 'other-window)
-  (global-set-key (kbd "C-u") 'undo)
-  (global-set-key (kbd "C-/") 'universal-argument)
+  (global-set-key (kbd "M-.") 'other-window)
+
   (global-set-key (kbd "C-z") 'zap-to-char)
-  (global-set-key (kbd "C-x s") 'eshell)
   (global-set-key (kbd "C-x d") 'sr-speedbar-select-window)
   (global-set-key (kbd "C-x p") 'pop-to-mark-command)
-  (global-set-key (kbd "C-h x") 'helm-google-suggest)
-  (global-set-key (kbd "M-r") 'query-replace-regexp)
-  (global-set-key (kbd "C-M-r") 'replace-regexp)
-  (global-set-key (kbd "C-M-d") 'kill-sexp)
   (global-set-key (kbd "C-x b") 'bookmark-jump)
   (global-set-key (kbd "C-x w") 'eww)
-  (global-set-key (kbd "C-x m") 'man)
+  (global-set-key (kbd "C-r") 'query-replace-regexp)
+  (global-set-key (kbd "C-M-r") 'replace-regexp)
+  (global-set-key (kbd "C-M-d") 'kill-sexp)
   (global-set-key (kbd "C-'") 'semantic-ia-show-summary)
+  (global-set-key (kbd "C-h o") 'man)
 #+END_SRC
+
+Swap undo and universal-argument. C-u is in too good of a position to be wasted on universal-argument.
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-u") 'undo)
+(global-set-key (kbd "C-/") 'universal-argument)
+#+END_SRC
+
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "M-s") 'avy-goto-word-1)
-(global-set-key (kbd "C-r") 'ace-window)
+(global-set-key (kbd "M-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
+#+END_SRC
+
+*** avy
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-s") 'avy-goto-word-1)
+(global-set-key (kbd "M-g M-g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
 #+END_SRC
 
 *** helm
@@ -61,6 +71,7 @@
 (global-set-key (kbd "C-x C-b") 'helm-mini)
 (global-set-key (kbd "C-x C-n") 'helm-mini)
 (global-set-key (kbd "C-h a") 'helm-apropos)
+(global-set-key (kbd "C-h x") 'helm-google-suggest)
 #+END_SRC
 
 *** corral
@@ -107,14 +118,17 @@ Use melpa and marmalade as package repositories.
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
-(setq favorite-themes
-      '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
-                   deeper-blue material sanityinc-tomorrow-blue soothe))
-  (load-theme 'lush t)
-  ;; (set-cursor-color "white")
-  (set-face-attribute 'vertical-border
-                      nil
-                      :foreground "#4d4d4d")
+  (setq favorite-themes
+        '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
+                     deeper-blue material sanityinc-tomorrow-blue soothe))
+    (load-theme 'lush t)
+  (add-hook 'after-init-hook
+            (lambda (sml/apply-theme 'smart-mode-line-respectful)))
+
+    ;; (set-cursor-color "white")
+    (set-face-attribute 'vertical-border
+                        nil
+                        :foreground "#4d4d4d")
 #+END_SRC
 
 *** Fringes
@@ -304,7 +318,7 @@ Autocomplete should preserve the original case as much as possible.
 
 ** Corral
 #+BEGIN_SRC emacs-lisp
-(setq corral-preserve-point nil)
+(setq corral-preserve-point t)
 (setq corral-syntax-entries '((?# "_")
                               (?* "_")
                               (?- "_")))
@@ -356,22 +370,11 @@ Overwrite helm-swoop-split-window-function to use display-buffer so swoop plays 
 #+BEGIN_SRC emacs-lisp
 (setq magit-last-seen-setup-instructions "1.4.0")
 #+END_SRC
-** math-symbol-lists
+** Projectile
 #+BEGIN_SRC emacs-lisp
-(require 'math-symbol-lists)
-(quail-define-package "math" "UTF-8" "Ω" t)
-(quail-define-rules ; whatever extra rules you want to define...
- ("\\from"    #X2190)
- ("\\to"      #X2192)
- ("\\lhd"     #X22B2)
- ("\\rhd"     #X22B3)
- ("\\unlhd"   #X22B4)
- ("\\unrhd"   #X22B5))
-(mapc (lambda (x)
-        (if (cddr x)
-            (quail-defrule (cadr x) (car (cddr x)))))
-      (append math-symbol-list-basic math-symbol-list-extended))
+(projectile-global-mode t)
 #+END_SRC
+
 ** Smart mode line
 Use smart mode line, and don't display most minor mode lighters from the mode line.
 #+BEGIN_SRC emacs-lisp
@@ -432,6 +435,7 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 ** sr-speedbar
 #+BEGIN_SRC emacs-lisp
   (setq sr-speedbar-default-width 25)
+  (setq sr-speedbar-width 25)
   (setq sr-speedbar-right-side nil)
   (add-hook 'after-init-hook
             (lambda () (speedbar-set-timer 1)))
@@ -525,4 +529,5 @@ Set scroll margin in terminal to 0.
 
   (if (display-graphic-p) (do-on-startup-graphical)
     (do-on-startup-terminal))
+
 #+END_SRC
