@@ -29,6 +29,9 @@
   (global-set-key (kbd "M-,")
                   (lambda () (interactive) (other-window -1)))
   (global-set-key (kbd "M-.") 'other-window)
+  (global-set-key (kbd "C-,")
+                  (lambda () (interactive) (other-window -1)))
+  (global-set-key (kbd "C-.") 'other-window)
 
   (global-set-key (kbd "C-z") 'zap-to-char)
   (global-set-key (kbd "C-x d") 'sr-speedbar-select-window)
@@ -73,7 +76,10 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-h x") 'helm-google-suggest)
 #+END_SRC
-
+*** helm-ag
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-M-s") 'helm-do-ag-project-root)
+#+END_SRC
 *** corral
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-9") 'corral-parentheses-backward)
@@ -358,6 +364,10 @@ Use flycheck for syntax checking.
 (setq helm-apropos-fuzzy-match t)
 #+END_SRC
 
+** Helm-ag
+#+BEGIN_SRC emacs-lisp
+(setq helm-ag-fuzzy-match t)
+#+END_SRC
 ** Helm swoop
 Overwrite helm-swoop-split-window-function to use display-buffer so swoop plays nice with shackle.
 #+BEGIN_SRC emacs-lisp
