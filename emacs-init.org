@@ -38,7 +38,7 @@
   (global-set-key (kbd "C-x p") 'pop-to-mark-command)
   (global-set-key (kbd "C-x b") 'bookmark-jump)
   (global-set-key (kbd "C-x w") 'eww)
-  (global-set-key (kbd "C-r") 'query-replace-regexp)
+  (global-set-key (kbd "M-r") 'query-replace-regexp)
   (global-set-key (kbd "C-M-r") 'replace-regexp)
   (global-set-key (kbd "C-M-d") 'kill-sexp)
   (global-set-key (kbd "C-'") 'semantic-ia-show-summary)
@@ -53,10 +53,11 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-s") 'swiper)
-(global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "M-r") 'ace-window)
-(global-set-key (kbd "M-m") 'er/expand-region)
+  (global-set-key (kbd "C-s") 'swiper)
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (global-set-key (kbd "C-r") 'ace-window)
+  (global-set-key (kbd "M-m") 'er/expand-region)
+  (global-set-key (kbd "C-x f") 'anchored-transpose)
 #+END_SRC
 
 *** avy
@@ -500,9 +501,38 @@ Use visual line mode to wrap lines in org mode.
 (add-hook 'org-mode-hook 'visual-line-mode)
 (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
+
+Org project settings for publishing my website.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-export-backends 'md)
+  (setq org-publish-project-alist
+        '(
+
+    ("org-website"
+            ;; Path to your org files.
+            :base-directory "~/code/nivekuil.github.io/org/"
+            :base-extension "org"
+
+            ;; Path to your Jekyll project.
+            :publishing-directory "~/code/nivekuil.github.io/jekyll/"
+            :recursive t
+            :publishing-function org-html-publish-to-html
+            :headline-levels 4
+            :html-extension "html"
+            :body-only t
+      )
+
+      ("org-website-static"
+            :base-directory "~/code/nivekuil.github.io/org/"
+            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
+            :publishing-directory "~/code/nivekuil.github.io/"
+            :recursive t
+            :publishing-function org-publish-attachment)
+
+      ("website" :components
+       ("org-website-static" "org-website"))
+  ))
 #+END_SRC
+
 ** Javascript/HTML/CSS
 Use js2-minor-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
@@ -525,6 +555,11 @@ Set scroll margin in terminal to 0.
                             (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
+* Project Settings
+** Website
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
 * Other
 #+BEGIN_SRC emacs-lisp
   (defun do-on-startup-graphical ()
@@ -541,3 +576,4 @@ Set scroll margin in terminal to 0.
     (do-on-startup-terminal))
 
 #+END_SRC
+nn
