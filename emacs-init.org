@@ -58,6 +58,7 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
   (global-set-key (kbd "C-r") 'ace-window)
   (global-set-key (kbd "M-m") 'er/expand-region)
   (global-set-key (kbd "C-x f") 'anchored-transpose)
+  (global-set-key (kbd "C-x C-o") 'shrink-whitespace)
 #+END_SRC
 
 *** avy
@@ -283,10 +284,13 @@ Binding: M-m
 
 ** Auto indent mode
 #+BEGIN_SRC emacs-lisp
-;; use auto indent mode
-(auto-indent-global-mode t)
-(add-to-list 'auto-indent-known-indent-level-variables 'js-indent-level)
-(setq auto-indent-assign-indent-level 2)
+  ;; use auto indent mode
+  (auto-indent-global-mode t)
+  (add-to-list 'auto-indent-known-indent-level-variables
+               'js-indent-level)
+  (add-to-list 'auto-indent-known-indent-level-variables
+               'web-mode-markup-indent-offset)
+  (setq auto-indent-assign-indent-level 2)
 
 #+END_SRC
 
@@ -502,18 +506,18 @@ Use visual line mode to wrap lines in org mode.
 (setq org-latex-create-formula-image-program 'imagemagick)
 #+END_SRC
 
-Org project settings for publishing my website.
+Org project settings for publishing my website, converting org files to html for jekyll.
 #+BEGIN_SRC emacs-lisp
   (setq org-publish-project-alist
         '(
 
     ("org-website"
             ;; Path to your org files.
-            :base-directory "~/code/nivekuil.github.io/org/"
+            :base-directory "~/code/nivekuil.github.io/.org/"
             :base-extension "org"
 
             ;; Path to your Jekyll project.
-            :publishing-directory "~/code/nivekuil.github.io/jekyll/"
+            :publishing-directory "~/code/nivekuil.github.io/"
             :recursive t
             :publishing-function org-html-publish-to-html
             :headline-levels 4
@@ -522,7 +526,7 @@ Org project settings for publishing my website.
       )
 
       ("org-website-static"
-            :base-directory "~/code/nivekuil.github.io/org/"
+            :base-directory "~/code/nivekuil.github.io/.org/"
             :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
             :publishing-directory "~/code/nivekuil.github.io/"
             :recursive t
@@ -533,14 +537,14 @@ Org project settings for publishing my website.
   ))
 #+END_SRC
 
+Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO).
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-window-setup 'current-window)
+#+END_SRC
 ** Javascript/HTML/CSS
 Use js2-minor-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'javascript-mode-hook 'js2-minor-mode)
-;; Use skewer mode which allows real time preview
-(add-hook 'javascript-mode-hook 'skewer-mode)
-(add-hook 'css-mode-hook 'skewer-css-mode)
-(add-hook 'html-mode-hook 'skewer-html-mode)
 #+END_SRC
 
 ** Python
@@ -555,6 +559,17 @@ Set scroll margin in terminal to 0.
                             (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
+** Web
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+#+END_SRC
 * Project Settings
 ** Website
 #+BEGIN_SRC emacs-lisp
