@@ -131,7 +131,7 @@ Use melpa and marmalade as package repositories.
                      deeper-blue material sanityinc-tomorrow-blue soothe))
     (load-theme 'lush t)
   (add-hook 'after-init-hook
-            (lambda (sml/apply-theme 'smart-mode-line-respectful)))
+            (lambda () (sml/apply-theme 'smart-mode-line-respectful)))
 
     ;; (set-cursor-color "white")
     (set-face-attribute 'vertical-border
@@ -276,6 +276,7 @@ Binding: M-m
           (while (re-search-forward (concat "[" character ")]") nil t)
             (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
+
 * Packages
 ** Ace window
 #+BEGIN_SRC emacs-lisp
@@ -591,4 +592,3 @@ Set scroll margin in terminal to 0.
     (do-on-startup-terminal))
 
 #+END_SRC
-nn
