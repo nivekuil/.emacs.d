@@ -98,6 +98,7 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "C-o") 'open-next-line) ;like vi o
 (global-set-key (kbd "C-x C-r") 'find-file-sudo)
 (global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
+(global-set-key (kbd "<f8>") 'run-async-script)
 #+END_SRC
 
 * Settings
@@ -223,6 +224,13 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 
 * Custom Functions
 ** Commands
+*** Run current buffer in interpreter asynchronously
+#+BEGIN_SRC emacs-lisp
+(defun run-async-script ()
+  (interactive)
+  (cond ((equal (file-name-extension buffer-file-name) "py")
+         (async-shell-command (concat "python " buffer-file-name)))))
+#+END_SRC
 *** file-file-sudo
 #+BEGIN_SRC emacs-lisp
 (defun find-file-sudo ()
