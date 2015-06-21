@@ -457,8 +457,8 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 
 ** sr-speedbar
 #+BEGIN_SRC emacs-lisp
-  (setq sr-speedbar-default-width 25)
   (setq sr-speedbar-width 25)
+  (setq sr-speedbar-default-width 25)
   (setq sr-speedbar-right-side nil)
   (add-hook 'after-init-hook
             (lambda () (speedbar-set-timer 1)))
