@@ -155,7 +155,7 @@ Set autosave directory so that all the autosaves are in one place, and not all o
 *** Dired
 When multiple dired buffers are open, dired should assume that file operations should be directed to the path in the other dired buffer.
 #+BEGIN_SRC emacs-lisp
-(setq dired-dwim-target t)
+(setq dired-dwim-target nil)
 #+END_SRC
 *** Fill column
 fill commands should create rows up to to 78 characters long.
@@ -389,13 +389,38 @@ mu4e is not part of an Emacs package management system, so we have to require it
   (require 'mu4e)
   (setq mu4e-get-mail-command "offlineimap")
   (setq mu4e-view-show-images t)
-  (setq mu4e-html2text-command "html2text -b 80")
   (setq mu4e-headers-date-format "%Y-%m-%d")
   (setq mu4e-headers-fields '(
                              (:human-date . 11)
                              (:subject . 52)
                              (:from . 22)
                              (:flags . 3)))
+#+END_SRC
+Use gmail as default mailbox.
+#+BEGIN_SRC emacs-lisp
+  (setq mu4e-maildir       "~/Maildir"   ;; top-level Maildir
+        mu4e-sent-folder   "/gmail/sent"       ;; folder for sent messages
+        mu4e-drafts-folder "/gmail/drafts"     ;; unfinished messages
+        mu4e-trash-folder  "/gmail/trash"      ;; trashed messages
+        mu4e-refile-folder "/gmail/archive")   ;; saved messages
+
+#+END_SRC
+Use `mu4e-shr2text` found in the `mu4e-contrib` package to display rich text messages.
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e-contrib)
+(setq mu4e-html2text-command 'mu4e-shr2text)
+#+END_SRC
+
+*** Sending mail
+Settings for sending mail.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
+#+BEGIN_SRC emacs-lisp
+  (require 'smtpmail)
+  (setq user-mail-address "kevin@nivekuil.com"
+        message-send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "smtp.zoho.com"
+        smtpmail-stream-type 'ssl
+        smtpmail-smtp-service 465)
+
 #+END_SRC
 
 ** Projectile
@@ -548,9 +573,15 @@ Editing source code blocks should happen in the same window.  The edit session s
   (setq org-src-window-setup 'current-window)
 #+END_SRC
 ** Javascript/HTML/CSS
-Use js2-minor-mode for editing .js files.
+Use js2-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx$" . js2-mode))
+#+END_SRC
+
+JSON is a subset of YAML, so use yaml-mode to edit json files.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.json$" . yaml-mode))
 #+END_SRC
 
 ** Python
@@ -575,6 +606,8 @@ Set scroll margin in terminal to 0.
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
 #+END_SRC
 
 * Other
