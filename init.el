@@ -33,10 +33,7 @@
      (company-clang-arguments "-I/home/nivekuil/code/ucsd/cs30/pa2" "-I/home/nivekuil/code/ucsd/cs30/pa3")
      (company-clang-arguments "/home/nivekuil/code/ucsd/cs30/pa2" "/home/nivekuil/code/ucsd/cs30/pa3"))))
  '(scroll-bar-mode nil)
- '(send-mail-function (quote smtpmail-send-it))
  '(sml/position-percentage-format "")
- '(smtpmail-smtp-server "smtp.zoho.net")
- '(smtpmail-smtp-service 25)
  '(tool-bar-mode nil)
  '(vc-annotate-background nil t)
  '(vc-annotate-color-map

@@ -388,14 +388,18 @@ mu4e is not part of an Emacs package management system, so we have to require it
 #+BEGIN_SRC emacs-lisp
   (require 'mu4e)
   (setq mu4e-get-mail-command "offlineimap")
-  (setq mu4e-view-show-images t)
-  (setq mu4e-headers-date-format "%Y-%m-%d")
-  (setq mu4e-headers-fields '(
-                             (:human-date . 11)
-                             (:subject . 52)
-                             (:from . 22)
-                             (:flags . 3)))
+  (setq mu4e-headers-date-format "%b %d")
+  (setq mu4e-headers-time-format "%I:%M %p")
+  (setq mu4e-headers-fields '((:subject . 57)
+                              (:from . 23)
+                              (:human-date . 9)))
 #+END_SRC
+
+Update mailboxes every 10 minutes.
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-update-interval 600)
+#+END_SRC
+
 Use gmail as default mailbox.
 #+BEGIN_SRC emacs-lisp
   (setq mu4e-maildir       "~/Maildir"   ;; top-level Maildir
@@ -405,22 +409,25 @@ Use gmail as default mailbox.
         mu4e-refile-folder "/gmail/archive")   ;; saved messages
 
 #+END_SRC
-Use `mu4e-shr2text` found in the `mu4e-contrib` package to display rich text messages.
+
+Gmail and offlineimap leads to duplicate emails showing up in search filters since that's the way labels/virtual folders in Gmail are represented, so skip them.
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-headers-skip-duplicates t)
+#+END_SRC
+
+Use =mu4e-shr2text= found in the =mu4e-contrib= package to display rich text messages.
 #+BEGIN_SRC emacs-lisp
 (require 'mu4e-contrib)
 (setq mu4e-html2text-command 'mu4e-shr2text)
 #+END_SRC
 
-*** Sending mail
 Settings for sending mail.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
 #+BEGIN_SRC emacs-lisp
   (require 'smtpmail)
-  (setq user-mail-address "kevin@nivekuil.com"
-        message-send-mail-function 'smtpmail-send-it
-        smtpmail-smtp-server "smtp.zoho.com"
-        smtpmail-stream-type 'ssl
-        smtpmail-smtp-service 465)
-
+  (setq user-mail-address "kevin@nivekuil.com")
+  (setq send-mail-function 'smtpmail-send-it)
+  (setq smtpmail-smtp-server "smtp.zoho.com")
+  (setq smtpmail-smtp-service 587)      ;TLS port
 #+END_SRC
 
 ** Projectile
@@ -616,6 +623,7 @@ Set scroll margin in terminal to 0.
   (defun do-on-startup-graphical ()
     "Stuff to do after the init file is loaded."
     (other-window 1)
+    (mu4e t)                              ;Start mu4e in background
     (split-window-horizontally)
     (server-start))
 
