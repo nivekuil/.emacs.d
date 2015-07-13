@@ -395,9 +395,9 @@ mu4e is not part of an Emacs package management system, so we have to require it
                               (:human-date . 9)))
 #+END_SRC
 
-Update mailboxes every 10 minutes.
+Update mailboxes every 30 minutes.
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-update-interval 600)
+(setq mu4e-update-interval 1800)
 #+END_SRC
 
 Use gmail as default mailbox.
@@ -421,13 +421,13 @@ Use =mu4e-shr2text= found in the =mu4e-contrib= package to display rich text mes
 (setq mu4e-html2text-command 'mu4e-shr2text)
 #+END_SRC
 
-Settings for sending mail.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
+Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
 #+BEGIN_SRC emacs-lisp
   (require 'smtpmail)
-  (setq user-mail-address "kevin@nivekuil.com")
-  (setq send-mail-function 'smtpmail-send-it)
-  (setq smtpmail-smtp-server "smtp.zoho.com")
-  (setq smtpmail-smtp-service 587)      ;TLS port
+  (setq user-mail-address "kevin@nivekuil.com"
+        send-mail-function 'smtpmail-send-it
+        smtpmail-smtp-server "smtp.zoho.com"
+        smtpmail-smtp-service 587)      ;TLS port
 #+END_SRC
 
 ** Projectile
@@ -579,6 +579,17 @@ Editing source code blocks should happen in the same window.  The edit session s
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
 #+END_SRC
+
+Eval code blocks without prompting for confirmation.  It's unlikely that this will ever cause a security threat.
+#+BEGIN_SRC emacs-lisp
+(setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+Show literal link markup instead of styling links.
+#+BEGIN_SRC emacs-lisp
+ (setq org-descriptive-links nil)
+#+END_SRC
+
 ** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp

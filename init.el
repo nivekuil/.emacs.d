@@ -19,7 +19,7 @@
  '(electric-pair-mode t)
  '(fci-rule-color "#424242")
  '(inhibit-startup-screen t)
- '(linum-format " %7d " t)
+ '(linum-format " %7d ")
  '(main-line-color1 "#191919" t)
  '(main-line-color2 "#111111" t)
  '(menu-bar-mode nil)
@@ -29,7 +29,18 @@
  '(python-indent-guess-indent-offset nil)
  '(safe-local-variable-values
    (quote
-    ((company-clang-arguments "-I/home/nivekuil/code/ucsd/cs30/pa2/" "-I/home/nivekuil/code/ucsd/cs30/pa3/")
+    ((eval setq-local org-descriptive-links nil)
+     (org-descriptive-links)
+     (org-descriptive-links nil)
+     (setq org-descriptive-links nil)
+     (eval add-hook
+           (quote after-save-hook)
+           (function org-publish-current-file)
+           nil t)
+     (eval add-hook
+           (quote after-save-hook)
+           (quote org-publish-current-file))
+     (company-clang-arguments "-I/home/nivekuil/code/ucsd/cs30/pa2/" "-I/home/nivekuil/code/ucsd/cs30/pa3/")
      (company-clang-arguments "-I/home/nivekuil/code/ucsd/cs30/pa2" "-I/home/nivekuil/code/ucsd/cs30/pa3")
      (company-clang-arguments "/home/nivekuil/code/ucsd/cs30/pa2" "/home/nivekuil/code/ucsd/cs30/pa3"))))
  '(scroll-bar-mode nil)
