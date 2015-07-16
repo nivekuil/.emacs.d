@@ -126,10 +126,10 @@ Use melpa as package repository.
   (setq favorite-themes
         '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                      deeper-blue material sanityinc-tomorrow-blue soothe))
-  (load-theme 'zenburn t)
+  (load-theme 'lush t)
 
   (add-hook 'after-init-hook
-            (lambda () (sml/apply-theme 'smart-mode-line-respectful)))
+            (lambda () (sml/apply-theme 'smart-mode-line-dark)))
 
     ;; (set-cursor-color "white")
     (set-face-attribute 'vertical-border
@@ -350,6 +350,12 @@ Autocomplete should preserve the original case as much as possible.
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook #'global-flycheck-mode)
+#+END_SRC
+
+** Flyspell
+Check spelling in strings and comments.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+END_SRC
 
 ** Helm
