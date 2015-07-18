@@ -355,7 +355,11 @@ Use flycheck for syntax checking.
 ** Flyspell
 Check spelling in strings and comments.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+  (eval-after-load "flyspell"
+    (progn
+      (define-key flyspell-mode-map (kbd "C-.") nil)
+      (define-key flyspell-mode-map (kbd "C-,") nil)))
 #+END_SRC
 
 ** Helm
@@ -378,6 +382,7 @@ Check spelling in strings and comments.
 #+BEGIN_SRC emacs-lisp
 (setq helm-apropos-fuzzy-match t)
 #+END_SRC
+
 
 ** Helm-ag
 #+BEGIN_SRC emacs-lisp
