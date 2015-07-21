@@ -128,8 +128,8 @@ Use melpa as package repository.
                      deeper-blue material sanityinc-tomorrow-blue soothe))
   (load-theme 'lush t)
 
-  (add-hook 'after-init-hook
-            (lambda () (sml/apply-theme 'smart-mode-line-dark)))
+ (add-hook 'after-init-hook
+           '(lambda () (sml/apply-theme 'smart-mode-line-dark)))
 
     ;; (set-cursor-color "white")
     (set-face-attribute 'vertical-border
@@ -353,11 +353,20 @@ Use flycheck for syntax checking.
 #+END_SRC
 
 ** Flyspell
-Check spelling in strings and comments.
+Check spelling while editing text.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(add-hook 'text-mode-hook 'flyspell-mode)
+#+END_SRC
+
+In programming languages, only check spelling in strings and comments.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+END_SRC
+
+Override flyspell keybindings.
+#+BEGIN_SRC emacs-lisp
   (eval-after-load "flyspell"
-    (progn
+    '(progn
       (define-key flyspell-mode-map (kbd "C-.") nil)
       (define-key flyspell-mode-map (kbd "C-,") nil)))
 #+END_SRC
@@ -382,7 +391,6 @@ Check spelling in strings and comments.
 #+BEGIN_SRC emacs-lisp
 (setq helm-apropos-fuzzy-match t)
 #+END_SRC
-
 
 ** Helm-ag
 #+BEGIN_SRC emacs-lisp
@@ -451,9 +459,10 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
 Use smart mode line, and don't display most minor mode lighters from the mode line.
 #+BEGIN_SRC emacs-lisp
 (sml/setup)
-(setq rm-blacklist '(" ,"       ; Subword mode
+(setq rm-blacklist '(" ,"               ; Subword mode
                      " 80col"           ; Column enforce mode
-                     " company" ; Company mode
+                     " company"         ; Company mode
+                     " Fly"             ; Flyspell mode
                      " Helm"            ; Helm mode
                      " AI"              ; Auto indent mode
                      " MRev"            ; Magit auto revert mode
@@ -546,7 +555,7 @@ Autojoin channels in ERC
 
 ** Help
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'help-mode-hook 'visual-line-mode)
+(add-hook 'help-mode-hook 'visual-line-mode)
 #+END_SRC
 
 ** Org
@@ -558,37 +567,37 @@ Use visual line mode to wrap lines in org mode.
 
 Org project settings for publishing my website, converting org files to html for jekyll.
 #+BEGIN_SRC emacs-lisp
-  (setq org-publish-project-alist
-        '(
-    ("org-website"
-            ;; Path to your org files.
-            :base-directory "~/code/nivekuil.github.io/_org/"
-            :base-extension "org"
+(setq org-publish-project-alist
+      '(
+  ("org-website"
+          ;; Path to your org files.
+          :base-directory "~/code/nivekuil.github.io/_org/"
+          :base-extension "org"
 
-            ;; Path to your Jekyll project.
-            :publishing-directory "~/code/nivekuil.github.io/"
-            :recursive t
-            :publishing-function org-html-publish-to-html
-            :headline-levels 4
-            :html-extension "html"
-            :body-only t
-      )
+          ;; Path to your Jekyll project.
+          :publishing-directory "~/code/nivekuil.github.io/"
+          :recursive t
+          :publishing-function org-html-publish-to-html
+          :headline-levels 4
+          :html-extension "html"
+          :body-only t
+    )
 
-      ("org-website-static"
-            :base-directory "~/code/nivekuil.github.io/_org/"
-            :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
-            :publishing-directory "~/code/nivekuil.github.io/"
-            :recursive t
-            :publishing-function org-publish-attachment)
+    ("org-website-static"
+          :base-directory "~/code/nivekuil.github.io/_org/"
+          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
+          :publishing-directory "~/code/nivekuil.github.io/"
+          :recursive t
+          :publishing-function org-publish-attachment)
 
-      ("website" :components
-       ("org-website-static" "org-website"))
-  ))
+    ("website" :components
+     ("org-website-static" "org-website"))
+))
 #+END_SRC
 
 Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO).
 #+BEGIN_SRC emacs-lisp
-  (setq org-src-window-setup 'current-window)
+(setq org-src-window-setup 'current-window)
 #+END_SRC
 
 Eval code blocks without prompting for confirmation.  It's unlikely that this will ever cause a security threat.
@@ -596,9 +605,14 @@ Eval code blocks without prompting for confirmation.  It's unlikely that this wi
 (setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
+Don't indent the content of src blocks.
+#+BEGIN_SRC emacs-lisp
+(setq org-edit-src-content-indentation 0)
+#+END_SRC
+
 Show literal link markup instead of styling links.
 #+BEGIN_SRC emacs-lisp
- (setq org-descriptive-links nil)
+(setq org-descriptive-links nil)
 #+END_SRC
 
 ** Javascript/HTML/CSS
@@ -639,6 +653,11 @@ Set scroll margin in terminal to 0.
   (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
 #+END_SRC
 
+** wsd-mode
+Major mode for editing [[https://www.websequencediagrams.com/][web sequence diagrams]].
+#+BEGIN_SRC emacs-lisp
+  (setq wsd-style "Green Earth")
+#+END_SRC
 * Other
 ** Startup
 #+BEGIN_SRC emacs-lisp
