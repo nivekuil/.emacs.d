@@ -290,6 +290,7 @@ Binding: M-m
             (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 
+
 * Packages
 ** Ace window
 #+BEGIN_SRC emacs-lisp
@@ -398,9 +399,9 @@ mu4e is not part of an Emacs package management system, so we have to require it
                               (:human-date . 9)))
 #+END_SRC
 
-Update mailboxes every 30 minutes.
+Update mailboxes every hour.
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-update-interval 1800)
+(setq mu4e-update-interval 3600)
 #+END_SRC
 
 Use gmail as default mailbox.
@@ -612,8 +613,14 @@ JSON is a subset of YAML, so use yaml-mode to edit json files.
 #+END_SRC
 
 ** Python
+Use anaconda for IDE features.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'python-mode-hook 'anaconda-mode)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook
+          (lambda () (setq auto-indent-assign-indent-level 4)))
 #+END_SRC
 
 ** Term
