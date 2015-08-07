@@ -34,7 +34,6 @@
   (global-set-key (kbd "C-.") 'other-window)
 
   (global-set-key (kbd "C-z") 'zap-to-char)
-  (global-set-key (kbd "C-x d") 'sr-speedbar-select-window)
   (global-set-key (kbd "C-x p") 'pop-to-mark-command)
   (global-set-key (kbd "C-x b") 'bookmark-jump)
   (global-set-key (kbd "C-x w") 'eww)
@@ -63,6 +62,8 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "C-M-s") 'helm-do-ag-project-root)
 (global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
 
+(global-set-key (kbd "C-x d") 'deft)
+(global-set-key (kbd "C-c n") 'deft-new-file)
 
 #+END_SRC
 
@@ -290,7 +291,6 @@ Binding: M-m
             (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 
-
 * Packages
 ** Ace window
 #+BEGIN_SRC emacs-lisp
@@ -350,6 +350,11 @@ Autocomplete should preserve the original case as much as possible.
                               (?- "_")))
 #+END_SRC
 
+** Deft
+#+BEGIN_SRC emacs-lisp
+(setq deft-directory "/home/nivekuil/docs/deft/")
+(setq deft-default-extension "org")
+#+END_SRC
 ** Flycheck
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
@@ -412,6 +417,11 @@ Use gmail as default mailbox.
         mu4e-trash-folder  "/gmail/trash"      ;; trashed messages
         mu4e-refile-folder "/gmail/archive")   ;; saved messages
 
+#+END_SRC
+
+Show images in emails.
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-view-show-images t)
 #+END_SRC
 
 Gmail and offlineimap leads to duplicate emails showing up in search filters since that's the way labels/virtual folders in Gmail are represented, so skip them.
