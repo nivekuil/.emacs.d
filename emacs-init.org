@@ -62,9 +62,6 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "C-M-s") 'helm-do-ag-project-root)
 (global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
 
-(global-set-key (kbd "C-x d") 'deft)
-(global-set-key (kbd "C-c n") 'deft-new-file)
-
 #+END_SRC
 
 *** avy
@@ -74,7 +71,13 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "M-g g") 'avy-goto-line)
 #+END_SRC
 
-*** helm
+*** deft
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x d") 'deft)
+(global-set-key (kbd "C-c n") 'deft-new-file)
+#+END_SRC
+
+** helm
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
@@ -130,7 +133,7 @@ Use melpa as package repository.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe))
-(load-theme 'lush t)
+(load-theme 'noctilux t)
 
 (add-hook 'after-init-hook
           '(lambda () (sml/apply-theme 'smart-mode-line-dark)))
@@ -353,7 +356,8 @@ Autocomplete should preserve the original case as much as possible.
 ** Deft
 #+BEGIN_SRC emacs-lisp
 (setq deft-directory "/home/nivekuil/docs/deft/")
-(setq deft-default-extension "org")
+(setq-default deft-default-extension "org")
+(setq deft-auto-save-buffers nil)
 #+END_SRC
 ** Flycheck
 Use flycheck for syntax checking.
