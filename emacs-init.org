@@ -356,8 +356,10 @@ Autocomplete should preserve the original case as much as possible.
 ** Deft
 #+BEGIN_SRC emacs-lisp
 (setq deft-directory "/home/nivekuil/docs/deft/")
-(setq-default deft-default-extension "org")
-(setq deft-auto-save-buffers nil)
+(setq deft-extension "org")
+(setq deft-default-extension "org")
+(setq deft-text-mode 'org-mode)
+(setq deft-auto-save-interval 0)
 #+END_SRC
 ** Flycheck
 Use flycheck for syntax checking.
