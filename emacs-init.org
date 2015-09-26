@@ -97,6 +97,7 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "M-{") 'corral-braces-backward)
 (global-set-key (kbd "M-}") 'corral-braces-forward)
 (global-set-key (kbd "M-\"") 'corral-double-quotes-backward)
+(global-set-key (kbd "M-'") 'corral-single-quotes-backward)
 #+END_SRC
 
 ** Keybindings for custom defined functions
