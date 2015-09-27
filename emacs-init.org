@@ -121,6 +121,8 @@ Use melpa as package repository.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/")
 #+END_SRC
 ** Appearance
 *** Frame title
@@ -549,12 +551,21 @@ Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
 #+END_SRC
 
 ** ERC
-Autojoin channels in ERC
+Autojoin channels when ERC starts.
 #+BEGIN_SRC emacs-lisp
 (setq erc-autojoin-channels-alist
       '(("freenode.net" "#emacs" "#archlinux")))
 #+END_SRC
 
+Highlight nicknames.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'erc-mode-hook 'erc-hl-nicks-mode)
+#+END_SRC
+
+Hide those annoying join/quit messages.
+#+BEGIN_SRC emacs-lisp
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+#+END_SRC
 ** Help
 #+BEGIN_SRC emacs-lisp
 (add-hook 'help-mode-hook 'visual-line-mode)
