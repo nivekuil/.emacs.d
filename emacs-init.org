@@ -136,7 +136,7 @@ Use melpa as package repository.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe))
-(load-theme 'noctilux t)
+(load-theme 'grandshell t)
 
 (set-cursor-color "white")
 (set-face-attribute 'vertical-border
@@ -476,11 +476,6 @@ Use smart mode line, and don't display most minor mode lighters from the mode li
                      " Abbrev"))
 #+END_SRC
 
-** Spaceline
-#+BEGIN_SRC emacs-lisp
-(require 'spaceline-config)
-(spaceline-emacs-theme)
-#+END_SRC
 ** Swiper
 Backspace should not end swiper.
 #+BEGIN_SRC emacs-lisp
