@@ -122,7 +122,7 @@ Use melpa as package repository.
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
 (add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/")
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 #+END_SRC
 ** Appearance
 *** Frame title
@@ -137,9 +137,6 @@ Use melpa as package repository.
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe))
 (load-theme 'noctilux t)
-
-(add-hook 'after-init-hook
-          '(lambda () (sml/apply-theme 'smart-mode-line-dark)))
 
 (set-cursor-color "white")
 (set-face-attribute 'vertical-border
@@ -329,7 +326,7 @@ Use column enforce mode to mark text past column 80.
 #+END_SRC
 
 ** Company mode
-Use company mode for text and code completion.  There should be no delay  completion pop up.
+Use company mode for text and code completion.
 #+BEGIN_SRC emacs-lisp
 (global-company-mode)
 (add-to-list 'company-backends 'company-anaconda)
@@ -364,6 +361,7 @@ Autocomplete should preserve the original case as much as possible.
 (setq deft-text-mode 'org-mode)
 (setq deft-auto-save-interval 0)
 #+END_SRC
+
 ** Flycheck
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
@@ -478,6 +476,11 @@ Use smart mode line, and don't display most minor mode lighters from the mode li
                      " Abbrev"))
 #+END_SRC
 
+** Spaceline
+#+BEGIN_SRC emacs-lisp
+(require 'spaceline-config)
+(spaceline-emacs-theme)
+#+END_SRC
 ** Swiper
 Backspace should not end swiper.
 #+BEGIN_SRC emacs-lisp
