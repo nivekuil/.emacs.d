@@ -135,8 +135,8 @@ Use melpa as package repository.
 #+BEGIN_SRC emacs-lisp
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
-                   deeper-blue material sanityinc-tomorrow-blue soothe))
-(load-theme 'grandshell t)
+                   deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
+(load-theme 'noctilux t)
 
 (set-cursor-color "white")
 (set-face-attribute 'vertical-border
@@ -419,10 +419,9 @@ Update mailboxes every hour.
 Use gmail as default mailbox.
 #+BEGIN_SRC emacs-lisp
   (setq mu4e-maildir       "~/Maildir"   ;; top-level Maildir
-        mu4e-sent-folder   "/gmail/sent"       ;; folder for sent messages
-        mu4e-drafts-folder "/gmail/drafts"     ;; unfinished messages
-        mu4e-trash-folder  "/gmail/trash"      ;; trashed messages
-        mu4e-refile-folder "/gmail/archive")   ;; saved messages
+        mu4e-sent-folder   "/zoho/Sent"       ;; folder for sent messages
+        mu4e-drafts-folder "/zoho/Drafts"     ;; unfinished messages
+        mu4e-trash-folder  "/zoho/Trash")      ;; trashed messages
 
 #+END_SRC
 
@@ -552,7 +551,7 @@ Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
 Autojoin channels when ERC starts.
 #+BEGIN_SRC emacs-lisp
 (setq erc-autojoin-channels-alist
-      '(("freenode.net" "#emacs" "#archlinux")))
+      '(("freenode.net" "#ucsd")))
 #+END_SRC
 
 Highlight nicknames.
