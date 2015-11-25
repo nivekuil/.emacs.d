@@ -1,4 +1,4 @@
-* Key Bindings
+* Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
 (keyboard-translate ?\C-x ?\C-h)	;x for eXplain
@@ -110,7 +110,7 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 (global-set-key (kbd "<f8>") 'run-async-script)
 #+END_SRC
 
-* Settings
+* General Settings
 ** Package Management
 Load and activate packages before using them.
 #+BEGIN_SRC emacs-lisp
@@ -563,6 +563,12 @@ Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq erc-log-channels-directory "~/.emacs.d/erc-logs/")
+(setq erc-save-buffer-on-part t)
+#+END_SRC
+
 ** Help
 #+BEGIN_SRC emacs-lisp
 (add-hook 'help-mode-hook 'visual-line-mode)
@@ -573,36 +579,6 @@ Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'visual-line-mode)
 (setq org-latex-create-formula-image-program 'imagemagick)
-#+END_SRC
-
-Org project settings for publishing my website, converting org files to html for jekyll.
-#+BEGIN_SRC emacs-lisp
-(setq org-publish-project-alist
-      '(
-  ("org-website"
-          ;; Path to your org files.
-          :base-directory "~/code/nivekuil.github.io/_org/"
-          :base-extension "org"
-
-          ;; Path to your Jekyll project.
-          :publishing-directory "~/code/nivekuil.github.io/"
-          :recursive t
-          :publishing-function org-html-publish-to-html
-          :headline-levels 4
-          :html-extension "html"
-          :body-only t
-    )
-
-    ("org-website-static"
-          :base-directory "~/code/nivekuil.github.io/_org/"
-          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
-          :publishing-directory "~/code/nivekuil.github.io/"
-          :recursive t
-          :publishing-function org-publish-attachment)
-
-    ("website" :components
-     ("org-website-static" "org-website"))
-))
 #+END_SRC
 
 Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO).
@@ -671,10 +647,40 @@ Set scroll margin in terminal to 0.
 
 ** wsd-mode
 Major mode for editing [[https://www.websequencediagrams.com/][web sequence diagrams]].
-#+BEGIN_SRC emacs-lisp
-  (setq wsd-style "Green Earth")
-#+END_SRC
+
 * Other
+** Website
+Org project settings for publishing my website, converting org files to html for jekyll.
+#+BEGIN_SRC emacs-lisp
+(require 'htmlize)
+(setq org-publish-project-alist
+      '(("org-website"
+         ;; Path to your org files.
+         :base-directory "~/code/nivekuil.github.io/_org/"
+         :base-extension "org"
+
+         :htmlized-source t
+
+         ;; Path to your Jekyll project.
+         :publishing-directory "~/code/nivekuil.github.io/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4
+         :html-extension "html"
+         :body-only t
+         )
+
+        ("org-website-static"
+         :base-directory "~/code/nivekuil.github.io/_org/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
+         :publishing-directory "~/code/nivekuil.github.io/"
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ("website" :components
+         ("org-website-static" "org-website"))))
+#+END_SRC
+
 ** Startup
 #+BEGIN_SRC emacs-lisp
   (defun do-on-startup-graphical ()
