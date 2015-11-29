@@ -208,9 +208,6 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 ;; use winner-mode (C-c left to undo window changes)
 (winner-mode t)
 
-;; use semantic
-(semantic-mode t)
-
 ;; use hl line mode in dired and speedbar
 (add-hook 'dired-mode-hook 'hl-line-mode)
 (add-hook 'speedbar-mode-hook 'hl-line-mode)
@@ -277,21 +274,21 @@ Binding: M-m
 
 *** correct-exponent-formatting-in-region
 #+BEGIN_SRC emacs-lisp
-  (defun correct-exponent-formatting-in-region (start end)
-    "Corrects formatting of exponents from copied text.
-  When yanking formatted text, the formatting of exponents will be lost,
-  appearing as regular numbers instead.  This function adds carets to properly
-  denote that they are exponents, including exponents of parenthetical
-  expressions.  This function assumes that the input variable is never an
-  exponent itself."
-    (interactive "*r")
-    (save-excursion
-      (save-restriction
-        (let ((character (read-string "Enter variable to add carets around: ")))
-          (narrow-to-region start end)
-          (goto-char (point-min))
-          (while (re-search-forward (concat "[" character ")]") nil t)
-            (when (looking-at-p "[[:digit:]]") (insert "^")))))))
+(defun correct-exponent-formatting-in-region (start end)
+  "Corrects formatting of exponents from copied text.
+When yanking formatted text, the formatting of exponents will be lost,
+appearing as regular numbers instead.  This function adds carets to properly
+denote that they are exponents, including exponents of parenthetical
+expressions.  This function assumes that the input variable is never an
+exponent itself."
+  (interactive "*r")
+  (save-excursion
+    (save-restriction
+      (let ((character (read-string "Enter variable to add carets around: ")))
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (while (re-search-forward (concat "[" character ")]") nil t)
+          (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 
 * Packages
@@ -330,6 +327,7 @@ Use company mode for text and code completion.
 #+BEGIN_SRC emacs-lisp
 (global-company-mode)
 (add-to-list 'company-backends 'company-anaconda)
+(add-to-list 'company-backends 'company-irony)
 (setq company-idle-delay 0.15)
 #+END_SRC
 
@@ -526,6 +524,25 @@ Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
         (setq indent-tabs-mode t)
         (add-hook 'before-save-hook
                   (lambda () (tabify (point-min) (point-max))) nil t)))
+#+END_SRC
+
+** C/C++ (cpp)
+Use irony-mode.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
 #+END_SRC
 
 ** Comint
