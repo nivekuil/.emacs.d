@@ -28,7 +28,9 @@
  '(python-indent-guess-indent-offset nil)
  '(safe-local-variable-values
    (quote
-    ((eval setq-local org-descriptive-links nil)
+    ((irony-additional-clang-options quote
+                                     ("-std=c++11"))
+     (eval setq-local org-descriptive-links nil)
      (org-descriptive-links)
      (org-descriptive-links nil)
      (setq org-descriptive-links nil)
