@@ -194,9 +194,16 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 *** deft
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x d") 'deft)
-(global-set-key (kbd "C-c n") 'deft-new-file)
 #+END_SRC
 
+*** flycheck
+#+BEGIN_SRC emacs-lisp
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c C-n") #'flycheck-next-error)
+            (local-set-key (kbd "C-c C-p") #'flycheck-previous-error)))
+
+#+END_SRC
 ** helm
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-x") 'helm-M-x)
@@ -321,6 +328,12 @@ exponent itself."
 (setq avy-background nil)
 #+END_SRC
 
+** Beacon
+Display a beacon when changing windows.
+#+BEGIN_SRC emacs-lisp
+(beacon-mode t)
+(setq beacon-blink-when-window-scrolls nil)
+#+END_SRC
 ** Column enforce mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
@@ -331,8 +344,9 @@ Use column enforce mode to mark text past column 80.
 Use company mode for text and code completion.
 #+BEGIN_SRC emacs-lisp
 (global-company-mode)
-(add-to-list 'company-backends 'company-anaconda)
-(add-to-list 'company-backends 'company-irony)
+(add-to-list 'company-backends '(company-anaconda
+                                 company-irony
+                                 company-irony-c-headers))
 (setq company-idle-delay 0.15)
 #+END_SRC
 
@@ -372,6 +386,8 @@ Use flycheck for syntax checking.
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (add-hook 'flycheck-mode-hook #'flycheck-irony-setup);
+(setq flycheck-display-errors-delay 0.4)
+
 #+END_SRC
 
 ** Helm
@@ -469,7 +485,6 @@ Use smart mode line, and don't display most minor mode lighters from the mode li
 (setq rm-blacklist '(" ,"               ; Subword mode
                      " 80col"           ; Column enforce mode
                      " company"         ; Company mode
-                     " Fly"             ; Flyspell mode
                      " Helm"            ; Helm mode
                      " AI"              ; Auto indent mode
                      " MRev"            ; Magit auto revert mode
@@ -554,11 +569,11 @@ Use irony-mode.
 #+END_SRC
 
 ** Comint
+There should be no scroll margin in a shell buffer.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'comint-mode-hook (lambda ()
                               (set (make-local-variable 'scroll-margin) 0)))
 (setq shell-file-name "bash")
-
 (setq comint-prompt-read-only t)
 #+END_SRC
 
@@ -587,11 +602,6 @@ Highlight nicknames.
 Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(setq erc-log-channels-directory "~/.emacs.d/erc-logs/")
-(setq erc-save-buffer-on-part t)
 #+END_SRC
 
 ** Help
