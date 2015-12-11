@@ -8,12 +8,16 @@ Load and activate packages before using them.
 Use melpa as package repository.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+             '("melpa" . "https://melpa.org/packages/") t)
+;;(add-to-list 'package-archives
+;;             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 #+END_SRC
 ** Appearance
 *** Frame title
+#+BEGIN_SRC emacs-lisp
+(setq phrases `("conlidimus nostra ultra pensum"))
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook
           (lambda () (setq frame-title-format 'mode-line-format)))
@@ -24,12 +28,12 @@ Use melpa as package repository.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
-(load-theme 'noctilux t)
+(load-theme 'solarized-dark t)
 
-(set-cursor-color "white")
-(set-face-attribute 'vertical-border
-                    nil
-                    :foreground "#4d4d4d")
+ (set-cursor-color "white")
+ ;; (set-face-attribute 'vertical-border
+ ;;                     nil
+ ;;                     :foreground "#4d4d4d")
 #+END_SRC
 
 *** Fringes
@@ -331,7 +335,7 @@ exponent itself."
 ** Beacon
 Display a beacon when changing windows.
 #+BEGIN_SRC emacs-lisp
-(beacon-mode t)
+(beacon-mode 1)
 (setq beacon-blink-when-window-scrolls nil)
 #+END_SRC
 ** Column enforce mode
@@ -378,6 +382,11 @@ Best package ever!
 (setq deft-default-extension "org")
 (setq deft-text-mode 'org-mode)
 (setq deft-auto-save-interval 0)
+#+END_SRC
+
+Use hl-line-mode in the deft buffer.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'deft-mode-hook (lambda () (hl-line-mode 1)))
 #+END_SRC
 
 ** Flycheck
@@ -478,6 +487,10 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
 (setq projectile-mode-line '(:eval (format " [%s]" (projectile-project-name))))
 #+END_SRC
 
+** puml-mode
+#+BEGIN_SRC emacs-lisp
+(setq puml-plantuml-jar-path (concat (expand-file-name user-emacs-directory) "util/plantuml.jar"))
+#+END_SRC
 ** Smart mode line
 Use smart mode line, and don't display most minor mode lighters from the mode line.
 #+BEGIN_SRC emacs-lisp
@@ -680,8 +693,6 @@ Set scroll margin in terminal to 0.
   (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
 #+END_SRC
 
-** wsd-mode
-Major mode for editing [[https://www.websequencediagrams.com/][web sequence diagrams]].
 
 * Other
 ** Website
