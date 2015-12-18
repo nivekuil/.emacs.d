@@ -204,8 +204,8 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (local-set-key (kbd "C-c C-n") #'flycheck-next-error)
-            (local-set-key (kbd "C-c C-p") #'flycheck-previous-error)))
+            (local-set-key (kbd "C-M-n") #'flycheck-next-error)
+            (local-set-key (kbd "C-M-p") #'flycheck-previous-error)))
 
 #+END_SRC
 ** helm
@@ -515,6 +515,13 @@ Backspace should not end swiper.
 (setq ivy-on-del-error-function nil)
 #+END_SRC
 
+** Symon
+Mini system monitor that pops up in the minibuffer after a period of idleness.
+#+BEGIN_SRC emacs-lisp
+(setq symon-delay 5)
+(symon-mode 1)
+#+END_SRC
+
 ** Whole line or region
 Use whole line or region so C-w and M-w without an active mark kills the line.
 #+BEGIN_SRC emacs-lisp
@@ -617,6 +624,21 @@ Hide those annoying join/quit messages.
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 #+END_SRC
 
+
+** Haskell
+#+BEGIN_SRC emacs-lisp
+(require 'haskell-interactive-mode)
+(require 'haskell-process)
+(add-hook 'haskell-mode-hook
+          (progn
+              (interactive-haskell-mode)
+              (turn-on-haskell-indent)))
+
+(setq haskell-process-suggest-remove-import-lines t)
+(setq haskell-process-auto-import-loaded-modules t)
+(setq haskell-process-log t)
+
+#+END_SRC
 ** Help
 #+BEGIN_SRC emacs-lisp
 (add-hook 'help-mode-hook 'visual-line-mode)
