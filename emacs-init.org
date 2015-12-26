@@ -318,18 +318,6 @@ exponent itself."
 (setq aw-background t)
 #+END_SRC
 
-** Auto indent mode
-#+BEGIN_SRC emacs-lisp
-  ;; use auto indent mode
-;  (auto-indent-global-mode t)
-;;  (add-to-list 'auto-indent-known-indent-level-variables
-;               # 'js-indent-level)
-;  (add-to-list 'auto-indent-known-indent-level-variables
-;               'web-mode-markup-indent-offset)
-;  (setq auto-indent-assign-indent-level 2)
-
-#+END_SRC
-
 ** Avy
 #+BEGIN_SRC emacs-lisp
 (setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
@@ -785,3 +773,4 @@ Org project settings for publishing my website, converting org files to html for
     (do-on-startup-terminal))
 
 #+END_SRC
+p
