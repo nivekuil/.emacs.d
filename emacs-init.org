@@ -148,8 +148,8 @@ recentf is a very useful feature that stores the most recently visited files, co
                                         (other-window -1)))))
 
   (global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
-  (global-set-key (kbd "M-p") 'backward-paragraph)
-  (global-set-key (kbd "M-n") 'forward-paragraph)
+  (global-set-key (kbd "C-M-p") 'backward-paragraph)
+  (global-set-key (kbd "C-M-n") 'forward-paragraph)
 
   (global-set-key (kbd "M-,")
                   (lambda () (interactive) (other-window -1)))
@@ -206,7 +206,6 @@ Swap undo and universal-argument. C-u is in too good of a position to be wasted 
           (lambda ()
             (local-set-key (kbd "C-M-n") #'flycheck-next-error)
             (local-set-key (kbd "C-M-p") #'flycheck-previous-error)))
-
 #+END_SRC
 ** helm
 #+BEGIN_SRC emacs-lisp
