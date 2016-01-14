@@ -373,6 +373,13 @@ Using a clojure nrepl, scad-clj can interactively update a file to be read by an
             (local-set-key (kbd "C-c c") 'spit-scad-last-expression)))
 #+END_SRC
 
+*** set-frame-width-80col
+Make the current window 80 columns wide.
+#+BEGIN_SRC emacs-lisp
+(defun set-frame-width-80col ()
+  (interactive)
+  (set-frame-width (selected-frame) 81))
+#+END_SRC
 * Packages
 ** Ace window
 #+BEGIN_SRC emacs-lisp
