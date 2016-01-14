@@ -11,14 +11,19 @@ Use melpa as package repository.
 ;;             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 #+END_SRC
 
-Load and activate packages before using them.
+Load and activate packages.
 #+BEGIN_SRC emacs-lisp
 (package-initialize)
 #+END_SRC
 
+Check if package-initialize did anything.  If nil, this is probably the first time starting emacs, so contact the package archives to refresh the package list.
+#+BEGIN_SRC emacs-lisp
+(unless package-activated-list (package-refresh-contents))
+#+END_SRC
+
 Regenerate any missing packages.
 #+BEGIN_SRC emacs-lisp
-(setq packages '(request @ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode color-theme-sanityinc-tomorrow column-enforce-mode company-anaconda s dash anaconda-mode f dash s s dash pythonic f dash s s dash company company-irony irony company company-irony-c-headers irony company corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project swiper firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode god-mode grandshell-theme graphviz-dot-mode haskell-mode helm-ag helm helm-core async async helm-projectile dash projectile pkg-info epl dash helm helm-core async async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic f dash s s dash pyvenv queue rainbow-delimiters request scss-mode seq simple-httpd smart-mode-line rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme s dash powerline spinner sr-speedbar string-utils list-utils stripe-buffer swiper symon temp-buffer-browse tronesque-theme twittering-mode ujelly-theme web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme))
+(setq packages '(request @ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode color-theme-sanityinc-tomorrow column-enforce-mode company-anaconda s dash anaconda-mode f dash s s dash pythonic f dash s s dash company company-irony irony company company-irony-c-headers irony company corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project swiper firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode god-mode grandshell-theme graphviz-dot-mode haskell-mode helm-ag helm helm-core async async helm-projectile dash projectile pkg-info epl dash helm helm-core async async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic f dash s s dash pyvenv queue rainbow-delimiters request scss-mode seq simple-httpd smart-mode-line rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme s dash powerline spinner string-utils list-utils stripe-buffer swiper symon temp-buffer-browse tronesque-theme twittering-mode ujelly-theme web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme))
 
 (mapc (lambda (package)
         (unless (package-installed-p package)
@@ -145,9 +150,8 @@ recentf is a very useful feature that stores the most recently visited files, co
 ;; use winner-mode (C-c left to undo window changes)
 (winner-mode t)
 
-;; use hl line mode in dired and speedbar
+;; use hl line mode in dired
 (add-hook 'dired-mode-hook 'hl-line-mode)
-(add-hook 'speedbar-mode-hook 'hl-line-mode)
 
 ;; use electric pair mode
 (electric-pair-mode t)
@@ -639,16 +643,6 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'comint-mode-hook (lambda () (yas-minor-mode -1)))
 (add-hook 'term-mode-hook (lambda () (yas-minor-mode -1)))
-#+END_SRC
-
-** sr-speedbar
-#+BEGIN_SRC emacs-lisp
-  (setq sr-speedbar-width 25)
-  (setq sr-speedbar-default-width 25)
-  (setq sr-speedbar-right-side nil)
-  (add-hook 'after-init-hook
-            (lambda () (speedbar-set-timer 1)))
-
 #+END_SRC
 
 * Major Mode Settings
