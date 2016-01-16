@@ -64,7 +64,7 @@ Show column number in mode line.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
-(load-theme 'grandshell t)
+(load-theme 'tronesque t)
 
 (set-cursor-color "white")
 (blink-cursor-mode 0)
@@ -376,13 +376,12 @@ Using a clojure nrepl, scad-clj can interactively update a file to be read by an
           (lambda ()
             (local-set-key (kbd "C-c c") 'spit-scad-last-expression)))
 #+END_SRC
-
 *** set-frame-width-80col
 Make the current window 80 columns wide.
 #+BEGIN_SRC emacs-lisp
-(defun set-frame-width-80col ()
-  (interactive)
-  (set-frame-width (selected-frame) 81))
+(defun set-frame-width-80col (&optional cols)
+  (interactive "p")
+  (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1))))
 #+END_SRC
 * Packages
 ** Ace window
@@ -482,6 +481,11 @@ Use flycheck for syntax checking.
 #+END_SRC
 
 ** Helm
+The following must be set before helm is loaded when tethered to my phone's data, due to T-Mobile's DNS hijacking, or emacs will hang.
+#+BEGIN_SRC emacs-lisp
+(setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (helm-mode t)
 #+END_SRC
@@ -788,13 +792,6 @@ Set scroll margin in terminal to 0.
                             (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
-** TeX
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'TeX-view-program-selection
-      '((output-pdf "PDF Viewer")))
-(add-to-list 'TeX-view-program-list
-      '(("PDF Viewer" "okular %o")))
-#+END_SRC
 ** Web
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
