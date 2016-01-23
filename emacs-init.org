@@ -64,7 +64,7 @@ Show column number in mode line.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
-(load-theme 'tronesque t)
+(load-theme 'cyberpunk t)
 
 (set-cursor-color "white")
 (blink-cursor-mode 0)
@@ -481,9 +481,9 @@ Use flycheck for syntax checking.
 #+END_SRC
 
 ** Helm
-The following must be set before helm is loaded when tethered to my phone's data, due to T-Mobile's DNS hijacking, or emacs will hang.
+The following must be set before helm is loaded when tethered to my phone due to T-Mobile's DNS hijacking, or it will hang emacs.
 #+BEGIN_SRC emacs-lisp
-(setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+;;(setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -580,7 +580,11 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
 ** Projectile
 #+BEGIN_SRC emacs-lisp
 (projectile-global-mode t)
-(setq projectile-mode-line '(:eval (format " [%s]" (projectile-project-name))))
+#+END_SRC
+
+Disable the projectile mode line, if only because it slows TRAMP to a crawl.
+#+BEGIN_SRC emacs-lisp
+(setq projectile-mode-line nil)
 #+END_SRC
 
 ** puml-mode
@@ -677,7 +681,7 @@ Use irony-mode.
     'irony-completion-at-point-async))
 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
+(setq irony-additional-clang-options '("-std=c++11"))
 #+END_SRC
 
 ** Comint
@@ -713,7 +717,7 @@ Highlight nicknames.
 
 Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
-(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+;;(setq erc-hide-list '("JOIN" "PART" "QUIT"))
 #+END_SRC
 
 ** Haskell
