@@ -169,10 +169,10 @@ recentf is a very useful feature that stores the most recently visited files, co
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
-(keyboard-translate ?\C-x ?\C-h)	;x for eXplain
-(keyboard-translate ?\C-h ?\C-x)	;h for hang on, I have more input
-(keyboard-translate ?\C-t ?\C-f)	;f for Flip two letters
-(keyboard-translate ?\C-f ?\C-t)	;t for Toward the end of the line/file
+(define-key key-translation-map [?\C-h] [?\C-x]) ;x for eXplain
+(define-key key-translation-map [?\C-x] [?\C-h]) ;h for hang on, I have more input
+(define-key key-translation-map [?\C-t] [?\C-f]) ;f for Flip two letters
+(define-key key-translation-map [?\C-f] [?\C-t]) ;t for Toward the end of the line/file
 (define-key key-translation-map (kbd "C-M-f") (kbd "C-M-t"))
 (define-key key-translation-map (kbd "C-M-t") (kbd "C-M-f"))
 (define-key key-translation-map (kbd "C-M-S-f") (kbd "C-M-S-t"))
@@ -376,6 +376,7 @@ Using a clojure nrepl, scad-clj can interactively update a file to be read by an
           (lambda ()
             (local-set-key (kbd "C-c c") 'spit-scad-last-expression)))
 #+END_SRC
+
 *** set-frame-width-80col
 Make the current window 80 columns wide.
 #+BEGIN_SRC emacs-lisp
@@ -383,6 +384,7 @@ Make the current window 80 columns wide.
   (interactive "p")
   (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1))))
 #+END_SRC
+
 * Packages
 ** Ace window
 #+BEGIN_SRC emacs-lisp
@@ -851,8 +853,8 @@ Org project settings for publishing my website, converting org files to html for
     ;;(mu4e t)                              ;Start mu4e in background
     (split-window-horizontally)
     (split-window-horizontally)
-    (balance-windows)
-    (server-start))
+    (balance-windows))
+    ;;(server-start))
 
   (defun do-on-startup-terminal ()
     (split-window-horizontally))
