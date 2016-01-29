@@ -140,6 +140,7 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 recentf is a very useful feature that stores the most recently visited files, conveiniently accessible via `helm-mini`.
 #+BEGIN_SRC emacs-lisp
 (setq recentf-max-saved-items 30)
+(add-hook 'server-done-hook 'recentf-save-list)
 #+END_SRC
 
 ** Built-in minor modes
@@ -523,6 +524,7 @@ Delete all whitespace instead of doing it one character at a time.
 #+BEGIN_SRC emacs-lisp
 (hungry-delete-mode 1)
 #+END_SRC
+
 ** Magit
 #+BEGIN_SRC emacs-lisp
 (setq magit-last-seen-setup-instructions "1.4.0")
@@ -820,13 +822,13 @@ Org project settings for publishing my website, converting org files to html for
 (setq org-publish-project-alist
       '(("org-website"
          ;; Path to your org files.
-         :base-directory "~/code/nivekuil.github.io/_org/"
+         :base-directory "~/docs/nivekuil.github.io/_org/"
          :base-extension "org"
 
          :htmlized-source t
 
          ;; Path to your Jekyll project.
-         :publishing-directory "~/code/nivekuil.github.io/"
+         :publishing-directory "~/docs/nivekuil.github.io/"
          :recursive t
          :publishing-function org-html-publish-to-html
          :headline-levels 4
@@ -835,9 +837,9 @@ Org project settings for publishing my website, converting org files to html for
          )
 
         ("org-website-static"
-         :base-directory "~/code/nivekuil.github.io/_org/"
+         :base-directory "~/docs/nivekuil.github.io/_org/"
          :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
-         :publishing-directory "~/code/nivekuil.github.io/"
+         :publishing-directory "~/docs/nivekuil.github.io/"
          :recursive t
          :publishing-function org-publish-attachment)
 
