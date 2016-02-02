@@ -11,6 +11,8 @@ Use melpa as package repository.
 ;;             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 #+END_SRC
 
+#+RESULTS:
+
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
 (package-initialize)
@@ -141,6 +143,7 @@ recentf is a very useful feature that stores the most recently visited files, co
 #+BEGIN_SRC emacs-lisp
 (setq recentf-max-saved-items 30)
 (add-hook 'server-done-hook 'recentf-save-list)
+(add-hook 'auto-save-hook 'recentf-save-list)
 #+END_SRC
 
 ** Built-in minor modes
@@ -383,7 +386,9 @@ Make the current window 80 columns wide.
 #+BEGIN_SRC emacs-lisp
 (defun set-frame-width-80col (&optional cols)
   (interactive "p")
-  (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1))))
+  (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1)))
+  (set-frame-height (selected-frame) (x-display-pixel-height)))
+
 #+END_SRC
 
 * Packages
