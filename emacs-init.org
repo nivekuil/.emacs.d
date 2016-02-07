@@ -70,6 +70,12 @@ Show column number in mode line.
 (blink-cursor-mode 0)
 #+END_SRC
 
+**** Optional settings
+#+BEGIN_SRC emacs-lisp
+(set-face-background 'default "#1d1f21")
+(set-face-foreground 'default "#DCDCCC")
+#+END_SRC
+
 *** Fringes
 #+BEGIN_SRC emacs-lisp
 (fringe-mode '(4 . 0))
