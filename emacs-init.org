@@ -883,18 +883,12 @@ Set scroll margin in terminal to 0.
 
 ** xwidget-webkit
 #+BEGIN_SRC emacs-lisp
-(defun scroll-up-wrapper (&optional arg)
-  (xwidget-webkit-scroll-up))
-
-(defun scroll-down-wrapper (&optional arg)
-  (xwidget-webkit-scroll-down))
-
 (setq xwidget-webkit-mode-hook
       (lambda ()
-        (setq-local mwheel-scroll-up-function #'scroll-up-wrapper)
-        (setq-local mwheel-scroll-down-function #'scroll-down-wrapper)))
-
-
+        (setq-local mwheel-scroll-up-function
+                    (lambda (&optional arg) (xwidget-webkit-scroll-up)))
+        (setq-local mwheel-scroll-down-function
+                    (lambda (&optional arg) (xwidget-webkit-scroll-down)))))
 #+END_SRC
 * Other
 ** Website
