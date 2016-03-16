@@ -23,7 +23,7 @@ Check if package-initialize did anything.  If nil, this is probably the first ti
 
 Regenerate any missing packages.
 #+BEGIN_SRC emacs-lisp
-(setq my-packages '(@ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode color-theme-sanityinc-tomorrow column-enforce-mode s dash f dash s s dash pythonic f dash s s dash company company-irony irony company company-jedi company-irony-c-headers corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project swiper firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode grandshell-theme haskell-mode helm-ag helm helm-core async popup async helm-projectile dash projectile pkg-info epl dash helm helm-core async popup async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup powerline projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic f dash s s dash pyvenv queue rainbow-delimiters request s scss-mode seq simple-httpd smart-mode-line rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme spinner sr-speedbar string-utils list-utils stripe-buffer swiper symon temp-buffer-browse tronesque-theme twittering-mode ujelly-theme diminish bind-key web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme))
+(setq my-packages '(@ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode color-theme-sanityinc-tomorrow column-enforce-mode s dash f dash s s dash pythonic f dash s s dash company company-irony irony company company-jedi company-irony-c-headers corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project swiper firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode grandshell-theme haskell-mode helm-ag helm helm-core async popup async helm-projectile dash projectile pkg-info epl dash helm helm-core async popup async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup powerline projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic f dash s s dash pyvenv queue rainbow-delimiters request s scss-mode seq simple-httpd smart-mode-line rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme spinner sr-speedbar string-utils list-utils stripe-buffer swiper symon temp-buffer-browse tronesque-theme ujelly-theme diminish bind-key web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme))
 
 (mapc (lambda (package)
         (unless (package-installed-p package)
@@ -765,7 +765,12 @@ Highlight nicknames.
 
 Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
-;;(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'erc-mode-hook (lambda ()
+                            (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
 ** Haskell
@@ -882,6 +887,7 @@ Set scroll margin in terminal to 0.
 #+END_SRC
 
 ** xwidget-webkit
+Override mwheel-scroll-up-function for xwidget-webkit, but the scroll functions need an adapter.
 #+BEGIN_SRC emacs-lisp
 (setq xwidget-webkit-mode-hook
       (lambda ()
@@ -934,9 +940,9 @@ Org project settings for publishing my website, converting org files to html for
     (balance-windows))
     ;;(server-start))
 
-  (defun do-on-startup-terminal ()
-    (split-window-horizontally))
+;;  (defun do-on-startup-terminal ()
+;;    (split-window-horizontally))
 
-  (if (display-graphic-p) (do-on-startup-graphical)
-    (do-on-startup-terminal))
+;;  (if (display-graphic-p) (do-on-startup-graphical)
+;;    (do-on-startup-terminal))
 #+END_SRC
