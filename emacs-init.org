@@ -23,7 +23,7 @@ Check if package-initialize did anything.  If nil, this is probably the first ti
 
 Regenerate any missing packages.
 #+BEGIN_SRC emacs-lisp
-(setq my-packages '(@ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode color-theme-sanityinc-tomorrow column-enforce-mode s dash f dash s s dash pythonic f dash s s dash company company-irony irony company company-jedi company-irony-c-headers corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project swiper firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode grandshell-theme haskell-mode helm-ag helm helm-core async popup async helm-projectile dash projectile pkg-info epl dash helm helm-core async popup async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup powerline projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic f dash s s dash pyvenv queue rainbow-delimiters request s scss-mode seq simple-httpd smart-mode-line rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme spinner sr-speedbar string-utils list-utils stripe-buffer swiper symon temp-buffer-browse tronesque-theme ujelly-theme diminish bind-key web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme))
+(setq my-packages '(@ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode color-theme-sanityinc-tomorrow column-enforce-mode s dash f pythonic company company-irony irony company company-jedi company-irony-c-headers corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project swiper firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode grandshell-theme haskell-mode helm-ag helm helm-core async popup async helm-projectile dash projectile pkg-info epl dash helm helm-core async popup async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup powerline projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic pyvenv queue rainbow-delimiters request scss-mode seq simple-httpd smart-mode-line rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme spinner sr-speedbar string-utils list-utils stripe-buffer swiper symon temp-buffer-browse tronesque-theme ujelly-theme diminish bind-key web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme))
 
 (mapc (lambda (package)
         (unless (package-installed-p package)
@@ -32,6 +32,12 @@ Regenerate any missing packages.
 #+END_SRC
 
 ** Appearance
+*** Cursor
+#+BEGIN_SRC emacs-lisp
+;;(set-cursor-color "white")
+(blink-cursor-mode 0)
+#+END_SRC
+
 *** Font
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
@@ -66,14 +72,13 @@ Show column number in mode line.
                    deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
 (load-theme 'solarized-dark t)
 
-(set-cursor-color "white")
-(blink-cursor-mode 0)
 #+END_SRC
 
 **** Optional settings
 #+BEGIN_SRC emacs-lisp
-(set-face-background 'default "#1d1f21")
-(set-face-foreground 'default "#DCDCCC")
+(set-face-background 'default "#111122")
+(set-face-foreground 'default "#BCBCBC")
+(setq solarized-scale-org-headlines nil)
 #+END_SRC
 
 *** Fringes
@@ -505,7 +510,7 @@ Best package ever!
 (setq deft-auto-save-interval 0)
 (add-hook 'deft-mode-hook
           (lambda ()
-            (setq deft-window-width (- (window-width) 2))))
+            (setq-default deft-window-width (- (window-width) 2))))
 
 #+END_SRC
 
@@ -793,6 +798,13 @@ Hide those annoying join/quit messages.
 (add-hook 'help-mode-hook 'visual-line-mode)
 #+END_SRC
 
+** LaTeX
+#+BEGIN_SRC emacs-lisp
+(setq TeX-command-force "LaTeX")
+(add-hook 'LaTeX-mode-hook
+          (lambda () (add-hook 'after-save-hook
+                               (lambda () (TeX-command-master -1)) nil t)))
+#+END_SRC
 ** Org
 Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
