@@ -177,6 +177,10 @@ A useful feature that stores the most recently visited files, conveiniently acce
 (add-hook 'kill-emacs-hook 'recentf-save-list)
 #+END_SRC
 
+** Web browsing
+#+BEGIN_SRC emacs-lisp
+(setq browse-url-browser-function 'xwidget-webkit-browse-url)
+#+END_SRC
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -899,14 +903,15 @@ Set scroll margin in terminal to 0.
 #+END_SRC
 
 ** xwidget-webkit
-Override mwheel-scroll-up-function for xwidget-webkit, but the scroll functions need an adapter.
+Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
 #+BEGIN_SRC emacs-lisp
 (setq xwidget-webkit-mode-hook
       (lambda ()
         (setq-local mwheel-scroll-up-function
                     (lambda (&optional arg) (xwidget-webkit-scroll-up)))
         (setq-local mwheel-scroll-down-function
-                    (lambda (&optional arg) (xwidget-webkit-scroll-down)))))
+                    (lambda (&optional arg) (xwidget-webkit-scroll-down)))
+        (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
 #+END_SRC
 * Other
 ** Website
