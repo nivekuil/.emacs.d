@@ -108,6 +108,7 @@ When multiple dired buffers are open, dired should assume that file operations s
 #+BEGIN_SRC emacs-lisp
 (setq dired-dwim-target nil)
 #+END_SRC
+
 *** Fill column
 fill commands should create rows up to to 78 characters long.
 #+BEGIN_SRC emacs-lisp
@@ -803,13 +804,14 @@ Hide those annoying join/quit messages.
 #+END_SRC
 
 ** LaTeX
+Automatically compile on save.  There's probably a better way to do this than using the undocumented variable =TeX-command-force=.
 #+BEGIN_SRC emacs-lisp
 (setq TeX-command-force "LaTeX")
 (add-hook 'LaTeX-mode-hook
           (lambda () (add-hook 'after-save-hook
                                (lambda () (TeX-command-master -1)) nil t)))
 #+END_SRC
-** Org
+** Org-mode
 Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'visual-line-mode)
@@ -857,6 +859,28 @@ Add an "<el" expansion for emacs-lisp source blocks.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-structure-template-alist
              '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+#+END_SRC
+
+*** Website
+Org project settings for publishing my website, converting org files to html for jekyll.
+#+BEGIN_SRC emacs-lisp
+(setq org-html-doctype "html5")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+When exporting to HTML, highlight the code within src blocks.
+(setq org-src-fontify-natively t)
+#+END_SRC
+
+Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
+#+BEGIN_SRC emacs-lisp
+(defun org-font-lock-ensure ()
+  (font-lock-fontify-buffer))
+#+END_SRC
+
+Add more backends to =org-export=.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-export-backends 'org)
 #+END_SRC
 
 ** Javascript/HTML/CSS
@@ -914,52 +938,3 @@ Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding 
         (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
 #+END_SRC
 * Other
-** Website
-Org project settings for publishing my website, converting org files to html for jekyll.
-#+BEGIN_SRC emacs-lisp
-(require 'htmlize)
-(setq org-publish-project-alist
-      '(("org-website"
-         ;; Path to your org files.
-         :base-directory "~/docs/nivekuil.github.io/_org/"
-         :base-extension "org"
-
-         :htmlized-source t
-
-         ;; Path to your Jekyll project.
-         :publishing-directory "~/docs/nivekuil.github.io/"
-         :recursive t
-         :publishing-function org-html-publish-to-html
-         :headline-levels 4
-         :html-extension "html"
-         :body-only t
-         )
-
-        ("org-website-static"
-         :base-directory "~/docs/nivekuil.github.io/_org/"
-         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf\\|php"
-         :publishing-directory "~/docs/nivekuil.github.io/"
-         :recursive t
-         :publishing-function org-publish-attachment)
-
-        ("website" :components
-         ("org-website-static" "org-website"))))
-#+END_SRC
-
-** Startup
-#+BEGIN_SRC emacs-lisp
-  (defun do-on-startup-graphical ()
-    "Stuff to do after the init file is loaded."
-    (other-window 1)
-    ;;(mu4e t)                              ;Start mu4e in background
-    (split-window-horizontally)
-    (split-window-horizontally)
-    (balance-windows))
-    ;;(server-start))
-
-;;  (defun do-on-startup-terminal ()
-;;    (split-window-horizontally))
-
-;;  (if (display-graphic-p) (do-on-startup-graphical)
-;;    (do-on-startup-terminal))
-#+END_SRC
