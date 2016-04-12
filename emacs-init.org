@@ -70,6 +70,8 @@ Show column number in mode line.
 (setq favorite-themes
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
+
+(setq solarized-scale-org-headlines nil)
 (load-theme 'solarized-dark t)
 
 #+END_SRC
@@ -78,7 +80,6 @@ Show column number in mode line.
 #+BEGIN_SRC emacs-lisp
 (set-face-background 'default "#111122")
 (set-face-foreground 'default "#BCBCBC")
-(setq solarized-scale-org-headlines nil)
 #+END_SRC
 
 *** Fringes
@@ -178,6 +179,11 @@ A useful feature that stores the most recently visited files, conveiniently acce
 (add-hook 'kill-emacs-hook 'recentf-save-list)
 #+END_SRC
 
+Ignore autoloaded files that clobber the recentf list after upgrading packages.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'recentf-exclude "*-autoloads.el")
+#+END_SRC
+
 ** Web browsing
 #+BEGIN_SRC emacs-lisp
 (setq browse-url-browser-function 'xwidget-webkit-browse-url)
@@ -202,30 +208,30 @@ A useful feature that stores the most recently visited files, conveiniently acce
 
 ** Global key bindings
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'org-mode-hook
-            (lambda () (local-set-key (kbd "C-,")
-                                      (lambda () (interactive)
-                                        (other-window -1)))))
+(add-hook 'org-mode-hook
+          (lambda () (local-set-key (kbd "C-,")
+                                    (lambda () (interactive)
+                                      (other-window -1)))))
 
-  (global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
-  (global-set-key (kbd "M-p") 'backward-paragraph)
-  (global-set-key (kbd "M-n") 'forward-paragraph)
+(global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
 
-  (global-set-key (kbd "M-,")
-                  (lambda () (interactive) (other-window -1)))
-  (global-set-key (kbd "M-.") 'other-window)
-  (global-set-key (kbd "C-,")
-                  (lambda () (interactive) (other-window -1)))
-  (global-set-key (kbd "C-.") 'other-window)
+(global-set-key (kbd "M-,")
+                (lambda () (interactive) (other-window -1)))
+(global-set-key (kbd "M-.") 'other-window)
+(global-set-key (kbd "C-,")
+                (lambda () (interactive) (other-window -1)))
+(global-set-key (kbd "C-.") 'other-window)
 
-  (global-set-key (kbd "C-z") 'zap-to-char)
-  (global-set-key (kbd "C-x p") 'pop-to-mark-command)
-  (global-set-key (kbd "C-x b") 'helm-bookmarks)
-  (global-set-key (kbd "C-x w") 'eww)
-  (global-set-key (kbd "M-r") 'query-replace-regexp)
-  (global-set-key (kbd "C-M-r") 'replace-regexp)
-  (global-set-key (kbd "C-M-d") 'kill-sexp)
-  (global-set-key (kbd "C-h o") 'man)
+(global-set-key (kbd "C-z") 'zap-to-char)
+(global-set-key (kbd "C-x p") 'pop-to-mark-command)
+(global-set-key (kbd "C-x b") 'helm-bookmarks)
+(global-set-key (kbd "C-x w") 'eww)
+(global-set-key (kbd "M-r") 'query-replace-regexp)
+(global-set-key (kbd "C-M-r") 'replace-regexp)
+(global-set-key (kbd "C-M-d") 'kill-sexp)
+(global-set-key (kbd "C-h o") 'man)
 #+END_SRC
 
 Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be wasted on =universal-argument=.
@@ -405,7 +411,8 @@ Make the current window 80 columns wide.
 
 #+END_SRC
 
-*** irc
+*** TODO irc
+TODO - encrypt ercpass file
 #+BEGIN_SRC emacs-lisp
 (defun connect-to-irc ()
   (interactive)
@@ -476,6 +483,7 @@ Use column enforce mode to mark text past column 80.
 (add-hook 'python-mode-hook 'column-enforce-mode)
 #+END_SRC
 
+** command-log-mode
 ** company-mode
 Use company mode for text and code completion.
 #+BEGIN_SRC emacs-lisp
@@ -563,6 +571,11 @@ Use fuzzy matching with helm-apropos
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
 (setq helm-echo-input-in-header-line t)
+#+END_SRC
+
+*** helm-web
+#+BEGIN_SRC emacs-lisp
+(setq helm-net-prefer-curl t)
 #+END_SRC
 
 ** helm-ag
@@ -676,6 +689,8 @@ Backspace should not end swiper.
 Mini system monitor that pops up in the minibuffer after a period of idleness.
 #+BEGIN_SRC emacs-lisp
 (setq symon-delay 30)
+(setq symon-sparkline-width 48)
+(setq symon-refresh-rate 2)
 (symon-mode 1)
 #+END_SRC
 
@@ -751,7 +766,7 @@ There should be no scroll margin in a shell buffer.
 (setq comint-prompt-read-only t)
 #+END_SRC
 
-** Eww
+* Eww
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "eww"
   '(progn (define-key eww-mode-map "n" 'next-line)
@@ -783,6 +798,11 @@ Hide those annoying join/quit messages.
                             (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
+Load modules
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'erc-modules 'notifications)
+#+END_SRC
+
 ** Haskell
 #+BEGIN_SRC emacs-lisp
 (require 'haskell-interactive-mode)
@@ -802,7 +822,6 @@ Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'help-mode-hook 'visual-line-mode)
 #+END_SRC
-
 ** LaTeX
 Automatically compile on save.  There's probably a better way to do this than using the undocumented variable =TeX-command-force=.
 #+BEGIN_SRC emacs-lisp
@@ -865,6 +884,8 @@ Add an "<el" expansion for emacs-lisp source blocks.
 Org project settings for publishing my website, converting org files to html for jekyll.
 #+BEGIN_SRC emacs-lisp
 (setq org-html-doctype "html5")
+(setq org-html-postamble "&copy; nivekuil %C <br> %c <br>
+<a href=\"./index.org\">Source</a> | <a href=\"#\">Back to top</a>")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -874,8 +895,9 @@ When exporting to HTML, highlight the code within src blocks.
 
 Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
 #+BEGIN_SRC emacs-lisp
-(defun org-font-lock-ensure ()
-  (font-lock-fontify-buffer))
+(eval-after-load "/home/nivekuil/docs/website/index.org"
+  (defun org-font-lock-ensure ()
+    (font-lock-fontify-buffer)))
 #+END_SRC
 
 Add more backends to =org-export=.
@@ -929,7 +951,7 @@ Set scroll margin in terminal to 0.
 ** xwidget-webkit
 Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
 #+BEGIN_SRC emacs-lisp
-(setq xwidget-webkit-mode-hook
+(add-hook 'xwidget-webkit-mode-hook
       (lambda ()
         (setq-local mwheel-scroll-up-function
                     (lambda (&optional arg) (xwidget-webkit-scroll-up)))
@@ -937,4 +959,3 @@ Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding 
                     (lambda (&optional arg) (xwidget-webkit-scroll-down)))
         (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
 #+END_SRC
-* Other
