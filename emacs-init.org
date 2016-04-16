@@ -83,7 +83,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
             (local-set-key (kbd "C-M-p") #'flycheck-previous-error)))
 #+END_SRC
 
-** helm
+*** helm
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-x") 'helm-M-x)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
