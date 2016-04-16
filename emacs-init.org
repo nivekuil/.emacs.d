@@ -266,12 +266,13 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 #+END_SRC
 
 ** Web browsing
-Shadow the browse url function, making it work appropriate to the frame's environment (graphical or terminal).
+Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-(defun browse-url (url &rest args)
+(defun browse-url (url &rest _)
+  "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
   (interactive)
   (if (display-graphic-p)
-      (browse-url-default-browser url args)
+      (browse-url-xdg-open url)
     (eww-browse-url url)))
 #+END_SRC
 
