@@ -1,3 +1,122 @@
+* Keybindings
+** Switch keys for better Dvorak compatibility
+#+BEGIN_SRC emacs-lisp
+(define-key key-translation-map [?\C-h] [?\C-x]) ;x for eXplain
+(define-key key-translation-map [?\C-x] [?\C-h]) ;h for hang on, I have more input
+(define-key key-translation-map [?\C-t] [?\C-f]) ;f for Flip two letters
+(define-key key-translation-map [?\C-f] [?\C-t]) ;t for Toward the end of the line/file
+(define-key key-translation-map (kbd "C-M-h") (kbd "C-M-x"))
+(define-key key-translation-map (kbd "C-M-f") (kbd "C-M-t"))
+(define-key key-translation-map (kbd "C-M-t") (kbd "C-M-f"))
+(define-key key-translation-map (kbd "C-M-S-f") (kbd "C-M-S-t"))
+(define-key key-translation-map (kbd "C-M-S-t") (kbd "C-M-S-f"))
+(define-key key-translation-map (kbd "M-t") (kbd "M-f"))
+(define-key key-translation-map (kbd "M-f") (kbd "M-t"))
+(define-key key-translation-map (kbd "M-F") (kbd "M-T"))
+(define-key key-translation-map (kbd "M-T") (kbd "M-F"))
+#+END_SRC
+
+** Global key bindings
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook
+          (lambda () (local-set-key (kbd "C-,")
+                                    (lambda () (interactive)
+                                      (other-window -1)))))
+
+(global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
+(global-set-key (kbd "M-p") 'backward-paragraph)
+(global-set-key (kbd "M-n") 'forward-paragraph)
+
+(global-set-key (kbd "M-,")
+                (lambda () (interactive) (other-window -1)))
+(global-set-key (kbd "M-.") 'other-window)
+(global-set-key (kbd "C-,")
+                (lambda () (interactive) (other-window -1)))
+(global-set-key (kbd "C-.") 'other-window)
+
+(global-set-key (kbd "C-z") 'zap-to-char)
+(global-set-key (kbd "C-x p") 'pop-to-mark-command)
+(global-set-key (kbd "C-x b") 'helm-bookmarks)
+(global-set-key (kbd "C-x w") 'eww)
+(global-set-key (kbd "M-r") 'query-replace-regexp)
+(global-set-key (kbd "C-M-r") 'replace-regexp)
+(global-set-key (kbd "C-M-d") 'kill-sexp)
+(global-set-key (kbd "C-h o") 'man)
+#+END_SRC
+
+Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be wasted on =universal-argument=.
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-u") 'undo)
+(global-set-key (kbd "C-/") 'universal-argument)
+#+END_SRC
+
+** Keybindings for external packages
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x m") 'mu4e)
+(global-set-key (kbd "C-s") 'swiper)
+(global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-r") 'ace-window)
+(global-set-key (kbd "M-m") 'er/expand-region)
+(global-set-key (kbd "C-x f") 'anchored-transpose)
+(global-set-key (kbd "C-M-s") 'helm-do-ag-project-root)
+(global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
+
+#+END_SRC
+
+*** avy
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-s") 'avy-goto-subword-1)
+(global-set-key (kbd "M-g M-g") 'avy-goto-line)
+(global-set-key (kbd "M-g g") 'avy-goto-line)
+#+END_SRC
+
+*** deft
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x d") 'deft)
+#+END_SRC
+
+*** flycheck
+#+BEGIN_SRC emacs-lisp
+(add-hook 'flycheck-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-M-n") #'flycheck-next-error)
+            (local-set-key (kbd "C-M-p") #'flycheck-previous-error)))
+#+END_SRC
+
+** helm
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+(global-set-key (kbd "C-x C-b") 'helm-mini)
+(global-set-key (kbd "C-x C-n") 'helm-mini)
+(global-set-key (kbd "C-h a") 'helm-apropos)
+(global-set-key (kbd "C-h x") 'helm-google-suggest)
+#+END_SRC
+
+*** corral
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-9") 'corral-parentheses-backward)
+(global-set-key (kbd "M-0") 'corral-parentheses-forward)
+(global-set-key (kbd "M-[") 'corral-brackets-backward)
+(global-set-key (kbd "M-]") 'corral-brackets-forward)
+(global-set-key (kbd "M-{") 'corral-braces-backward)
+(global-set-key (kbd "M-}") 'corral-braces-forward)
+(global-set-key (kbd "M-\"") 'corral-double-quotes-backward)
+(global-set-key (kbd "M-'") 'corral-single-quotes-backward)
+#+END_SRC
+
+** Keybindings for custom defined functions
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<C-return>") 'open-next-line)
+(global-set-key (kbd "M-RET") 'open-next-line)
+(global-set-key (kbd "C-o") 'open-next-line) ;like vi o
+(global-set-key (kbd "C-x C-r") 'find-file-sudo)
+(global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
+(global-set-key (kbd "<f8>") 'run-async-script)
+(global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
+#+END_SRC
+
 * General Settings
 ** Package Management
 Use melpa as package repository.
@@ -146,44 +265,6 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 (setq undo-strong-limit 1200000)
 #+END_SRC
 
-** Built-in minor modes
-#+BEGIN_SRC emacs-lisp
-;; Use subword mode in prog mode to move by camelCase.
-(add-hook 'prog-mode-hook 'subword-mode)
-
-;; use winner-mode (C-c left to undo window changes)
-(winner-mode t)
-
-;; use hl line mode in dired
-(add-hook 'dired-mode-hook 'hl-line-mode)
-
-;; use electric pair mode
-(electric-pair-mode t)
-
-;; use mouse avoidance mode
-(setq mouse-avoidance-mode 'banish)
-
-;; tab inserts spaces only
-(setq-default indent-tabs-mode nil)
-
-;; use auto-revert-mode for log files to update the output automatically
-(add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
-
-#+END_SRC
-*** recentf-mode
-A useful feature that stores the most recently visited files, conveiniently accessible via =helm-mini=.
-#+BEGIN_SRC emacs-lisp
-(recentf-mode)
-(setq recentf-max-saved-items 30)
-(add-hook 'server-done-hook 'recentf-save-list)
-(add-hook 'kill-emacs-hook 'recentf-save-list)
-#+END_SRC
-
-Ignore autoloaded files that clobber the recentf list after upgrading packages.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'recentf-exclude "*-autoloads.el")
-#+END_SRC
-
 ** Web browsing
 Set the browse url function to something appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
@@ -193,124 +274,6 @@ Set the browse url function to something appropriate to the frame's environment 
     (if (display-graphic-p)
         (setq browse-url-browser-function 'browse-url-xdg-open)
       (setq browse-url-browser-function 'eww-browse-url))))
-#+END_SRC
-* Keybindings
-** Switch keys for better Dvorak compatibility
-#+BEGIN_SRC emacs-lisp
-(define-key key-translation-map [?\C-h] [?\C-x]) ;x for eXplain
-(define-key key-translation-map [?\C-x] [?\C-h]) ;h for hang on, I have more input
-(define-key key-translation-map [?\C-t] [?\C-f]) ;f for Flip two letters
-(define-key key-translation-map [?\C-f] [?\C-t]) ;t for Toward the end of the line/file
-(define-key key-translation-map (kbd "C-M-h") (kbd "C-M-x"))
-(define-key key-translation-map (kbd "C-M-f") (kbd "C-M-t"))
-(define-key key-translation-map (kbd "C-M-t") (kbd "C-M-f"))
-(define-key key-translation-map (kbd "C-M-S-f") (kbd "C-M-S-t"))
-(define-key key-translation-map (kbd "C-M-S-t") (kbd "C-M-S-f"))
-(define-key key-translation-map (kbd "M-t") (kbd "M-f"))
-(define-key key-translation-map (kbd "M-f") (kbd "M-t"))
-(define-key key-translation-map (kbd "M-F") (kbd "M-T"))
-(define-key key-translation-map (kbd "M-T") (kbd "M-F"))
-#+END_SRC
-
-** Global key bindings
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook
-          (lambda () (local-set-key (kbd "C-,")
-                                    (lambda () (interactive)
-                                      (other-window -1)))))
-
-(global-set-key (kbd "<f5>") (lambda () (interactive) (revert-buffer nil t)))
-(global-set-key (kbd "M-p") 'backward-paragraph)
-(global-set-key (kbd "M-n") 'forward-paragraph)
-
-(global-set-key (kbd "M-,")
-                (lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "M-.") 'other-window)
-(global-set-key (kbd "C-,")
-                (lambda () (interactive) (other-window -1)))
-(global-set-key (kbd "C-.") 'other-window)
-
-(global-set-key (kbd "C-z") 'zap-to-char)
-(global-set-key (kbd "C-x p") 'pop-to-mark-command)
-(global-set-key (kbd "C-x b") 'helm-bookmarks)
-(global-set-key (kbd "C-x w") 'eww)
-(global-set-key (kbd "M-r") 'query-replace-regexp)
-(global-set-key (kbd "C-M-r") 'replace-regexp)
-(global-set-key (kbd "C-M-d") 'kill-sexp)
-(global-set-key (kbd "C-h o") 'man)
-#+END_SRC
-
-Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be wasted on =universal-argument=.
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-u") 'undo)
-(global-set-key (kbd "C-/") 'universal-argument)
-#+END_SRC
-
-** Keybindings for external packages
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x m") 'mu4e)
-(global-set-key (kbd "C-s") 'swiper)
-(global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "C-r") 'ace-window)
-(global-set-key (kbd "M-m") 'er/expand-region)
-(global-set-key (kbd "C-x f") 'anchored-transpose)
-(global-set-key (kbd "C-M-s") 'helm-do-ag-project-root)
-(global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
-
-#+END_SRC
-
-*** avy
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-s") 'avy-goto-subword-1)
-(global-set-key (kbd "M-g M-g") 'avy-goto-line)
-(global-set-key (kbd "M-g g") 'avy-goto-line)
-#+END_SRC
-
-*** deft
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x d") 'deft)
-#+END_SRC
-
-*** flycheck
-#+BEGIN_SRC emacs-lisp
-(add-hook 'flycheck-mode-hook
-          (lambda ()
-            (local-set-key (kbd "C-M-n") #'flycheck-next-error)
-            (local-set-key (kbd "C-M-p") #'flycheck-previous-error)))
-#+END_SRC
-
-** helm
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "M-y") 'helm-show-kill-ring)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(global-set-key (kbd "C-x C-b") 'helm-mini)
-(global-set-key (kbd "C-x C-n") 'helm-mini)
-(global-set-key (kbd "C-h a") 'helm-apropos)
-(global-set-key (kbd "C-h x") 'helm-google-suggest)
-#+END_SRC
-
-*** corral
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-9") 'corral-parentheses-backward)
-(global-set-key (kbd "M-0") 'corral-parentheses-forward)
-(global-set-key (kbd "M-[") 'corral-brackets-backward)
-(global-set-key (kbd "M-]") 'corral-brackets-forward)
-(global-set-key (kbd "M-{") 'corral-braces-backward)
-(global-set-key (kbd "M-}") 'corral-braces-forward)
-(global-set-key (kbd "M-\"") 'corral-double-quotes-backward)
-(global-set-key (kbd "M-'") 'corral-single-quotes-backward)
-#+END_SRC
-
-** Keybindings for custom defined functions
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<C-return>") 'open-next-line)
-(global-set-key (kbd "M-RET") 'open-next-line)
-(global-set-key (kbd "C-o") 'open-next-line) ;like vi o
-(global-set-key (kbd "C-x C-r") 'find-file-sudo)
-(global-set-key (kbd "M-o") 'open-previous-line) ;like vi O
-(global-set-key (kbd "<f8>") 'run-async-script)
-(global-set-key (kbd "C-a") 'beginning-of-line-or-indentation)
 #+END_SRC
 
 * Custom Functions
@@ -453,6 +416,294 @@ TODO - encrypt ercpass file
 (global-set-key (kbd "C-x u") 'jump-to-last-edit)
 #+END_SRC
 
+* Mode settings
+** Minor modes
+#+BEGIN_SRC emacs-lisp
+;; Use subword mode in prog mode to move by camelCase.
+(add-hook 'prog-mode-hook 'subword-mode)
+
+;; use winner-mode (C-c left to undo window changes)
+(winner-mode t)
+
+;; use hl line mode in dired
+(add-hook 'dired-mode-hook 'hl-line-mode)
+
+;; use electric pair mode
+(electric-pair-mode t)
+
+;; use mouse avoidance mode
+(setq mouse-avoidance-mode 'banish)
+
+;; tab inserts spaces only
+(setq-default indent-tabs-mode nil)
+
+;; use auto-revert-mode for log files to update the output automatically
+(add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
+
+#+END_SRC
+*** recentf-mode
+A useful feature that stores the most recently visited files, conveiniently accessible via =helm-mini=.
+#+BEGIN_SRC emacs-lisp
+(recentf-mode)
+(setq recentf-max-saved-items 30)
+(add-hook 'server-done-hook 'recentf-save-list)
+(add-hook 'kill-emacs-hook 'recentf-save-list)
+#+END_SRC
+
+Ignore autoloaded files that clobber the recentf list after upgrading packages.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'recentf-exclude "*-autoloads.el")
+#+END_SRC
+
+** Major modes
+*** Assembly
+Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
+#+BEGIN_SRC emacs-lisp
+(setq asm-comment-char ?!)
+(setq asm-mode-hook
+      (lambda ()
+        (setq indent-tabs-mode t)
+        (add-hook 'before-save-hook
+                  (lambda () (tabify (point-min) (point-max))) nil t)))
+#+END_SRC
+
+*** C/C++ (cpp)
+Use irony-mode.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+(setq irony-additional-clang-options '("-std=c++11"))
+#+END_SRC
+
+*** Comint
+There should be no scroll margin in a shell buffer.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'comint-mode-hook (lambda ()
+                              (set (make-local-variable 'scroll-margin) 0)))
+(setq shell-file-name "bash")
+(setq comint-prompt-read-only t)
+#+END_SRC
+
+*** Eww
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "eww"
+  '(progn (define-key eww-mode-map "n" 'next-line)
+          (define-key eww-mode-map "m" 'eww-follow-link)
+          (define-key eww-mode-map "p" 'previous-line)
+          (define-key eww-mode-map "N" 'eww-next-url)
+          (define-key eww-mode-map "P" 'eww-previou1rs-url)))
+#+END_SRC
+
+*** ERC
+   #+BEGIN_SRC emacs-lisp
+   (require 'erc)
+   #+END_SRC
+Autojoin channels when ERC starts.
+#+BEGIN_SRC emacs-lisp
+  (setq erc-autojoin-channels-alist nil)
+        '(("freenode.net" "#ucsd"))
+#+END_SRC
+
+Highlight nicknames.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'erc-modules 'hl-nicks)
+#+END_SRC
+
+Hide those annoying join/quit messages.
+#+BEGIN_SRC emacs-lisp
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+(setq erc-channel-hide-list '(("ucsd") nil))
+#+END_SRC
+
+No scroll margin in ERC buffers.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'erc-mode-hook (lambda ()
+                            (set (make-local-variable 'scroll-margin) 1)))
+#+END_SRC
+
+Show a notification when mentioned.  Works with libnotify, so I get pretty desktop notifications too.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'erc-modules 'notifications)
+#+END_SRC
+
+Since we're using ZNC, don't send PART messages when killing buffers.
+#+BEGIN_SRC emacs-lisp
+(defun erc-detach ()
+  (erc-server-send (format "DETACH %s" (erc-default-target))
+                   nil (erc-default-target)))
+
+(setq erc-kill-buffer-hook #'(erc-detach))
+(setq erc-kill-channel-hook #'(erc-detach))
+(setq erc-kill-server-hook #'(erc-detach))
+#+END_SRC
+
+*** Haskell
+#+BEGIN_SRC emacs-lisp
+(require 'haskell-interactive-mode)
+(require 'haskell-process)
+(add-hook 'haskell-mode-hook
+          (progn
+              (interactive-haskell-mode)
+              (turn-on-haskell-indent)))
+
+(setq haskell-process-suggest-remove-import-lines t)
+(setq haskell-process-auto-import-loaded-modules t)
+(setq haskell-process-log t)
+
+#+END_SRC
+
+*** Help
+#+BEGIN_SRC emacs-lisp
+(add-hook 'help-mode-hook 'visual-line-mode)
+#+END_SRC
+*** LaTeX
+Automatically compile on save.  There's probably a better way to do this than using the undocumented variable =TeX-command-force=.
+#+BEGIN_SRC emacs-lisp
+(setq TeX-command-force "LaTeX")
+(add-hook 'LaTeX-mode-hook
+          (lambda () (add-hook 'after-save-hook
+                               (lambda () (TeX-command-master -1)) nil t)))
+#+END_SRC
+*** Org-mode
+Use visual line mode to wrap lines in org mode.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook 'visual-line-mode)
+#+END_SRC
+
+Indent sections and hide multiple asterisks.
+#+BEGIN_SRC emacs-lisp
+(setq org-startup-indented t)
+#+END_SRC
+
+**** org-babel
+Eval code blocks without prompting for confirmation.  It's unlikely that this will ever be a security concern.
+#+BEGIN_SRC emacs-lisp
+(setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (emacs-lisp . t)))
+#+END_SRC
+
+**** org-src
+Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO: submit patch? after-save-hook isn't called by org-edit-src-save so might be better to modify org-edit-src-save itself).
+#+BEGIN_SRC emacs-lisp
+;;(setq org-src-window-setup 'current-window)
+#+END_SRC
+
+Don't indent the content of src blocks.
+#+BEGIN_SRC emacs-lisp
+(setq org-edit-src-content-indentation 0)
+#+END_SRC
+
+Disable syntax checking in src blocks.
+#+BEGIN_SRC emacs-lisp
+;;(add-hook 'org-src-mode-hook
+;;          (lambda ()
+;;            (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
+;;            (column-enforce-mode 0)))
+#+END_SRC
+
+**** Macros
+Add an "<el" expansion for emacs-lisp source blocks.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-structure-template-alist
+             '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+#+END_SRC
+
+**** Website
+Org project settings for publishing my website, converting org files to html for jekyll.
+#+BEGIN_SRC emacs-lisp
+(setq org-html-doctype "html5")
+(setq org-html-postamble "&copy; nivekuil %C <br> %c <br>
+<a href=\"./index.org\">Source</a> | <a href=\"#\">Back to top</a>")
+#+END_SRC
+
+When exporting to HTML, highlight the code within src blocks.
+#+BEGIN_SRC emacs-lisp
+(setq org-src-fontify-natively t)
+#+END_SRC
+
+Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "/home/nivekuil/docs/website/index.org"
+  (defun org-font-lock-ensure ()
+    (font-lock-fontify-buffer)))
+#+END_SRC
+
+Add more backends to =org-export=.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-export-backends 'org)
+#+END_SRC
+
+*** Javascript/HTML/CSS
+Use js2-mode for editing .js files.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx$" . js2-mode))
+#+END_SRC
+
+JSON is a subset of YAML, so use yaml-mode to edit json files.
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.json$" . yaml-mode))
+#+END_SRC
+
+*** Python
+Use jedi for completion.
+#+BEGIN_SRC emacs-lisp
+(defun my/python-mode-setup ()
+  (add-to-list 'company-backends 'company-jedi)
+  (local-set-key (kbd "C-c C-d") 'jedi:show-doc))
+
+(add-hook 'python-mode-hook 'my/python-mode-setup)
+#+END_SRC
+
+*** Term
+Set scroll margin in terminal to 0.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'term-mode-hook (lambda ()
+                            (set (make-local-variable 'scroll-margin) 0)))
+#+END_SRC
+
+*** Web
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
+#+END_SRC
+
+*** xwidget-webkit
+Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'xwidget-webkit-mode-hook
+      (lambda ()
+        (setq-local mwheel-scroll-up-function
+                    (lambda (&optional arg) (xwidget-webkit-scroll-up)))
+        (setq-local mwheel-scroll-down-function
+                    (lambda (&optional arg) (xwidget-webkit-scroll-down)))
+        (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
+#+END_SRC
 * Packages
 ** ace-window
 Switch between windows by assigning a number to each one.
@@ -735,252 +986,3 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 (add-hook 'term-mode-hook (lambda () (yas-minor-mode -1)))
 #+END_SRC
 
-** Assembly
-Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
-#+BEGIN_SRC emacs-lisp
-(setq asm-comment-char ?!)
-(setq asm-mode-hook
-      (lambda ()
-        (setq indent-tabs-mode t)
-        (add-hook 'before-save-hook
-                  (lambda () (tabify (point-min) (point-max))) nil t)))
-#+END_SRC
-
-** C/C++ (cpp)
-Use irony-mode.
-#+BEGIN_SRC emacs-lisp
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
-
-;; replace the `completion-at-point' and `complete-symbol' bindings in
-;; irony-mode's buffers by irony-mode's function
-(defun my-irony-mode-hook ()
-  (define-key irony-mode-map [remap completion-at-point]
-    'irony-completion-at-point-async)
-  (define-key irony-mode-map [remap complete-symbol]
-    'irony-completion-at-point-async))
-(add-hook 'irony-mode-hook 'my-irony-mode-hook)
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-(setq irony-additional-clang-options '("-std=c++11"))
-#+END_SRC
-
-** Comint
-There should be no scroll margin in a shell buffer.
-#+BEGIN_SRC emacs-lisp
-(add-hook 'comint-mode-hook (lambda ()
-                              (set (make-local-variable 'scroll-margin) 0)))
-(setq shell-file-name "bash")
-(setq comint-prompt-read-only t)
-#+END_SRC
-
-** Eww
-#+BEGIN_SRC emacs-lisp
-(eval-after-load "eww"
-  '(progn (define-key eww-mode-map "n" 'next-line)
-          (define-key eww-mode-map "m" 'eww-follow-link)
-          (define-key eww-mode-map "p" 'previous-line)
-          (define-key eww-mode-map "N" 'eww-next-url)
-          (define-key eww-mode-map "P" 'eww-previou1rs-url)))
-#+END_SRC
-
-** ERC
-   #+BEGIN_SRC emacs-lisp
-   (require 'erc)
-   #+END_SRC
-Autojoin channels when ERC starts.
-#+BEGIN_SRC emacs-lisp
-  (setq erc-autojoin-channels-alist nil)
-        '(("freenode.net" "#ucsd"))
-#+END_SRC
-
-Highlight nicknames.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'erc-modules 'hl-nicks)
-#+END_SRC
-
-Hide those annoying join/quit messages.
-#+BEGIN_SRC emacs-lisp
-(setq erc-hide-list '("JOIN" "PART" "QUIT"))
-(setq erc-channel-hide-list '(("ucsd") nil))
-#+END_SRC
-
-No scroll margin in ERC buffers.
-#+BEGIN_SRC emacs-lisp
-(add-hook 'erc-mode-hook (lambda ()
-                            (set (make-local-variable 'scroll-margin) 1)))
-#+END_SRC
-
-Show a notification when mentioned.  Works with libnotify, so I get pretty desktop notifications too.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'erc-modules 'notifications)
-#+END_SRC
-
-Since we're using ZNC, don't send PART messages when killing buffers.
-#+BEGIN_SRC emacs-lisp
-(defun erc-detach ()
-  (erc-server-send (format "DETACH %s" (erc-default-target))
-                   nil (erc-default-target)))
-
-(setq erc-kill-buffer-hook #'(erc-detach))
-(setq erc-kill-channel-hook #'(erc-detach))
-(setq erc-kill-server-hook #'(erc-detach))
-#+END_SRC
-
-** Haskell
-#+BEGIN_SRC emacs-lisp
-(require 'haskell-interactive-mode)
-(require 'haskell-process)
-(add-hook 'haskell-mode-hook
-          (progn
-              (interactive-haskell-mode)
-              (turn-on-haskell-indent)))
-
-(setq haskell-process-suggest-remove-import-lines t)
-(setq haskell-process-auto-import-loaded-modules t)
-(setq haskell-process-log t)
-
-#+END_SRC
-
-** Help
-#+BEGIN_SRC emacs-lisp
-(add-hook 'help-mode-hook 'visual-line-mode)
-#+END_SRC
-** LaTeX
-Automatically compile on save.  There's probably a better way to do this than using the undocumented variable =TeX-command-force=.
-#+BEGIN_SRC emacs-lisp
-(setq TeX-command-force "LaTeX")
-(add-hook 'LaTeX-mode-hook
-          (lambda () (add-hook 'after-save-hook
-                               (lambda () (TeX-command-master -1)) nil t)))
-#+END_SRC
-** Org-mode
-Use visual line mode to wrap lines in org mode.
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook 'visual-line-mode)
-#+END_SRC
-
-Indent sections and hide multiple asterisks.
-#+BEGIN_SRC emacs-lisp
-(setq org-startup-indented t)
-#+END_SRC
-
-*** org-babel
-Eval code blocks without prompting for confirmation.  It's unlikely that this will ever be a security concern.
-#+BEGIN_SRC emacs-lisp
-(setq org-confirm-babel-evaluate nil)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((sh . t)
-   (emacs-lisp . t)))
-#+END_SRC
-
-*** org-src
-Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO: submit patch? after-save-hook isn't called by org-edit-src-save so might be better to modify org-edit-src-save itself).
-#+BEGIN_SRC emacs-lisp
-;;(setq org-src-window-setup 'current-window)
-#+END_SRC
-
-Don't indent the content of src blocks.
-#+BEGIN_SRC emacs-lisp
-(setq org-edit-src-content-indentation 0)
-#+END_SRC
-
-Disable syntax checking in src blocks.
-#+BEGIN_SRC emacs-lisp
-;;(add-hook 'org-src-mode-hook
-;;          (lambda ()
-;;            (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
-;;            (column-enforce-mode 0)))
-#+END_SRC
-
-*** Macros
-Add an "<el" expansion for emacs-lisp source blocks.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-structure-template-alist
-             '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
-#+END_SRC
-
-*** Website
-Org project settings for publishing my website, converting org files to html for jekyll.
-#+BEGIN_SRC emacs-lisp
-(setq org-html-doctype "html5")
-(setq org-html-postamble "&copy; nivekuil %C <br> %c <br>
-<a href=\"./index.org\">Source</a> | <a href=\"#\">Back to top</a>")
-#+END_SRC
-
-When exporting to HTML, highlight the code within src blocks.
-#+BEGIN_SRC emacs-lisp
-(setq org-src-fontify-natively t)
-#+END_SRC
-
-Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
-#+BEGIN_SRC emacs-lisp
-(eval-after-load "/home/nivekuil/docs/website/index.org"
-  (defun org-font-lock-ensure ()
-    (font-lock-fontify-buffer)))
-#+END_SRC
-
-Add more backends to =org-export=.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-export-backends 'org)
-#+END_SRC
-
-
-** Javascript/HTML/CSS
-Use js2-mode for editing .js files.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx$" . js2-mode))
-#+END_SRC
-
-JSON is a subset of YAML, so use yaml-mode to edit json files.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.json$" . yaml-mode))
-#+END_SRC
-
-** Python
-Use jedi for completion.
-#+BEGIN_SRC emacs-lisp
-(defun my/python-mode-setup ()
-  (add-to-list 'company-backends 'company-jedi)
-  (local-set-key (kbd "C-c C-d") 'jedi:show-doc))
-
-(add-hook 'python-mode-hook 'my/python-mode-setup)
-#+END_SRC
-
-** Term
-Set scroll margin in terminal to 0.
-#+BEGIN_SRC emacs-lisp
-(add-hook 'term-mode-hook (lambda ()
-                            (set (make-local-variable 'scroll-margin) 0)))
-#+END_SRC
-
-** Web
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.scss?\\'" . web-mode))
-#+END_SRC
-
-** xwidget-webkit
-Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
-#+BEGIN_SRC emacs-lisp
-(add-hook 'xwidget-webkit-mode-hook
-      (lambda ()
-        (setq-local mwheel-scroll-up-function
-                    (lambda (&optional arg) (xwidget-webkit-scroll-up)))
-        (setq-local mwheel-scroll-down-function
-                    (lambda (&optional arg) (xwidget-webkit-scroll-down)))
-        (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
-#+END_SRC
