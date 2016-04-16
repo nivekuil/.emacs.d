@@ -266,14 +266,13 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 #+END_SRC
 
 ** Web browsing
-Set the browse url function to something appropriate to the frame's environment (graphical or terminal).
+Shadow the browse url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'after-make-frame-functions
-  (lambda (frame)
-    (select-frame frame) ; why is this needed?
-    (if (display-graphic-p)
-        (setq browse-url-browser-function 'browse-url-xdg-open)
-      (setq browse-url-browser-function 'eww-browse-url))))
+(defun browse-url (url &rest args)
+  (interactive)
+  (if (display-graphic-p)
+      (browse-url-default-browser url args)
+    (eww-browse-url url)))
 #+END_SRC
 
 * Custom Functions
@@ -987,7 +986,6 @@ Automatically and non-disruptively clean up whitespace on save.
 
 ** yasnippet
 #+BEGIN_SRC emacs-lisp
-;; use yasnippet
 (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (yas-global-mode t) ;; Activate global mode before defining keys
 #+END_SRC
@@ -997,4 +995,3 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 (add-hook 'comint-mode-hook (lambda () (yas-minor-mode -1)))
 (add-hook 'term-mode-hook (lambda () (yas-minor-mode -1)))
 #+END_SRC
-
