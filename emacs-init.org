@@ -198,9 +198,9 @@ Show column number in mode line.
 **** Optional settings
 #+BEGIN_SRC emacs-lisp
 (set-face-background 'default "#111122")
-(set-face-foreground 'default "#BCBCBC")
+;(set-face-foreground 'default "#BCBCBC")
 #+END_SRC
-
+     
 *** Fringes
 #+BEGIN_SRC emacs-lisp
 (fringe-mode '(4 . 0))
@@ -268,11 +268,12 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
+(setq browse-url-generic-program (executable-find "google-chrome-beta"))
 (defun browse-url (url &rest _)
   "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
   (interactive)
   (if (display-graphic-p)
-      (browse-url-xdg-open url)
+      (browse-url-generic url)
     (eww-browse-url url)))
 #+END_SRC
 
@@ -503,7 +504,6 @@ There should be no scroll margin in a shell buffer.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'comint-mode-hook (lambda ()
                               (set (make-local-variable 'scroll-margin) 0)))
-(setq shell-file-name "bash")
 (setq comint-prompt-read-only t)
 #+END_SRC
 
@@ -662,6 +662,11 @@ Add more backends to =org-export=.
 (add-to-list 'org-export-backends 'org)
 #+END_SRC
 
+The publish function.
+#+BEGIN_SRC emacs-lisp
+(setq org-publish-project-alist ())
+#+END_SRC
+
 *** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
@@ -793,10 +798,7 @@ Best package ever!
 (setq deft-default-extension "org")
 (setq deft-text-mode 'org-mode)
 (setq deft-auto-save-interval 0)
-(add-hook 'deft-mode-hook
-          (lambda ()
-            (setq-default deft-window-width (- (window-width) 2))))
-
+(setq deft-window-offset 2)
 #+END_SRC
 
 Use hl-line-mode in the deft buffer.
@@ -869,8 +871,9 @@ Delete all whitespace instead of doing it one character at a time.
 ** mu4e
 mu4e is not part of package.el, so we have to require it manually instead of letting package-initialize handle it.
 #+BEGIN_SRC emacs-lisp
-;;  (require 'mu4e)
-  (setq mu4e-get-mail-command "offlineimap")
+  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
+  (require 'mu4e)
+  (setq mu4e-get-mail-command "mbsync zoho")
   (setq mu4e-headers-date-format "%b %d")
   (setq mu4e-headers-time-format "%I:%M %p")
   (setq mu4e-headers-fields '((:subject . 57)
@@ -885,10 +888,10 @@ Update mailboxes every hour.
 
 Use gmail as default mailbox.
 #+BEGIN_SRC emacs-lisp
-  (setq mu4e-maildir       "~/Maildir"   ;; top-level Maildir
-        mu4e-sent-folder   "/zoho/Sent"       ;; folder for sent messages
-        mu4e-drafts-folder "/zoho/Drafts"     ;; unfinished messages
-        mu4e-trash-folder  "/zoho/Trash")      ;; trashed messages
+(setq mu4e-maildir       "~/.mail"              ;; top-level Maildir
+      mu4e-sent-folder   "/zoho/Sent"
+      mu4e-drafts-folder "/zoho/Drafts"
+      mu4e-trash-folder  "/zoho/Trash")
 
 #+END_SRC
 
@@ -904,7 +907,7 @@ Gmail and offlineimap leads to duplicate emails showing up in search filters sin
 
 Use =mu4e-shr2text= found in the =mu4e-contrib= package to display rich text messages.
 #+BEGIN_SRC emacs-lisp
-;;(require 'mu4e-contrib)
+(require 'mu4e-contrib)
 (setq mu4e-html2text-command 'mu4e-shr2text)
 #+END_SRC
 
@@ -912,9 +915,12 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
 #+BEGIN_SRC emacs-lisp
   (require 'smtpmail)
   (setq user-mail-address "kevin@nivekuil.com"
-        send-mail-function 'smtpmail-send-it
+        message-send-mail-function 'smtpmail-send-it
         smtpmail-smtp-server "smtp.zoho.com"
+        smtpmail-stream-type 'starttls
         smtpmail-smtp-service 587)      ;TLS port
+  (setq mu4e-maildir-shortcuts
+    '(("/zoho/Inbox" . ?j)))
 #+END_SRC
 
 ** projectile
