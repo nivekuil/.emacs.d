@@ -288,7 +288,7 @@ Shadow the original browse-url function, making it work appropriate to the frame
          (async-shell-command (concat "python " buffer-file-name)))))
 #+END_SRC
 
-*** file-file-sudo
+*** find-file-sudo
 #+BEGIN_SRC emacs-lisp
 (defun find-file-sudo ()
   "Reopen the current file as root user."
@@ -535,18 +535,12 @@ Highlight nicknames.
 Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
-(setq erc-channel-hide-list '(("ucsd") nil))
 #+END_SRC
 
 No scroll margin in ERC buffers.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'erc-mode-hook (lambda ()
                             (set (make-local-variable 'scroll-margin) 1)))
-#+END_SRC
-
-Show a notification when mentioned.  Works with libnotify, so I get pretty desktop notifications too.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'erc-modules 'notifications)
 #+END_SRC
 
 Since we're using ZNC, don't send PART messages when killing buffers.
@@ -745,8 +739,10 @@ Automatically fix indentation as you type.  Nice to have in lisp, but I find it 
 ** beacon
 Display a beacon when changing windows.
 #+BEGIN_SRC emacs-lisp
-(beacon-mode 1)
-(setq beacon-blink-when-window-scrolls nil)
+ (beacon-mode 1)
+    (setq beacon-blink-when-window-scrolls nil)
+    (add-to-list 'beacon-dont-blink-major-modes 'special-mode)
+
 #+END_SRC
 
 ** column-enforce-mode
@@ -886,13 +882,18 @@ Update mailboxes every hour.
 (setq mu4e-update-interval 3600)
 #+END_SRC
 
-Use gmail as default mailbox.
+Use zoho as default mailbox.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-maildir       "~/.mail"              ;; top-level Maildir
       mu4e-sent-folder   "/zoho/Sent"
       mu4e-drafts-folder "/zoho/Drafts"
       mu4e-trash-folder  "/zoho/Trash")
 
+#+END_SRC
+
+Enabling this will make mbsync not break with a maildir error about UIDs.  Offlineimap prefers this to be nil.
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-change-filenames-when-moving t)
 #+END_SRC
 
 Show images in emails.
