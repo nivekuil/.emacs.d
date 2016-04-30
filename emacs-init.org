@@ -608,7 +608,7 @@ Eval code blocks without prompting for confirmation.  It's unlikely that this wi
 **** org-src
 Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO: submit patch? after-save-hook isn't called by org-edit-src-save so might be better to modify org-edit-src-save itself).
 #+BEGIN_SRC emacs-lisp
-;;(setq org-src-window-setup 'current-window)
+(setq org-src-window-setup 'current-window)
 #+END_SRC
 
 Don't indent the content of src blocks.
@@ -618,10 +618,10 @@ Don't indent the content of src blocks.
 
 Disable syntax checking in src blocks.
 #+BEGIN_SRC emacs-lisp
-;;(add-hook 'org-src-mode-hook
-;;          (lambda ()
-;;            (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
-;;            (column-enforce-mode 0)))
+(add-hook 'org-src-mode-hook
+          (lambda ()
+            (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
+            (column-enforce-mode 0)))
 #+END_SRC
 
 **** Macros
@@ -922,6 +922,7 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
         smtpmail-smtp-service 587)      ;TLS port
   (setq mu4e-maildir-shortcuts
     '(("/zoho/Inbox" . ?j)))
+  (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
 ** projectile
