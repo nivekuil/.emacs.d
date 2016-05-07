@@ -263,6 +263,14 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 (setq undo-strong-limit 1200000)
 #+END_SRC
 
+*** Spell checking
+Disable these keybindings for flyspell.
+#+BEGIN_SRC emacs-lisp
+(eval-after-load "flyspell"
+  (lambda ()
+    (define-key flyspell-mode-map (kbd "C-.") nil)
+    (define-key flyspell-mode-map (kbd "C-,") nil)))
+#+END_SRC
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
@@ -456,14 +464,20 @@ Use auto-revert-mode for log files to update the output automatically
 A useful feature that stores the most recently visited files, conveiniently accessible via =helm-mini=.
 #+BEGIN_SRC emacs-lisp
 (recentf-mode)
-(setq recentf-max-saved-items 30)
+(setq recentf-max-saved-items 50)
+(setq recentf-auto-cleanup 30)
 (add-hook 'server-done-hook 'recentf-save-list)
 (add-hook 'kill-emacs-hook 'recentf-save-list)
 #+END_SRC
 
 Ignore autoloaded files that clobber the recentf list after upgrading packages.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'recentf-exclude "*-autoloads.el")
+(setq recentf-exclude (list "/\\.git/.*\\'" ; Git contents
+                            "/elpa/.*\\'"   ; Package files
+                            "/itsalltext/"  ; It's all text temp files
+                            ".*\\.gz\\'"
+                            "TAGS"
+                            ".*-autoloads\\.el\\'"))
 #+END_SRC
 
 ** Major modes
@@ -516,9 +530,9 @@ There should be no scroll margin in a shell buffer.
 #+END_SRC
 
 *** ERC
-   #+BEGIN_SRC emacs-lisp
-   (require 'erc)
-   #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(require 'erc)
+#+END_SRC
 Autojoin channels when ERC starts.
 #+BEGIN_SRC emacs-lisp
   (setq erc-autojoin-channels-alist nil)
@@ -528,6 +542,8 @@ Autojoin channels when ERC starts.
 Highlight nicknames.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'erc-modules 'hl-nicks)
+(add-to-list 'erc-modules 'notifications)
+(add-to-list 'erc-modules 'spelling)
 #+END_SRC
 
 Hide those annoying join/quit messages.
