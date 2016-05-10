@@ -126,6 +126,7 @@ Use melpa as package repository.
              '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 #+END_SRC
 
 Load and activate packages.
@@ -383,7 +384,8 @@ Make the current window 80 columns wide.
 (defun set-frame-width-80col (&optional cols)
   (interactive "p")
   (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1)))
- (set-frame-height (selected-frame) (x-display-pixel-height)))
+  (set-frame-height (selected-frame) (x-display-pixel-height))
+  (set-frame-position (selected-frame) 0 0))
 
 #+END_SRC
 
@@ -687,6 +689,9 @@ JSON is a subset of YAML, so use yaml-mode to edit json files.
 (add-to-list 'auto-mode-alist '("\\.json$" . yaml-mode))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(setq js-indent-level 2)
+#+END_SRC
 *** Python
 Use jedi for completion.
 #+BEGIN_SRC emacs-lisp
