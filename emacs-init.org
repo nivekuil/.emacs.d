@@ -391,7 +391,6 @@ Make the current window 80 columns wide.
 #+END_SRC
 
 *** TODO irc
-TODO - encrypt ercpass file
 #+BEGIN_SRC emacs-lisp
 (defun connect-to-irc ()
   (interactive)
