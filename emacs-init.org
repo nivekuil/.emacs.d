@@ -276,12 +276,13 @@ Disable these keybindings for flyspell.
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
 (setq browse-url-generic-program (executable-find "google-chrome-beta"))
-(defun browse-url (url &rest _)
-  "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
-  (interactive)
-  (if (display-graphic-p)
-      (browse-url-generic url)
-    (eww-browse-url url)))
+(with-eval-after-load 'erc
+ (defun browse-url (url &rest _)
+ "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
+ (interactive)
+ (if (display-graphic-p)
+  (browse-url-generic url)
+  (eww-browse-url url))))
 #+END_SRC
 
 * Custom Functions
@@ -392,20 +393,19 @@ Make the current window 80 columns wide.
 *** TODO irc
 TODO - encrypt ercpass file
 #+BEGIN_SRC emacs-lisp
-  (defun connect-to-irc ()
-    (interactive)
-    ;; (erc-tls :server "irc.freenode.net" :port 6697
-    ;;          :nick "nivekuil"
-    ;;          :password (with-temp-buffer
-    ;;                      (insert-file-contents (concat user-emacs-directory "ercpass"))
-    ;;                      (buffer-string)))
-    (erc-tls :server "nivekuil.com" :port 7000
-             :nick "nivekuil"
-             :password (with-temp-buffer
-                         (insert-file-contents
-                          (concat user-emacs-directory "ercpass.txt"))
-                         (buffer-string)))
-    )
+(defun connect-to-irc ()
+  (interactive)
+  ;; (erc-tls :server "irc.freenode.net" :port 6697
+  ;;          :nick "nivekuil"
+  ;;          :password (with-temp-buffer
+  ;;                      (insert-file-contents (concat user-emacs-directory "ercpass"))
+  ;;                      (buffer-string)))
+  (erc-tls :server "nivekuil.com" :port 7000
+           :nick "nivekuil"
+           :password (with-temp-buffer
+                       (insert-file-contents
+                         (concat user-emacs-directory "ercpass.gpg"))
+                       (buffer-string))))
 #+END_SRC
 
 *** jump-to-last-edit
@@ -896,9 +896,9 @@ mu4e is not part of package.el, so we have to require it manually instead of let
                               (:human-date . 9)))
 #+END_SRC
 
-Update mailboxes every hour.
+Update mailboxes every 30 minutes.
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-update-interval 3600)
+(setq mu4e-update-interval 1800)
 #+END_SRC
 
 Use zoho as default mailbox.
@@ -944,6 +944,11 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
   (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
+** mu4e-alert
+#+BEGIN_SRC emacs-lisp
+(mu4e-alert-set-default-style 'libnotify)
+(mu4e-alert-enable-notifications)
+#+END_SRC
 ** projectile
 #+BEGIN_SRC emacs-lisp
 (projectile-global-mode t)
