@@ -52,7 +52,9 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x m") 'mu4e)
+(global-set-key (kbd "C-x m")
+                (lambda () (interactive)
+                  (mu4e-headers-search-bookmark "date:7d..now")))
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-r") 'ace-window)
@@ -390,7 +392,7 @@ Make the current window 80 columns wide.
 
 #+END_SRC
 
-*** TODO irc
+*** irc
 #+BEGIN_SRC emacs-lisp
 (defun connect-to-irc ()
   (interactive)
@@ -883,16 +885,16 @@ Delete all whitespace instead of doing it one character at a time.
 #+END_SRC
 
 ** mu4e
-mu4e is not part of package.el, so we have to require it manually instead of letting package-initialize handle it.
+mu4e is not part of elpa, so we have to require it manually instead of letting package-initialize handle it.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
   (require 'mu4e)
-  (setq mu4e-get-mail-command "mbsync zoho")
+  (setq mu4e-get-mail-command "mbsync zoho gmail")
   (setq mu4e-headers-date-format "%b %d")
   (setq mu4e-headers-time-format "%I:%M %p")
-  (setq mu4e-headers-fields '((:subject . 57)
-                              (:from . 23)
-                              (:human-date . 9)))
+  (setq mu4e-headers-fields '((:subject . 50)
+                              (:from . 20)
+                              (:human-date . 7)))
 #+END_SRC
 
 Update mailboxes every 30 minutes.
@@ -943,7 +945,13 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
   (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
+Start mu4e in the background.
+#+BEGIN_SRC emacs-lisp
+(mu4e t)
+#+END_SRC
+
 ** mu4e-alert
+Use libnotify to send notifications about new emails.
 #+BEGIN_SRC emacs-lisp
 (mu4e-alert-set-default-style 'libnotify)
 (mu4e-alert-enable-notifications)
