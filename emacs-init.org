@@ -287,6 +287,19 @@ Shadow the original browse-url function, making it work appropriate to the frame
   (eww-browse-url url))))
 #+END_SRC
 
+** Timestamp message buffer
+#+BEGIN_SRC emacs-lisp
+(defadvice message (before test-symbol activate)
+  (unless (string-equal (ad-get-arg 0) "%s%s")
+    (let ((inhibit-read-only t)
+          (deactivate-mark nil))
+      (with-current-buffer (messages-buffer)
+        (goto-char (point-max))
+        (unless (bolp)
+          (newline))
+        (insert (format-time-string "[%Y-%m-%d %T] ")))))
+#+END_SRC
+
 * Custom Functions
 ** Commands
 *** Run current buffer in interpreter asynchronously
@@ -897,9 +910,9 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
                               (:human-date . 7)))
 #+END_SRC
 
-Update mailboxes every 30 minutes.
+Update mailboxes every 5 minutes.
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-update-interval 1800)
+(setq mu4e-update-interval 300)
 #+END_SRC
 
 Use zoho as default mailbox.
@@ -947,7 +960,7 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
 
 Start mu4e in the background.
 #+BEGIN_SRC emacs-lisp
-(mu4e t)
+;;(mu4e t)
 #+END_SRC
 
 ** mu4e-alert
