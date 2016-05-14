@@ -287,17 +287,13 @@ Shadow the original browse-url function, making it work appropriate to the frame
   (eww-browse-url url))))
 #+END_SRC
 
-** Timestamp message buffer
+** Message buffer
+Timestamp each message.
 #+BEGIN_SRC emacs-lisp
-(defadvice message (before test-symbol activate)
-  (unless (string-equal (ad-get-arg 0) "%s%s")
-    (let ((inhibit-read-only t)
-          (deactivate-mark nil))
-      (with-current-buffer (messages-buffer)
-        (goto-char (point-max))
-        (unless (bolp)
-          (newline))
-        (insert (format-time-string "[%Y-%m-%d %T] "))))))
+(defadvice message (before when-was-that activate)
+  "Add timestamps to `message' output."
+  (ad-set-arg 0 (concat (format-time-string "[%T] ")
+                        (ad-get-arg 0))))
 #+END_SRC
 
 * Custom Functions
