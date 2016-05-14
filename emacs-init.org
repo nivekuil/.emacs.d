@@ -297,7 +297,7 @@ Shadow the original browse-url function, making it work appropriate to the frame
         (goto-char (point-max))
         (unless (bolp)
           (newline))
-        (insert (format-time-string "[%Y-%m-%d %T] ")))))
+        (insert (format-time-string "[%Y-%m-%d %T] "))))))
 #+END_SRC
 
 * Custom Functions
