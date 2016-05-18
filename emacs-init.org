@@ -52,9 +52,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x m")
-                (lambda () (interactive)
-                  (mu4e-headers-search-bookmark "date:7d..now")))
+(global-set-key (kbd "C-x m") 'mu4e)
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-r") 'ace-window)
@@ -277,14 +275,14 @@ Disable these keybindings for flyspell.
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-(setq browse-url-generic-program (executable-find "google-chrome-beta"))
-(with-eval-after-load 'erc
- (defun browse-url (url &rest _)
- "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
- (interactive)
- (if (display-graphic-p)
-  (browse-url-generic url)
-  (eww-browse-url url))))
+  (setq browse-url-generic-program (executable-find "google-chrome-beta"))
+  (add-hook 'after-init-hook (lambda ()
+   (defun browse-url (url &rest _)
+   "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
+   (interactive)
+   (if (display-graphic-p)
+    (browse-url-generic url)
+    (eww-browse-url url)))))
 #+END_SRC
 
 ** Message buffer
@@ -901,7 +899,7 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
   (setq mu4e-get-mail-command "mbsync zoho gmail")
   (setq mu4e-headers-date-format "%b %d")
   (setq mu4e-headers-time-format "%I:%M %p")
-  (setq mu4e-headers-fields '((:subject . 50)
+  (setq mu4e-headers-fields '((:subject . 49)
                               (:from . 20)
                               (:human-date . 7)))
 #+END_SRC
@@ -956,7 +954,7 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
 
 Start mu4e in the background.
 #+BEGIN_SRC emacs-lisp
-;;(mu4e t)
+;;(add-hook 'after-init-hook 'mu4e)
 #+END_SRC
 
 ** mu4e-alert
@@ -1009,7 +1007,7 @@ Backspace should not end swiper.
 Mini system monitor that pops up in the minibuffer after a period of idleness.
 #+BEGIN_SRC emacs-lisp
 (setq symon-delay 30)
-(setq symon-sparkline-width 48)
+(setq symon-sparkline-width 1)
 (setq symon-refresh-rate 2)
 (symon-mode 1)
 #+END_SRC
