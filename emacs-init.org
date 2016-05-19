@@ -907,6 +907,7 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
 Update mailboxes every 5 minutes.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-update-interval 300)
+(setq mu4e-hide-index-messages t)
 #+END_SRC
 
 Use zoho as default mailbox.
