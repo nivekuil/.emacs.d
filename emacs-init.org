@@ -772,6 +772,10 @@ Display a beacon when changing windows.
 
 #+END_SRC
 
+** cider
+#+BEGIN_SRC emacs-lisp
+(setq cider-default-repl-command "boot")
+#+END_SRC
 ** column-enforce-mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
