@@ -189,15 +189,20 @@ Show column number in mode line.
       '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
                    deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
 
+(setq theme-combos
+      '((load-theme 'solarized-dark t)
+        (load-theme 'jazz t)))
+
 (setq solarized-scale-org-headlines nil)
 (load-theme 'solarized-dark t)
+(load-theme 'jazz t)
 
 #+END_SRC
 
 **** Optional settings
 #+BEGIN_SRC emacs-lisp
 (set-face-background 'default "#111122")
-;(set-face-foreground 'default "#BCBCBC")
+(set-face-foreground 'default "#BCBCBC")
 #+END_SRC
      
 *** Fringes
@@ -271,11 +276,12 @@ Disable these keybindings for flyspell.
   (lambda ()
     (define-key flyspell-mode-map (kbd "C-.") nil)
     (define-key flyspell-mode-map (kbd "C-,") nil)))
+(setq ispell-program-name "/usr/bin/hunspell")
 #+END_SRC
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-  (setq browse-url-generic-program (executable-find "google-chrome-beta"))
+  (setq browse-url-generic-program (executable-find "firefox"))
   (add-hook 'after-init-hook (lambda ()
    (defun browse-url (url &rest _)
    "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -396,7 +402,6 @@ Make the current window 80 columns wide.
   (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1)))
   (set-frame-height (selected-frame) (x-display-pixel-height))
   (set-frame-position (selected-frame) 0 0))
-
 #+END_SRC
 
 *** irc
@@ -457,7 +462,7 @@ Use electric pair mode to automatically insert matching delimiters (sometimes an
 
 Use mouse avoidance mode so the rodent doesn't cover the actual cursor.  I don't even notice I have this mode enabled, which is a probably a positive sign.
 #+BEGIN_SRC emacs-lisp
-(setq mouse-avoidance-mode 'banish)
+(mouse-avoidance-mode 'banish)
 #+END_SRC
 
 Tab inserts spaces only.
@@ -521,6 +526,10 @@ Use irony-mode.
 (setq irony-additional-clang-options '("-std=c++11"))
 #+END_SRC
 
+*** Clojure
+#+BEGIN_SRC emacs-lisp
+(add-hook 'clojure-mode-hook 'paredit-mode)
+#+END_SRC
 *** Comint
 There should be no scroll margin in a shell buffer.
 #+BEGIN_SRC emacs-lisp
@@ -735,12 +744,19 @@ Set scroll margin in terminal to 0.
 Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'xwidget-webkit-mode-hook
-      (lambda ()
-        (setq-local mwheel-scroll-up-function
-                    (lambda (&optional arg) (xwidget-webkit-scroll-up)))
-        (setq-local mwheel-scroll-down-function
-                    (lambda (&optional arg) (xwidget-webkit-scroll-down)))
-        (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
+          (lambda ()
+            (setq-local mwheel-scroll-up-function
+                        (lambda (&optional arg) (xwidget-webkit-scroll-up)))
+            (setq-local mwheel-scroll-down-function
+                        (lambda (&optional arg) (xwidget-webkit-scroll-down)))
+            (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
+
+#+END_SRC
+
+Reload automatically, handy for development. Should find a way to do this in background.
+#+BEGIN_SRC emacs-lisp
+;;(add-hook 'xwidget-webkit-mode-hook
+;;          (lambda () (run-with-timer 2 2 'xwidget-webkit-reload)))
 #+END_SRC
 * Packages
 ** ace-window
@@ -825,7 +841,7 @@ Best package ever!
 (setq deft-default-extension "org")
 (setq deft-text-mode 'org-mode)
 (setq deft-auto-save-interval 0)
-(setq deft-window-offset 2)
+(setq deft-width-offset 3)
 #+END_SRC
 
 Use hl-line-mode in the deft buffer.
@@ -838,7 +854,7 @@ Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(add-hook 'flycheck-mode-hook #'flycheck-irony-setup);
+(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
 (setq flycheck-display-errors-delay 0.4)
 
 #+END_SRC
@@ -900,7 +916,7 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
   (require 'mu4e)
-  (setq mu4e-get-mail-command "mbsync zoho gmail")
+  (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-headers-date-format "%b %d")
   (setq mu4e-headers-time-format "%I:%M %p")
   (setq mu4e-headers-fields '((:subject . 49)
@@ -947,7 +963,7 @@ Use =mu4e-shr2text= found in the =mu4e-contrib= package to display rich text mes
 Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
 #+BEGIN_SRC emacs-lisp
   (require 'smtpmail)
-  (setq user-mail-address "kevin@nivekuil.com"
+  (setq user-mail-address (concat "kevin" "@nivekuil.com")
         message-send-mail-function 'smtpmail-send-it
         smtpmail-smtp-server "smtp.zoho.com"
         smtpmail-stream-type 'starttls
