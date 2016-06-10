@@ -247,7 +247,8 @@ Make scrolling behave smoothly.  Note that scrolling does not work correctly wit
 #+END_SRC
 
 Change how many lines mouse wheel scrolls by - 1 line at a time with no modifiers.
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRn
+C emacs-lisp
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
 #+END_SRC
 
@@ -462,7 +463,7 @@ Use electric pair mode to automatically insert matching delimiters (sometimes an
 
 Use mouse avoidance mode so the rodent doesn't cover the actual cursor.  I don't even notice I have this mode enabled, which is a probably a positive sign.
 #+BEGIN_SRC emacs-lisp
-(mouse-avoidance-mode 'banish)
+(mouse-avoidance-mode 'exile)
 #+END_SRC
 
 Tab inserts spaces only.
@@ -536,6 +537,12 @@ There should be no scroll margin in a shell buffer.
 (add-hook 'comint-mode-hook (lambda ()
                               (set (make-local-variable 'scroll-margin) 0)))
 (setq comint-prompt-read-only t)
+#+END_SRC
+
+*** Conf
+Use tabs in Unix conf files.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'conf-mode (lambda () (setq indent-tabs-mode t)))
 #+END_SRC
 
 *** Eww
