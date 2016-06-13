@@ -58,9 +58,8 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
 (global-set-key (kbd "C-x f") 'anchored-transpose)
-(global-set-key (kbd "C-M-s") 'helm-do-ag-project-root)
+(global-set-key (kbd "C-M-s") 'helm-projectile-ag)
 (global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
-
 #+END_SRC
 
 *** avy
@@ -247,8 +246,7 @@ Make scrolling behave smoothly.  Note that scrolling does not work correctly wit
 #+END_SRC
 
 Change how many lines mouse wheel scrolls by - 1 line at a time with no modifiers.
-#+BEGIN_SRn
-C emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
 #+END_SRC
 
@@ -282,7 +280,7 @@ Disable these keybindings for flyspell.
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-  (setq browse-url-generic-program (executable-find "firefox"))
+  (setq browse-url-generic-program (executable-find "firefox-aurora"))
   (add-hook 'after-init-hook (lambda ()
    (defun browse-url (url &rest _)
    "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -923,12 +921,15 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
   (require 'mu4e)
-  (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-headers-date-format "%b %d")
   (setq mu4e-headers-time-format "%I:%M %p")
   (setq mu4e-headers-fields '((:subject . 49)
                               (:from . 20)
                               (:human-date . 7)))
+#+END_SRC
+Command run to sync mailboxes.  mbsync seems to have no timeout handling built in (and it gets stuck a lot), so we use the timeout utility to run it.
+#+BEGIN_SRC emacs-lisp
+  (setq mu4e-get-mail-command "timeout -s TERM 60 mbsync -a")
 #+END_SRC
 
 Update mailboxes every 5 minutes.
