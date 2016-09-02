@@ -1,3 +1,4 @@
+# -*- mode: poly-org -*-
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -467,8 +468,10 @@ Make the current window 80 columns wide.
 (defun compile-dwim ()
   (interactive)
   (save-buffer)
-  (recompile))
+  (save-window-excursion
+    (recompile)))
 #+END_SRC
+
 * Mode settings
 ** Minor modes
 Use subword mode in prog mode to move by camelCase.
@@ -595,10 +598,11 @@ Use tabs in Unix conf files.
 (add-hook 'conf-mode (lambda () (setq indent-tabs-mode t)))
 #+END_SRC
 
-*** Emacs lisp
+*** Emacs lisp  (elisp)
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 #+END_SRC
+
 *** Eww
 #+BEGIN_SRC emacs-lisp
 (eval-after-load "eww"
@@ -751,13 +755,6 @@ Add an "<el" expansion for emacs-lisp source blocks.
 #+END_SRC
 
 **** Website
-Org project settings for publishing my website, converting org files to html for jekyll.
-#+BEGIN_SRC emacs-lisp
-(setq org-html-doctype "html5")
-(setq org-html-postamble "&copy; nivekuil %C <br> %c <br>
-<a href=\"./index.org\">Source</a> | <a href=\"#\">Back to top</a>")
-#+END_SRC
-
 When exporting to HTML, highlight the code within src blocks.
 #+BEGIN_SRC emacs-lisp
 (setq org-src-fontify-natively t)
@@ -851,9 +848,6 @@ Reload automatically, handy for development. Should find a way to do this in bac
 * Packages
 ** ace-window
 Switch between windows by assigning a number to each one.
-#+BEGIN_SRC emacs-lisp
-(setq aw-background t)
-#+END_SRC
 
 ** aggressive-indent-mode
 Automatically fix indentation as you type.  Nice to have in lisp, but I find it more annoying than useful in other languages.
@@ -872,9 +866,9 @@ Automatically fix indentation as you type.  Nice to have in lisp, but I find it 
 ** beacon
 Display a beacon when changing windows.
 #+BEGIN_SRC emacs-lisp
- (beacon-mode 1)
-    (setq beacon-blink-when-window-scrolls nil)
-    (add-to-list 'beacon-dont-blink-major-modes 'special-mode)
+(beacon-mode 1)
+(setq beacon-blink-when-window-scrolls nil)
+(add-to-list 'beacon-dont-blink-major-modes 'special-mode)
 
 #+END_SRC
 
@@ -889,7 +883,6 @@ Use column enforce mode to mark text past column 80.
 (add-hook 'c-mode-hook 'column-enforce-mode)
 (add-hook 'c++-mode-hook 'column-enforce-mode)
 (add-hook 'clojure-mode-hook 'column-enforce-mode)
-(add-hook 'emacs-lisp-mode-hook 'column-enforce-mode)
 (add-hook 'js-mode-hook 'column-enforce-mode)
 (add-hook 'python-mode-hook 'column-enforce-mode)
 #+END_SRC
@@ -914,6 +907,10 @@ Autocomplete should preserve the original case as much as possible.
 #+BEGIN_SRC emacs-lisp
 (setq company-dabbrev-downcase nil)
 (setq company-dabbrev-ignore-case nil)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq company-tooltip-align-annotations t)
 #+END_SRC
 
 ** corral
@@ -954,7 +951,7 @@ Highlighting indentation levels makes Python ugly, and isn't very useful in prac
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-init-hook #'global-flycheck-mode)
-
+(setq flycheck-global-modes '(not emacs-lisp-mode))
 (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 (setq flycheck-display-errors-delay 0.4)
@@ -1115,6 +1112,15 @@ Use libnotify to send notifications about new emails.
 #+BEGIN_SRC emacs-lisp
 (mu4e-alert-set-default-style 'libnotify)
 (mu4e-alert-enable-notifications)
+#+END_SRC
+
+** polymode
+Override polymode key bindings.
+#+BEGIN_SRC emacs-lisp
+(eval-after-load 'polymode
+  (lambda nil
+    (define-key polymode-mode-map (kbd "M-n") 'forward-paragraph)
+    (define-key polymode-mode-map (kbd "M-p") 'backward-paragraph)))
 #+END_SRC
 ** projectile
 #+BEGIN_SRC emacs-lisp
