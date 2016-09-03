@@ -92,6 +92,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-x C-n") 'helm-mini)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-h x") 'helm-google-suggest)
+(global-set-key (kbd "C-l") 'helm-locate)
 #+END_SRC
 
 *** corral
@@ -392,6 +393,7 @@ exponent itself."
 
 *** beginning-of-line-or-indentation
 Cycle cursor between the beginning of indentation and beginning of the line.
+
 #+BEGIN_SRC emacs-lisp
 (defun beginning-of-line-or-indentation ()
   (interactive)
@@ -471,7 +473,6 @@ Make the current window 80 columns wide.
   (save-window-excursion
     (recompile)))
 #+END_SRC
-
 * Mode settings
 ** Minor modes
 Use subword mode in prog mode to move by camelCase.
@@ -801,6 +802,8 @@ JSON is a subset of YAML, so use yaml-mode to edit json files.
 (add-hook 'rust-mode-hook #'racer-mode)
 (add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'racer-mode-hook #'company-mode)
+(eval-after-load 'racer
+  (lambda nil (define-key racer-mode-map (kbd "C-c C-d") 'racer-describe)))
 (add-hook 'rust-mode-hook
           (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
 #+END_SRC
@@ -1000,6 +1003,10 @@ Show helm input within the helm window.
 (setq helm-net-prefer-curl t)
 #+END_SRC
 
+*** helm-projectile
+#+BEGIN_SRC emacs-lisp
+(helm-projectile-on)
+#+END_SRC
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
 (setq helm-ag-fuzzy-match t)
