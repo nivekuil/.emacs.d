@@ -300,22 +300,24 @@ Shadow the original browse-url function, making it work appropriate to the frame
                                (if (display-graphic-p)
                                    (browse-url-generic url)
                                  (eww-browse-url url)))))
-#+END_SRC
+#+END_SRC                                 
 
 ** Message buffer
 Timestamp each message.
 #+BEGIN_SRC emacs-lisp
-(defadvice message (before when-was-that activate)
-  "Add timestamps to `message' output."
-  (when-let (message (ad-get-arg 0))
-    (ad-set-arg 0 (concat (format-time-string "[%T] ") message))))
-#+END_SRC
+(defun timestamp-message (orig-fun format-string &rest args)
+  (when (or format-string args)
+    (apply orig-fun
+           (concat (format-time-string "[%T] " (current-time)) format-string)
+           args)))
+(advice-add 'message :around #'timestamp-message)
 
 ** Shell
 Don't pop up the async shell command buffer.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'display-buffer-alist (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
 #+END_SRC
+
 ** TRAMP
 Don't litter directories with history files.
 #+BEGIN_EXAMPLE
@@ -1154,6 +1156,7 @@ Disable the projectile mode line, if only because it slows TRAMP to a crawl.
 #+BEGIN_SRC emacs-lisp
 (require 'spaceline-config)
 (spaceline-emacs-theme)
+(spaceline-helm-mode)
 (spaceline-toggle-minor-modes-off)
 (spaceline-toggle-buffer-encoding-abbrev-off)
 (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
