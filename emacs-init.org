@@ -307,10 +307,8 @@ Timestamp each message.
 #+BEGIN_SRC emacs-lisp
 (defadvice message (before when-was-that activate)
   "Add timestamps to `message' output."
-  (when (ad-get-arg 0)
-    (ad-set-arg 0 (concat (format-time-string "[%T] ")
-                          (ad-get-arg 0))))
-  )
+  (when-let (message (ad-get-arg 0))
+    (ad-set-arg 0 (concat (format-time-string "[%T] ") message))))
 #+END_SRC
 
 ** Shell
