@@ -123,11 +123,11 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 Use melpa as package repository.
 #+BEGIN_SRC emacs-lisp
 (require 'package)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 #+END_SRC
 
 Load and activate packages.
@@ -237,25 +237,24 @@ Disable autosave based on number of characters typed.  Autosave after 10 seconds
 *** Dired
 When multiple dired buffers are open, dired should assume that file operations should be directed to the path in the other dired buffer.
 #+BEGIN_SRC emacs-lisp
-(setq dired-dwim-target nil)
-#+END_SRC
+  (setq dired-dwim-target nil)
+                                                                              #+END_SRC
 
 *** Eldoc
 This should be lower than flycheck-display-errors-delay so it doesn't clobber it.
 #+BEGIN_SRC emacs-lisp
-(setq eldoc-idle-delay 0.3)
-#+END_SRC
+  (setq eldoc-idle-delay 0.3)
+    #+END_SRC
 *** Fill column
 fill commands should create rows up to to 78 characters long.
 #+BEGIN_SRC emacs-lisp
-(setq-default fill-column 78)
-#+END_SRC
-
+  (setq-default fill-column 78)
+    #+END_SRC
 *** Scrolling
 Make scrolling behave smoothly.  Note that scrolling does not work correctly with hl-line-mode after cursor goes to the bottom of the buffer.
 #+BEGIN_SRC emacs-lisp
-(setq scroll-margin 7
-      scroll-conservatively 10000)
+  (setq scroll-margin 7
+        scroll-conservatively 10000)
 #+END_SRC
 
 Change how many lines mouse wheel scrolls by - 1 line at a time with no modifiers.
@@ -433,13 +432,23 @@ Make the current window 80 columns wide.
 #+BEGIN_SRC emacs-lisp
 (defun set-frame-width-80col (&optional cols)
   (interactive "p")
-  (set-frame-width (selected-frame) (+ (* 81 cols) (- cols 1)))
+  (set-frame-width (selected-frame) (* 80 cols))
   (set-frame-height (selected-frame) (x-display-pixel-height))
   (if (> cols 0)
       (set-frame-position (selected-frame) 0 0)
     (set-frame-position (selected-frame) -1 0)))
 #+END_SRC
-
+*** set-frame-with-100col
+Make the current window 100 columns wide.
+#+BEGIN_SRC emacs-lisp
+(defun set-frame-width-100col (&optional cols)
+  (interactive "p")
+  (set-frame-width (selected-frame) (* 100 cols))
+  (set-frame-height (selected-frame) (x-display-pixel-height))
+  (if (> cols 0)
+      (set-frame-position (selected-frame) 0 0)
+    (set-frame-position (selected-frame) -1 0)))
+#+END_SRC
 *** irc
 #+BEGIN_SRC emacs-lisp
 (defun connect-to-irc ()
@@ -697,7 +706,7 @@ Use pretty symbols.
 *** Python
 #+BEGIN_SRC emacs-lisp
 (when (executable-find "ipython")
-      (setq python-shell-intrepreter "ipython"))
+  (setq python-shell-intrepreter "ipython"))
 #+END_SRC
 *** Org-mode
 Use visual line mode to wrap lines in org mode.
@@ -746,8 +755,8 @@ Disable syntax checking in src blocks.
 **** Macros
 Add an "<el" expansion for emacs-lisp source blocks.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-structure-template-alist
-             '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+(with-eval-after-load 'org (add-to-list 'org-structure-template-alist
+                                        '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")))
 #+END_SRC
 
 **** Website
@@ -765,7 +774,7 @@ Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
 
 Add more backends to =org-export=.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-export-backends 'org)
+(with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
 #+END_SRC
 
 The publish function.
@@ -900,6 +909,7 @@ Use company mode for text and code completion.
 (add-to-list 'company-backends 'company-irony)
 (add-to-list 'company-backends 'company-irony-c-headers)
 (add-to-list 'company-backends 'company-tern)
+(company-emacs-eclim-setup)
 (setq company-idle-delay 0.15)
 #+END_SRC
 
@@ -943,6 +953,10 @@ Use hl-line-mode in the deft buffer.
 (add-hook 'deft-mode-hook (lambda () (hl-line-mode 1)))
 #+END_SRC
 
+** eclim
+#+BEGIN_SRC emacs-lisp
+(global-eclim-mode)
+#+END_SRC
 ** elpy
 #+BEGIN_SRC emacs-lisp
 (elpy-enable)
