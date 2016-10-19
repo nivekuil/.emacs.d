@@ -154,7 +154,8 @@ If any packages from the above list are missing, refresh the package list and in
 Pin packages to melpa-stable, since melpa versions will always have a higher version number.
 #+BEGIN_SRC emacs-lisp
   (setq package-pinned-packages
-        '((cider . "melpa-stable")))
+        '((cider . "melpa-stable")
+          (org . "org")))
   #+END_SRC        
 
 ** Appearance
@@ -162,34 +163,34 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 #+BEGIN_SRC emacs-lisp
   ;;(set-cursor-color "white")
   (blink-cursor-mode 0)
-#+END_SRC
+                    #+END_SRC
 
 *** Font
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
-#+END_SRC
+                    #+END_SRC
 
 *** Frame title
 #+BEGIN_SRC emacs-lisp
   (setq phrases `("conlidimus nostra ultra pensum"))
-#+END_SRC
+                    #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+                                                                                                  #+BEGIN_SRC emacs-lisp
   (add-hook 'after-init-hook
             (lambda () (setq frame-title-format 'mode-line-format)))
-#+END_SRC
+                    #+END_SRC
 
 *** Toolbars
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode 0)
   (tool-bar-mode 0)
-#+END_SRC
+                    #+END_SRC
 
 *** Mode line
 Show column number in mode line.
 #+BEGIN_SRC emacs-lisp
   (column-number-mode 1)
-#+END_SRC
+                    #+END_SRC
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
@@ -205,7 +206,7 @@ Show column number in mode line.
 (load-theme 'solarized-dark t)
 (load-theme 'jazz t)
 
-#+END_SRC
+                    #+END_SRC
 
 **** Optional settings
 #+BEGIN_SRC emacs-lisp
@@ -311,18 +312,18 @@ Shadow the original browse-url function, making it work appropriate to the frame
 ** Message buffer
 Timestamp each message.
 #+BEGIN_SRC emacs-lisp
-(defun timestamp-message (orig-fun format-string &rest args)
-  (when (or format-string args)
-    (apply orig-fun
-           (concat (format-time-string "[%T] " (current-time)) format-string)
-           args)))
-(advice-add 'message :around #'timestamp-message)
+  (defun timestamp-message (orig-fun format-string &rest args)
+    (when (or (> (length format-string) 0) args)
+      (apply orig-fun
+             (concat (format-time-string "[%T] " (current-time)) format-string)
+             args)))
+  (advice-add 'message :around #'timestamp-message)
 #+END_SRC
 
 ** Shell
 Don't pop up the async shell command buffer.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'display-buffer-alist (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
+  (add-to-list 'display-buffer-alist (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
 #+END_SRC
 
 ** TRAMP
