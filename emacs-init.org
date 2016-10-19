@@ -153,52 +153,53 @@ If any packages from the above list are missing, refresh the package list and in
 
 Pin packages to melpa-stable, since melpa versions will always have a higher version number.
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'package-pinned-packages '("cider" . "melpa-stable"))
-#+END_SRC
+  (setq package-pinned-packages
+        '((cider . "melpa-stable")))
+  #+END_SRC        
 
 ** Appearance
 *** Cursor
 #+BEGIN_SRC emacs-lisp
-;;(set-cursor-color "white")
-(blink-cursor-mode 0)
+  ;;(set-cursor-color "white")
+  (blink-cursor-mode 0)
 #+END_SRC
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
+  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
 #+END_SRC
 
 *** Frame title
 #+BEGIN_SRC emacs-lisp
-(setq phrases `("conlidimus nostra ultra pensum"))
+  (setq phrases `("conlidimus nostra ultra pensum"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook
-          (lambda () (setq frame-title-format 'mode-line-format)))
+  (add-hook 'after-init-hook
+            (lambda () (setq frame-title-format 'mode-line-format)))
 #+END_SRC
 
 *** Toolbars
 #+BEGIN_SRC emacs-lisp
-(menu-bar-mode 0)
-(tool-bar-mode 0)
+  (menu-bar-mode 0)
+  (tool-bar-mode 0)
 #+END_SRC
 
 *** Mode line
 Show column number in mode line.
 #+BEGIN_SRC emacs-lisp
-(column-number-mode 1)
+  (column-number-mode 1)
 #+END_SRC
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
-(setq favorite-themes
-      '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
-                   deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
+  (setq favorite-themes
+        '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
+                     deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
 
-(setq theme-combos
-      '((load-theme 'solarized-dark t)
-        (load-theme 'jazz t)))
+  (setq theme-combos
+        '((load-theme 'solarized-dark t)
+          (load-theme 'jazz t)))
 
 (setq solarized-scale-org-headlines nil)
 (load-theme 'solarized-dark t)
@@ -909,7 +910,6 @@ Use company mode for text and code completion.
 (add-to-list 'company-backends 'company-irony)
 (add-to-list 'company-backends 'company-irony-c-headers)
 (add-to-list 'company-backends 'company-tern)
-(company-emacs-eclim-setup)
 (setq company-idle-delay 0.15)
 #+END_SRC
 
@@ -955,12 +955,18 @@ Use hl-line-mode in the deft buffer.
 
 ** eclim
 #+BEGIN_SRC emacs-lisp
-(global-eclim-mode)
+(add-hook 'java-mode-hook 'eclim-mode)
+#+END_SRC
+*** company-emacs-eclim
+#+BEGIN_SRC emacs-lisp
+(company-emacs-eclim-setup)
+(define-key eclim-mode-map (kbd "C-M-i") 'company-emacs-eclim)
+
 #+END_SRC
 ** elpy
 #+BEGIN_SRC emacs-lisp
-(elpy-enable)
-(setq elpy-rpc-backend "jedi")
+  (elpy-enable)
+  (setq elpy-rpc-backend "jedi")
 #+END_SRC
 
 Highlighting indentation levels makes Python ugly, and isn't very useful in practice.
@@ -1008,32 +1014,33 @@ Make helm buffers appear on the bottom half of the window.
 Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
 (setq helm-apropos-fuzzy-match t)
-#+END_SRC
+                                                                                                    #+END_SRC
 
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
-(setq helm-echo-input-in-header-line t)
-#+END_SRC
+  (setq helm-echo-input-in-header-line t)
+    #+END_SRC
 
 *** helm-web
 #+BEGIN_SRC emacs-lisp
-(setq helm-net-prefer-curl t)
-#+END_SRC
+  (setq helm-net-prefer-curl t)
+    #+END_SRC
 
 *** helm-projectile
 #+BEGIN_SRC emacs-lisp
-(helm-projectile-on)
-#+END_SRC
+  (helm-projectile-on)
+    #+END_SRC
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
 (setq helm-ag-fuzzy-match t)
-#+END_SRC
+    #+END_SRC
 
 ** hungry-delete-mode
 Delete all whitespace instead of doing it one character at a time.
 #+BEGIN_SRC emacs-lisp
-(hungry-delete-mode 1)
+(global-hungry-delete-mode 1)
 (add-hook 'prog-mode-hook (lambda nil (hungry-delete-mode 1)))
+(setq-default c-hungry-delete-key t)
 #+END_SRC
 
 ** magit
@@ -1049,9 +1056,8 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
 (setq mu4e-headers-date-format "%b %d")
 (setq mu4e-headers-time-format "%H:%M")
 (setq mu4e-headers-fields '((:human-date . 7) (:from . 15) (:subject)))
-
-
 #+END_SRC
+
 Command run to sync mailboxes.  mbsync seems to have no timeout handling built in (and it gets stuck a lot), so we use the timeout utility to run it.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-get-mail-command "timeout -s TERM 120 mbsync -a")
@@ -1080,6 +1086,11 @@ Enabling this will make mbsync not break with a maildir error about UIDs.  Offli
 Show images in emails.
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-view-show-images t)
+#+END_SRC
+
+Word wrap emails.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-view-mode-hook 'visual-line-mode)
 #+END_SRC
 
 Gmail and offlineimap leads to duplicate emails showing up in search filters since that's the way labels/virtual folders in Gmail are represented, so skip them.
