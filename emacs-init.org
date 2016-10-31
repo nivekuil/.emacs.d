@@ -153,9 +153,9 @@ If any packages from the above list are missing, refresh the package list and in
 
 Pin packages to melpa-stable, since melpa versions will always have a higher version number.
 #+BEGIN_SRC emacs-lisp
-  (setq package-pinned-packages
-        '((cider . "melpa-stable")
-          (org . "org")))
+(setq package-pinned-packages
+      '((cider . "melpa-stable")
+        (org . "org")))
   #+END_SRC        
 
 ** Appearance
@@ -167,8 +167,8 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
-                    #+END_SRC
+(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
+#+END_SRC
 
 *** Frame title
 #+BEGIN_SRC emacs-lisp
@@ -299,7 +299,7 @@ Disable these keybindings for flyspell.
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-(setq browse-url-generic-program (executable-find "google-chrome-stable"))
+(setq browse-url-generic-program (executable-find "firefox-aurora"))
 (add-hook 'after-init-hook (lambda ()
                              (defun browse-url (url &rest _)
                                "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -819,6 +819,9 @@ Use jade for cool features.
   (lambda nil (define-key racer-mode-map (kbd "C-c C-d") 'racer-describe)))
 (add-hook 'rust-mode-hook
           (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
+(setq racer-rust-src-path
+      (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
+              "/lib/rustlib/src/rust/src"))
 #+END_SRC
 *** SQL
 #+BEGIN_SRC emacs-lisp
