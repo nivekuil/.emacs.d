@@ -1,4 +1,4 @@
-# -*- mode: poly-org -*-
+# -*- poly-org-mode -*-
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -128,17 +128,17 @@ Use melpa as package repository.
                '("melpa" . "https://melpa.org/packages/"))
   (add-to-list 'package-archives
                '("melpa-stable" . "https://stable.melpa.org/packages/"))
-              #+END_SRC
+#+END_SRC
 
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
   (package-initialize)
-    #+END_SRC
+#+END_SRC
 
 List of packages to install, courtesy of package-selected-packages.  This should be updated regularly (automatically).
-  #+BEGIN_SRC emacs-lisp
-  (setq my-packages '(flycheck org-plus-contrib cider company-emacs-eclim eclim flycheck-ocaml tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 puml-mode noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
-    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (setq my-packages '(org-plus-contrib cider company-emacs-eclim eclim flycheck-ocaml tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 puml-mode noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
+#+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
 #+BEGIN_SRC emacs-lisp
@@ -157,14 +157,14 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
         '((cider . "melpa-stable")
           (org . "org")
           (org-plus-contrib . "org")))
-  #+END_SRC        
+#+END_SRC
 
 ** Appearance
 *** Cursor
 #+BEGIN_SRC emacs-lisp
   ;;(set-cursor-color "white")
   (blink-cursor-mode 0)
-                    #+END_SRC
+#+END_SRC
 
 *** Font
 #+BEGIN_SRC emacs-lisp
@@ -174,30 +174,30 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 *** Frame title
 #+BEGIN_SRC emacs-lisp
   (setq phrases `("conlidimus nostra ultra pensum"))
-                    #+END_SRC
+#+END_SRC
 
-                                                                                                                                                                                                      #+BEGIN_SRC emacs-lisp
-                                                                                                                                                                                                        (add-hook 'after-init-hook
-                                                                                                                                                                                                                  (lambda () (setq frame-title-format 'mode-line-format)))
-                    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+                                                                                                                                                                                                      (add-hook 'after-init-hook
+                                                                                                                                                                                                                (lambda () (setq frame-title-format 'mode-line-format)))
+#+END_SRC
 
 *** Toolbars
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode 0)
   (tool-bar-mode 0)
-                    #+END_SRC
+#+END_SRC
 
 *** Mode line
 Show column number in mode line.
 #+BEGIN_SRC emacs-lisp
-  (column-number-mode 1)
-                    #+END_SRC
+(column-number-mode 1)
+#+END_SRC
 
 *** Theme
 #+BEGIN_SRC emacs-lisp
-  (setq favorite-themes
-        '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
-                     deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
+(setq favorite-themes
+  '(grandshell tronesque cyberpunk afternoon sanityinc-tomorrow-bright
+  deeper-blue material sanityinc-tomorrow-blue soothe noctilux))
 
   (setq theme-combos
         '((load-theme 'solarized-dark t)
@@ -207,12 +207,12 @@ Show column number in mode line.
   (load-theme 'solarized-dark t)
   (load-theme 'jazz t)
 
-                    #+END_SRC
+#+END_SRC
 
 **** Optional settings
 #+BEGIN_SRC emacs-lisp
-                                          ;(set-face-background 'default "#000000")
-                                        ;(set-face-foreground 'default "#BCBCBC")
+;(set-face-background 'default "#000000")
+;(set-face-foreground 'default "#BCBCBC")
 #+END_SRC
      
 *** Fringes
@@ -241,18 +241,18 @@ Disable autosave based on number of characters typed.  Autosave after 10 seconds
 When multiple dired buffers are open, dired should assume that file operations should be directed to the path in the other dired buffer.
 #+BEGIN_SRC emacs-lisp
   (setq dired-dwim-target nil)
-                                                                              #+END_SRC
+#+END_SRC
 
 *** Eldoc
 This should be lower than flycheck-display-errors-delay so it doesn't clobber it.
 #+BEGIN_SRC emacs-lisp
   (setq eldoc-idle-delay 0.3)
-    #+END_SRC
+#+END_SRC
 *** Fill column
 fill commands should create rows up to to 78 characters long.
 #+BEGIN_SRC emacs-lisp
   (setq-default fill-column 78)
-    #+END_SRC
+#+END_SRC
 *** Scrolling
 Make scrolling behave smoothly.  Note that scrolling does not work correctly with hl-line-mode after cursor goes to the bottom of the buffer.
 #+BEGIN_SRC emacs-lisp
@@ -1019,26 +1019,26 @@ Make helm buffers appear on the bottom half of the window.
 Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
 (setq helm-apropos-fuzzy-match t)
-                                                                                                    #+END_SRC
+#+END_SRC
 
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
   (setq helm-echo-input-in-header-line t)
-    #+END_SRC
+#+END_SRC
 
 *** helm-web
 #+BEGIN_SRC emacs-lisp
   (setq helm-net-prefer-curl t)
-    #+END_SRC
+#+END_SRC
 
 *** helm-projectile
 #+BEGIN_SRC emacs-lisp
   (helm-projectile-on)
-    #+END_SRC
+#+END_SRC
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
 (setq helm-ag-fuzzy-match t)
-    #+END_SRC
+#+END_SRC
 
 ** hungry-delete-mode
 Delete all whitespace instead of doing it one character at a time.
