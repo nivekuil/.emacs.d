@@ -121,41 +121,42 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 * General Settings
 ** Package Management
 Use melpa as package repository.
-#+BEGIN_SRC emacs-lisp
-(require 'package)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives
-             '("melpa-stable" . "https://stable.melpa.org/packages/"))
-#+END_SRC
+#+BEGIN_SRC emacs-lisp  
+  (require 'package)
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
+  (add-to-list 'package-archives
+               '("melpa-stable" . "https://stable.melpa.org/packages/"))
+              #+END_SRC
 
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
-(package-initialize)
-#+END_SRC
+  (package-initialize)
+    #+END_SRC
 
-List of packages to have.  This should be updated regularly (automatically).
-#+BEGIN_SRC emacs-lisp
-(setq my-packages '(@ queue ace-window avy afternoon-theme aggressive-indent anchored-transpose atom-one-dark-theme auctex auto-complete popup avy beacon seq bubbleberry-theme cider seq spinner queue pkg-info epl clojure-mode clojure-mode mu4e-alert color-theme-sanityinc-tomorrow column-enforce-mode s dash f pythonic company company-irony irony company company-irony-c-headers corral cyberpunk-theme darktooth-theme deft draft-mode epc ctable concurrent deferred erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-irony irony flycheck seq let-alist pkg-info epl dash flycheck-package flycheck seq let-alist pkg-info epl dash focus gnugo xpm ascii-art-to-unicode grandshell-theme haskell-mode helm-ag helm helm-core async popup async helm-projectile dash projectile pkg-info epl dash helm helm-core async popup async highlight-indentation htmlize hungry-delete irony jinja2-mode js2-mode json-rpc kerl let-alist load-theme-buffer-local lush-theme magit magit-popup dash async git-commit with-editor dash async dash with-editor dash async dash async magit-popup dash async material-theme minesweeper monokai-theme multi multiple-cursors names noctilux-theme paredit popup projectile pkg-info epl dash puml-mode py-autopep8 python-environment deferred pythonic pyvenv queue rainbow-delimiters request seq simple-httpd rich-minority smyx-theme solarized-theme dash soothe-theme spacegray-theme spinner sr-speedbar string-utils list-utils stripe-buffer symon temp-buffer-browse jade elpy tronesque-theme ujelly-theme diminish bind-key web-mode whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet zenburn-theme swiper jazz-theme spaceline))
-#+END_SRC
+List of packages to install, courtesy of package-selected-packages.  This should be updated regularly (automatically).
+  #+BEGIN_SRC emacs-lisp
+  (setq my-packages '(flycheck org-plus-contrib cider company-emacs-eclim eclim flycheck-ocaml tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 puml-mode noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
+    #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
-(when (cl-notevery #'package-installed-p my-packages)
-  (progn
-    (package-refresh-contents)
-    (mapc (lambda (package)
-            (package-install package))
-          my-packages)))
+  (require 'cl)
+  (when (cl-notevery #'package-installed-p my-packages)
+    (progn
+      (package-refresh-contents)
+      (mapc (lambda (package)
+              (package-install package))
+            my-packages)))
 #+END_SRC
 
 Pin packages to melpa-stable, since melpa versions will always have a higher version number.
 #+BEGIN_SRC emacs-lisp
-(setq package-pinned-packages
-      '((cider . "melpa-stable")
-        (org . "org")))
+  (setq package-pinned-packages
+        '((cider . "melpa-stable")
+          (org . "org")
+          (org-plus-contrib . "org")))
   #+END_SRC        
 
 ** Appearance
@@ -167,7 +168,7 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
+  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
 #+END_SRC
 
 *** Frame title
@@ -175,9 +176,9 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
   (setq phrases `("conlidimus nostra ultra pensum"))
                     #+END_SRC
 
-                                                                                                  #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook
-            (lambda () (setq frame-title-format 'mode-line-format)))
+                                                                                                                                                                                                      #+BEGIN_SRC emacs-lisp
+                                                                                                                                                                                                        (add-hook 'after-init-hook
+                                                                                                                                                                                                                  (lambda () (setq frame-title-format 'mode-line-format)))
                     #+END_SRC
 
 *** Toolbars
@@ -202,38 +203,38 @@ Show column number in mode line.
         '((load-theme 'solarized-dark t)
           (load-theme 'jazz t)))
 
-(setq solarized-scale-org-headlines nil)
-(load-theme 'solarized-dark t)
-(load-theme 'jazz t)
+  (setq solarized-scale-org-headlines nil)
+  (load-theme 'solarized-dark t)
+  (load-theme 'jazz t)
 
                     #+END_SRC
 
 **** Optional settings
 #+BEGIN_SRC emacs-lisp
-                                        ;(set-face-background 'default "#000000")
+                                          ;(set-face-background 'default "#000000")
                                         ;(set-face-foreground 'default "#BCBCBC")
 #+END_SRC
      
 *** Fringes
 #+BEGIN_SRC emacs-lisp
-(fringe-mode '(4 . 0))
-(scroll-bar-mode 0)
+  (fringe-mode '(4 . 0))
+  (scroll-bar-mode 0)
 #+END_SRC
 
 ** Editor behavior
 *** Autosave
 Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
 #+BEGIN_SRC emacs-lisp
-(setq backup-directory-alist `(("." . "/home/nivekuil/.emacs.d/backup")))
-(setq auto-save-list-file-prefix "/home/nivekuil/.emacs.d/autosave/")
-(setq auto-save-file-name-transforms
-      `((".*" , "/home/nivekuil/.emacs.d/autosave/" t)))
+  (setq backup-directory-alist `(("." . "/home/nivekuil/.emacs.d/backup")))
+  (setq auto-save-list-file-prefix "/home/nivekuil/.emacs.d/autosave/")
+  (setq auto-save-file-name-transforms
+        `((".*" , "/home/nivekuil/.emacs.d/autosave/" t)))
 #+END_SRC
 
 Disable autosave based on number of characters typed.  Autosave after 10 seconds of idle.
 #+BEGIN_SRC emacs-lisp
-(setq auto-save-interval 0)
-(setq auto-save-timeout 10)
+  (setq auto-save-interval 0)
+  (setq auto-save-timeout 10)
 #+END_SRC
 
 *** Dired
@@ -261,13 +262,13 @@ Make scrolling behave smoothly.  Note that scrolling does not work correctly wit
 
 Change how many lines mouse wheel scrolls by - 1 line at a time with no modifiers.
 #+BEGIN_SRC emacs-lisp
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 3) ((control) . 8)))
 #+END_SRC
 
 *** Yanking (pasting)
 If we copy something from outside emacs, save it in the kill ring so it doesn't get lost after a kill.
 #+BEGIN_SRC emacs-lisp
-(setq save-interprogram-paste-before-kill t)
+  (setq save-interprogram-paste-before-kill t)
 #+END_SRC
 
 *** Increase garbage collection memory threshold
