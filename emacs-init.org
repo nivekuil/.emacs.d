@@ -1,4 +1,4 @@
-# -*- poly-org-mode -*-
+# -*- poly-org -*-
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -56,6 +56,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-x m") 'mu4e)
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
+(global-set-key (kbd "C-l") 'magit-log-all)
 (global-set-key (kbd "C-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
 (global-set-key (kbd "C-x f") 'anchored-transpose)
@@ -92,7 +93,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-x C-n") 'helm-mini)
 (global-set-key (kbd "C-h a") 'helm-apropos)
 (global-set-key (kbd "C-h x") 'helm-google-suggest)
-(global-set-key (kbd "C-l") 'helm-locate)
+(global-set-key (kbd "C-M-l") 'helm-locate)
 #+END_SRC
 
 *** corral
@@ -122,64 +123,67 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 ** Package Management
 Use melpa as package repository.
 #+BEGIN_SRC emacs-lisp  
-  (require 'package)
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-  (add-to-list 'package-archives
-               '("melpa" . "https://melpa.org/packages/"))
-  (add-to-list 'package-archives
-               '("melpa-stable" . "https://stable.melpa.org/packages/"))
-#+END_SRC
+(require 'package)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/"))
+#+END_SRC             
 
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
-  (package-initialize)
+(package-initialize)
 #+END_SRC
 
-List of packages to install, courtesy of package-selected-packages.  This should be updated regularly (automatically).
+List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-  (setq my-packages '(org-plus-contrib cider company-emacs-eclim eclim flycheck-ocaml tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 puml-mode noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
+(setq my-packages '(racer ace-window deft jazz-theme jade projectile magit spaceline org-plus-contrib cider company-emacs-eclim eclim tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 puml-mode noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete jazz-theme htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
 #+BEGIN_SRC emacs-lisp
-  (require 'cl)
-  (when (cl-notevery #'package-installed-p my-packages)
-    (progn
-      (package-refresh-contents)
-      (mapc (lambda (package)
-              (package-install package))
-            my-packages)))
+(require 'cl)
+(when (cl-notevery #'package-installed-p my-packages)
+  (progn
+    (package-refresh-contents)
+    (mapc (lambda (package)
+            (package-install package))
+          my-packages)))
 #+END_SRC
 
 Pin packages to melpa-stable, since melpa versions will always have a higher version number.
 #+BEGIN_SRC emacs-lisp
-  (setq package-pinned-packages
-        '((cider . "melpa-stable")
-          (org . "org")
-          (org-plus-contrib . "org")))
+(setq package-pinned-packages
+      '((cider . "melpa-stable")
+        (ivy . "melpa-stable")
+        (swiper . "melpa-stable")
+        (magit . "melpa-stable")
+        (org . "org")
+        (org-plus-contrib . "org")))
 #+END_SRC
 
 ** Appearance
 *** Cursor
 #+BEGIN_SRC emacs-lisp
-  ;;(set-cursor-color "white")
-  (blink-cursor-mode 0)
+;;(set-cursor-color "white")
+(blink-cursor-mode 0)
 #+END_SRC
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
+(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
 #+END_SRC
 
 *** Frame title
 #+BEGIN_SRC emacs-lisp
-  (setq phrases `("conlidimus nostra ultra pensum"))
+(setq phrases `("conlidimus nostra ultra pensum"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-                                                                                                                                                                                                      (add-hook 'after-init-hook
-                                                                                                                                                                                                                (lambda () (setq frame-title-format 'mode-line-format)))
-#+END_SRC
+(add-hook 'after-init-hook
+          (lambda () (setq frame-title-format 'mode-line-format)))
+#+END_SRC          
 
 *** Toolbars
 #+BEGIN_SRC emacs-lisp
@@ -488,37 +492,37 @@ Make the current window 100 columns wide.
 
 *** compile-dwim
 #+BEGIN_SRC emacs-lisp
-(defun compile-dwim ()
-  (interactive)
-  (save-buffer)
-  (save-window-excursion
-    (recompile)))
-#+END_SRC
+  (defun compile-dwim ()
+    (interactive)
+    (save-buffer)
+    (save-window-excursion
+      (recompile)))
+                                        #+END_SRC
 * Mode settings
 ** Minor modes
 Use subword mode in prog mode to move by camelCase.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook 'subword-mode)
-#+END_SRC
+  (add-hook 'prog-mode-hook 'subword-mode)
+    #+END_SRC
 
 Use winner-mode to save window layout history (C-c left to undo window changes)
 #+BEGIN_SRC emacs-lisp
-(winner-mode t)
-#+END_SRC
+  (winner-mode t)
+    #+END_SRC
 
 Use hl line mode in dired, one of the few modes where it's more helpful than annoying.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'dired-mode-hook 'hl-line-mode)
-#+END_SRC
+  (add-hook 'dired-mode-hook 'hl-line-mode)
+    #+END_SRC
 
 Use electric pair mode to automatically insert matching delimiters (sometimes annoying).
 #+BEGIN_SRC emacs-lisp
-(electric-pair-mode t)
+  (electric-pair-mode 1)
 #+END_SRC
 
 Use mouse avoidance mode so the rodent doesn't cover the actual cursor.  I don't even notice I have this mode enabled, which is a probably a positive sign.
 #+BEGIN_SRC emacs-lisp
-(mouse-avoidance-mode 'exile)
+  (mouse-avoidance-mode 'exile)
 #+END_SRC
 
 Tab inserts spaces only.
@@ -675,16 +679,16 @@ Since we're using ZNC, DETACH instead of PART from a channel when killing its bu
 
 *** Haskell
 #+BEGIN_SRC emacs-lisp
-(require 'haskell-interactive-mode)
-(require 'haskell-process)
-(add-hook 'haskell-mode-hook
-          (progn
-              (interactive-haskell-mode)
-              (turn-on-haskell-indent)))
+  ;; (require 'haskell-interactive-mode)
+;; (require 'haskell-process)
+;; (add-hook 'haskell-mode-hook
+          ;; (progn
+              ;; (interactive-haskell-mode)
+              ;; (turn-on-haskell-indent)))
 
-(setq haskell-process-suggest-remove-import-lines t)
-(setq haskell-process-auto-import-loaded-modules t)
-(setq haskell-process-log t)
+;; (setq haskell-process-suggest-remove-import-lines t)
+;; (setq haskell-process-auto-import-loaded-modules t)
+;; (setq haskell-process-log t)
 
 #+END_SRC
 
@@ -1170,11 +1174,6 @@ Override polymode key bindings.
 Disable the projectile mode line, if only because it slows TRAMP to a crawl.
 #+BEGIN_SRC emacs-lisp
 (setq projectile-mode-line nil)
-#+END_SRC
-
-** puml-mode
-#+BEGIN_SRC emacs-lisp
-(setq puml-plantuml-jar-path (concat (expand-file-name user-emacs-directory) "util/plantuml.jar"))
 #+END_SRC
 
 ** spaceline
