@@ -60,7 +60,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
 (global-set-key (kbd "C-x f") 'anchored-transpose)
-(global-set-key (kbd "C-M-s") 'helm-do-ag)
+(global-set-key (kbd "C-M-s") 'helm-do-grep-ag)
 (global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
 #+END_SRC
 
@@ -492,23 +492,23 @@ Make the current window 100 columns wide.
 
 *** compile-dwim
 #+BEGIN_SRC emacs-lisp
-  (defun compile-dwim ()
-    (interactive)
-    (save-buffer)
-    (save-window-excursion
-      (recompile)))
-                                        #+END_SRC
+(defun compile-dwim ()
+  (interactive)
+  (save-buffer)
+  (save-window-excursion
+    (recompile)))
+#+END_SRC
 * Mode settings
 ** Minor modes
 Use subword mode in prog mode to move by camelCase.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'subword-mode)
-    #+END_SRC
+(add-hook 'prog-mode-hook 'subword-mode)
+#+END_SRC
 
 Use winner-mode to save window layout history (C-c left to undo window changes)
 #+BEGIN_SRC emacs-lisp
   (winner-mode t)
-    #+END_SRC
+#+END_SRC
 
 Use hl line mode in dired, one of the few modes where it's more helpful than annoying.
 #+BEGIN_SRC emacs-lisp
@@ -517,12 +517,13 @@ Use hl line mode in dired, one of the few modes where it's more helpful than ann
 
 Use electric pair mode to automatically insert matching delimiters (sometimes annoying).
 #+BEGIN_SRC emacs-lisp
-  (electric-pair-mode 1)
+(add-hook 'prog-mode-hook #'electric-pair-local-mode)
+(add-hook 'org-mode-hook #'electric-pair-local-mode)
 #+END_SRC
 
 Use mouse avoidance mode so the rodent doesn't cover the actual cursor.  I don't even notice I have this mode enabled, which is a probably a positive sign.
 #+BEGIN_SRC emacs-lisp
-  (mouse-avoidance-mode 'exile)
+(mouse-avoidance-mode 'exile)
 #+END_SRC
 
 Tab inserts spaces only.
@@ -1027,7 +1028,7 @@ Use fuzzy matching with helm-apropos
 
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
-  (setq helm-echo-input-in-header-line t)
+(setq helm-echo-input-in-header-line t)
 #+END_SRC
 
 *** helm-web
@@ -1042,6 +1043,7 @@ Show helm input within the helm window.
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
 (setq helm-ag-fuzzy-match t)
+(setq helm-grep-ag-command "TERM=eterm-color rg --color=always --smart-case --no-heading --line-number %s %s %s")
 #+END_SRC
 
 ** hungry-delete-mode
