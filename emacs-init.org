@@ -138,7 +138,7 @@ Load and activate packages.
 
 List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-(setq my-packages '(racer ace-window deft jazz-theme jade projectile magit spaceline org-plus-contrib cider company-emacs-eclim eclim tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 puml-mode noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete jazz-theme htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
+(setq my-packages '(expand-region racer ace-window deft jazz-theme jade projectile magit spaceline org-plus-contrib cider company-emacs-eclim eclim tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete jazz-theme htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
@@ -304,7 +304,7 @@ Disable these keybindings for flyspell.
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-(setq browse-url-generic-program (executable-find "firefox-aurora"))
+(setq browse-url-generic-program (executable-find "firefox-nightly"))
 (add-hook 'after-init-hook (lambda ()
                              (defun browse-url (url &rest _)
                                "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -507,18 +507,18 @@ Use subword mode in prog mode to move by camelCase.
 
 Use winner-mode to save window layout history (C-c left to undo window changes)
 #+BEGIN_SRC emacs-lisp
-  (winner-mode t)
+(winner-mode t)
 #+END_SRC
 
 Use hl line mode in dired, one of the few modes where it's more helpful than annoying.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'dired-mode-hook 'hl-line-mode)
+(add-hook 'dired-mode-hook 'hl-line-mode)
     #+END_SRC
 
 Use electric pair mode to automatically insert matching delimiters (sometimes annoying).
 #+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook #'electric-pair-local-mode)
-(add-hook 'org-mode-hook #'electric-pair-local-mode)
+(electric-pair-mode)
+(add-hook 'erc-mode-hook (lambda nil (electric-pair-local-mode 0)))
 #+END_SRC
 
 Use mouse avoidance mode so the rodent doesn't cover the actual cursor.  I don't even notice I have this mode enabled, which is a probably a positive sign.
@@ -756,8 +756,7 @@ Disable syntax checking in src blocks.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-src-mode-hook
           (lambda ()
-            (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)
-            (column-enforce-mode 0)))
+            (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)))
 #+END_SRC
 
 **** Macros
@@ -824,10 +823,13 @@ Use jade for cool features.
 (eval-after-load 'racer
   (lambda nil (define-key racer-mode-map (kbd "C-c C-d") 'racer-describe)))
 (add-hook 'rust-mode-hook
-          (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
-(setq racer-rust-src-path
-      (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
-              "/lib/rustlib/src/rust/src"))
+          (lambda nil
+            (setq compile-command "cargo build")
+            (setq racer-rust-src-path
+                  (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
+                          "/lib/rustlib/src/rust/src"))
+            (local-set-key (kbd "C-c C-c") 'compile-dwim)))
+
 #+END_SRC
 *** SQL
 #+BEGIN_SRC emacs-lisp
@@ -835,21 +837,21 @@ Use jade for cool features.
 *** Term
 Set scroll margin in terminal to 0.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'term-mode-hook (lambda ()
-                            (set (make-local-variable 'scroll-margin) 0)))
+  (add-hook 'term-mode-hook (lambda ()
+                              (set (make-local-variable 'scroll-margin) 0)))
 #+END_SRC
 
 *** Web
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
 #+END_SRC
 
 *** xwidget-webkit
@@ -909,7 +911,6 @@ Use column enforce mode to mark text past column 80.
 (add-hook 'c++-mode-hook 'column-enforce-mode)
 (add-hook 'clojure-mode-hook 'column-enforce-mode)
 (add-hook 'js-mode-hook 'column-enforce-mode)
-(add-hook 'python-mode-hook 'column-enforce-mode)
 #+END_SRC
 
 ** command-log-mode
@@ -1023,18 +1024,18 @@ Make helm buffers appear on the bottom half of the window.
 
 Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
-(setq helm-apropos-fuzzy-match t)
-#+END_SRC
+  (setq helm-apropos-fuzzy-match t)
+                                    #+END_SRC
 
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
-(setq helm-echo-input-in-header-line t)
-#+END_SRC
+  (setq helm-echo-input-in-header-line t)
+    #+END_SRC
 
 *** helm-web
 #+BEGIN_SRC emacs-lisp
   (setq helm-net-prefer-curl t)
-#+END_SRC
+  #+END_SRC
 
 *** helm-projectile
 #+BEGIN_SRC emacs-lisp
@@ -1042,14 +1043,14 @@ Show helm input within the helm window.
 #+END_SRC
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
-(setq helm-ag-fuzzy-match t)
-(setq helm-grep-ag-command "TERM=eterm-color rg --color=always --smart-case --no-heading --line-number %s %s %s")
+  (setq helm-ag-fuzzy-match t)
+  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --smart-case --no-heading --line-number %s %s %s")
 #+END_SRC
 
 ** hungry-delete-mode
 Delete all whitespace instead of doing it one character at a time.
 #+BEGIN_SRC emacs-lisp
-(global-hungry-delete-mode 1)
+  (global-hungry-delete-mode 1)
 (add-hook 'prog-mode-hook (lambda nil (hungry-delete-mode 1)))
 (setq-default c-hungry-delete-key t)
 #+END_SRC
