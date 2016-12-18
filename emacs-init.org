@@ -172,7 +172,7 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-15"))
+(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-18"))
 #+END_SRC
 
 *** Frame title
@@ -445,7 +445,7 @@ Make the current window 80 columns wide.
       (set-frame-position (selected-frame) 0 0)
     (set-frame-position (selected-frame) -1 0)))
 #+END_SRC
-*** set-frame-with-100col
+*** set-frame-width-100col
 Make the current window 100 columns wide.
 #+BEGIN_SRC emacs-lisp
 (defun set-frame-width-100col (&optional cols)
@@ -537,11 +537,11 @@ Use auto-revert-mode for log files to update the output automatically
 #+END_SRC
 
 *** recentf-mode
-A useful feature that stores the most recently visited files, conveiniently accessible via =helm-mini=.
+A useful feature that stores the most recently visited files, conveniently accessible via =helm-mini=.
 #+BEGIN_SRC emacs-lisp
 (recentf-mode)
-(setq recentf-max-saved-items 50)
-(setq recentf-auto-cleanup 30)
+(setq recentf-max-saved-items 80)
+(setq recentf-auto-cleanup 50)
 (add-hook 'kill-emacs-hook 'recentf-save-list)
 (add-hook 'auto-save-hook 'recentf-save-list)
 #+END_SRC
@@ -818,19 +818,20 @@ Use jade for cool features.
 
 *** Rust
 #+BEGIN_SRC emacs-lisp
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'racer-mode-hook #'company-mode)
-(eval-after-load 'racer
-  (lambda nil (define-key racer-mode-map (kbd "C-c C-d") 'racer-describe)))
-(add-hook 'rust-mode-hook
-          (lambda nil
-            (setq compile-command "cargo build")
-            (setq racer-rust-src-path
-                  (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
-                          "/lib/rustlib/src/rust/src"))
-            (local-set-key (kbd "C-c C-c") 'compile-dwim)))
+  (add-hook 'rust-mode-hook #'cargo-minor-mode)
+  (add-hook 'rust-mode-hook #'racer-mode)
+  (add-hook 'racer-mode-hook #'company-mode)
+  (eval-after-load 'racer
+    (lambda nil (define-key rust-mode-map (kbd "C-c C-d") 'racer-describe)))
+  (add-hook 'rust-mode-hook
+            (lambda nil
+              (setq compile-command "cargo build")
+              (setq racer-rust-src-path
+                    (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
+                            "/lib/rustlib/src/rust/src"))
+              (local-set-key (kbd "C-c C-c") 'compile-dwim)))
 
-#+END_SRC
+  #+END_SRC
 *** SQL
 #+BEGIN_SRC emacs-lisp
 #+END_SRC
@@ -843,34 +844,34 @@ Set scroll margin in terminal to 0.
 
 *** Web
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
 #+END_SRC
 
 *** xwidget-webkit
 Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'xwidget-webkit-mode-hook
-          (lambda ()
-            (setq-local mwheel-scroll-up-function
-                        (lambda (&optional arg) (xwidget-webkit-scroll-up)))
-            (setq-local mwheel-scroll-down-function
-                        (lambda (&optional arg) (xwidget-webkit-scroll-down)))
-            (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
+  (add-hook 'xwidget-webkit-mode-hook
+            (lambda ()
+              (setq-local mwheel-scroll-up-function
+                          (lambda (&optional arg) (xwidget-webkit-scroll-up)))
+              (setq-local mwheel-scroll-down-function
+                          (lambda (&optional arg) (xwidget-webkit-scroll-down)))
+              (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
 
 #+END_SRC
 
 Reload automatically, handy for development. Should find a way to do this in background.
 #+BEGIN_SRC emacs-lisp
-;;(add-hook 'xwidget-webkit-mode-hook
-;;          (lambda () (run-with-timer 2 2 'xwidget-webkit-reload)))
+  ;;(add-hook 'xwidget-webkit-mode-hook
+  ;;          (lambda () (run-with-timer 2 2 'xwidget-webkit-reload)))
 #+END_SRC
 * Packages
 ** ace-window
@@ -879,99 +880,99 @@ Switch between windows by assigning a number to each one.
 ** aggressive-indent-mode
 Automatically fix indentation as you type.  Nice to have in lisp, but I find it more annoying than useful in other languages.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
-(add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+  (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
 #+END_SRC
 
 ** avy
 #+BEGIN_SRC emacs-lisp
-(setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
-(setq avy-style 'at-full)
-(setq avy-background nil)
+  (setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
+  (setq avy-style 'at-full)
+  (setq avy-background nil)
 #+END_SRC
 
 ** beacon
 Display a beacon when changing windows.
 #+BEGIN_SRC emacs-lisp
-(beacon-mode 1)
-(setq beacon-blink-when-window-scrolls nil)
-(add-to-list 'beacon-dont-blink-major-modes 'special-mode)
+  (beacon-mode 1)
+  (setq beacon-blink-when-window-scrolls nil)
+  (add-to-list 'beacon-dont-blink-major-modes 'special-mode)
 
 #+END_SRC
 
 ** cider
 #+BEGIN_SRC emacs-lisp
-(setq cider-default-repl-command "boot")
-(setq cider-repl-pop-to-buffer-on-connect nil)
+  (setq cider-default-repl-command "boot")
+  (setq cider-repl-pop-to-buffer-on-connect nil)
 #+END_SRC
 ** column-enforce-mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c-mode-hook 'column-enforce-mode)
-(add-hook 'c++-mode-hook 'column-enforce-mode)
-(add-hook 'clojure-mode-hook 'column-enforce-mode)
-(add-hook 'js-mode-hook 'column-enforce-mode)
+  (add-hook 'c-mode-hook 'column-enforce-mode)
+  (add-hook 'c++-mode-hook 'column-enforce-mode)
+  (add-hook 'clojure-mode-hook 'column-enforce-mode)
+  (add-hook 'js-mode-hook 'column-enforce-mode)
 #+END_SRC
 
 ** command-log-mode
 ** company-mode
 Use company mode for text and code completion.
 #+BEGIN_SRC emacs-lisp
-(global-company-mode)
-(add-to-list 'company-backends 'company-irony)
-(add-to-list 'company-backends 'company-irony-c-headers)
-(add-to-list 'company-backends 'company-tern)
-(setq company-idle-delay 0.15)
+  (global-company-mode)
+  (add-to-list 'company-backends 'company-irony)
+  (add-to-list 'company-backends 'company-irony-c-headers)
+  (add-to-list 'company-backends 'company-tern)
+  (setq company-idle-delay 0.15)
 #+END_SRC
 
 The dabbrev backends should only look for candidates in buffers with the same major mode.
 #+BEGIN_SRC emacs-lisp
-(setq company-dabbrev-other-buffers t)
-(setq company-dabbrev-code-other-buffers t)
+  (setq company-dabbrev-other-buffers t)
+  (setq company-dabbrev-code-other-buffers t)
 #+END_SRC
 
 Autocomplete should preserve the original case as much as possible.
 #+BEGIN_SRC emacs-lisp
-(setq company-dabbrev-downcase nil)
-(setq company-dabbrev-ignore-case nil)
+  (setq company-dabbrev-downcase nil)
+  (setq company-dabbrev-ignore-case nil)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(setq company-tooltip-align-annotations t)
+  (setq company-tooltip-align-annotations t)
 #+END_SRC
 
 ** corral
 Best package ever!
 #+BEGIN_SRC emacs-lisp
-(setq corral-preserve-point t)
-(setq corral-syntax-entries '((?# "_")
-                              (?* "_")
-                              (?- "_")))
+  (setq corral-preserve-point t)
+  (setq corral-syntax-entries '((?# "_")
+                                (?* "_")
+                                (?- "_")))
 #+END_SRC
 
 ** deft
 #+BEGIN_SRC emacs-lisp
-(setq deft-directory "/home/nivekuil/docs/deft/")
-(setq deft-extension "org")
-(setq deft-default-extension "org")
-(setq deft-text-mode 'org-mode)
-(setq deft-auto-save-interval 0)
-(setq deft-width-offset 3)
+  (setq deft-directory "/home/nivekuil/docs/deft/")
+  (setq deft-extension "org")
+  (setq deft-default-extension "org")
+  (setq deft-text-mode 'org-mode)
+  (setq deft-auto-save-interval 0)
+  (setq deft-width-offset 3)
 #+END_SRC
 
 Use hl-line-mode in the deft buffer.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'deft-mode-hook (lambda () (hl-line-mode 1)))
+  (add-hook 'deft-mode-hook (lambda () (hl-line-mode 1)))
 #+END_SRC
 
 ** eclim
 #+BEGIN_SRC emacs-lisp
-(add-hook 'java-mode-hook 'eclim-mode)
+  (add-hook 'java-mode-hook 'eclim-mode)
 #+END_SRC
 *** company-emacs-eclim
 #+BEGIN_SRC emacs-lisp
-(company-emacs-eclim-setup)
-(define-key eclim-mode-map (kbd "C-M-i") 'company-emacs-eclim)
+  (company-emacs-eclim-setup)
+  (define-key eclim-mode-map (kbd "C-M-i") 'company-emacs-eclim)
 
 #+END_SRC
 ** elpy
@@ -982,44 +983,44 @@ Use hl-line-mode in the deft buffer.
 
 Highlighting indentation levels makes Python ugly, and isn't very useful in practice.
 #+BEGIN_SRC emacs-lisp
-(setq elpy-modules (delete 'elpy-module-highlight-indentation elpy-modules))
+  (setq elpy-modules (delete 'elpy-module-highlight-indentation elpy-modules))
 #+END_SRC
 ** flycheck
 Use flycheck for syntax checking.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'after-init-hook #'global-flycheck-mode)
-(setq flycheck-global-modes '(not emacs-lisp-mode))
-(add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
-(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
-(setq flycheck-display-errors-delay 0.4)
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (setq flycheck-global-modes '(not emacs-lisp-mode))
+  (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
+  (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+  (setq flycheck-display-errors-delay 0.4)
 
 
 #+END_SRC
 *** flycheck-pos-tip
 #+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'flycheck
-  (flycheck-pos-tip-mode))
-(setq flycheck-pos-tip-timeout 30)
+  (with-eval-after-load 'flycheck
+    (flycheck-pos-tip-mode))
+  (setq flycheck-pos-tip-timeout 30)
 #+END_SRC
 ** helm
 The following must be set before helm is loaded when tethered to my phone due to T-Mobile's DNS hijacking, or it will hang emacs.
 #+BEGIN_SRC emacs-lisp
-;;(setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+  ;;(setq tramp-ssh-controlmaster-options "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(helm-mode t)
+  (helm-mode t)
 #+END_SRC
 Swap <tab> and C-z in helm buffers
 #+BEGIN_SRC emacs-lisp
-(define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
-(define-key helm-map (kbd "C-z") 'helm-select-action)
+  (define-key helm-map (kbd "TAB") 'helm-execute-persistent-action)
+  (define-key helm-map (kbd "C-z") 'helm-select-action)
 #+END_SRC
 
 Make helm buffers appear on the bottom half of the window.
 #+BEGIN_SRC emacs-lisp
-(setq helm-split-window-in-side-p t)
-(setq helm-split-window-default-side 'below)
+  (setq helm-split-window-in-side-p t)
+  (setq helm-split-window-default-side 'below)
 #+END_SRC
 
 Use fuzzy matching with helm-apropos
@@ -1051,7 +1052,7 @@ Show helm input within the helm window.
 Delete all whitespace instead of doing it one character at a time.
 #+BEGIN_SRC emacs-lisp
   (global-hungry-delete-mode 1)
-(add-hook 'prog-mode-hook (lambda nil (hungry-delete-mode 1)))
+  (add-hook 'prog-mode-hook (lambda nil (hungry-delete-mode 1)))
 (setq-default c-hungry-delete-key t)
 #+END_SRC
 
@@ -1126,7 +1127,7 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
         smtpmail-smtp-service 587)      ;TLS port
   (setq mu4e-maildir-shortcuts
     '(("/zoho/Inbox" . ?j)))
-  (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
+  ;; (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1146,12 +1147,19 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
       (xwidget-webkit-browse-url (concat "file://" tmpfile) t))))
 
 (add-to-list 'mu4e-view-actions
-  '("xViewXWidget" . my-mu4e-action-view-with-xwidget) t)
+             '("xViewXWidget" . my-mu4e-action-view-with-xwidget) t)
 #+END_SRC
 
 Start mu4e in the background.
 #+BEGIN_SRC emacs-lisp
 ;;(add-hook 'after-init-hook 'mu4e)
+#+END_SRC
+
+Spellcheck emails.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
+(add-hook 'mu4e-compose-mode-hook 'visual-line-mode)
+(add-hook 'mu4e-compose-mode-hook (lambda nil (auto-fill-mode -1)))
 #+END_SRC
 
 ** mu4e-alert
