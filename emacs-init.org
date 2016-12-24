@@ -138,7 +138,7 @@ Load and activate packages.
 
 List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-(setq my-packages '(expand-region racer ace-window deft jazz-theme jade projectile magit spaceline org-plus-contrib cider company-emacs-eclim eclim tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete jazz-theme htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @))
+(setq my-packages '(expand-region racer ace-window deft jazz-theme jade projectile magit spaceline org-plus-contrib cider company-emacs-eclim eclim tuareg swiper monochrome-theme polymode flycheck-pos-tip flycheck-rust rust-mode irony-eldoc ob-ipython jade scss-mode markdown-mode kooten-theme helm git-commit flycheck yasnippet yaml-mode ws-butler writegood-mode whole-line-or-region web-mode ujelly-theme tronesque-theme temp-buffer-browse symon stripe-buffer string-utils spacegray-theme soothe-theme solarized-theme smyx-theme simple-httpd request rainbow-delimiters py-autopep8 noctilux-theme names multi minesweeper lush-theme load-theme-buffer-local json-rpc jinja2-mode hungry-delete jazz-theme htmlize highlight-indentation helm-ag gnugo focus flycheck-package flycheck-irony firecode-theme erc-hl-nicks draft-mode diminish darktooth-theme cyberpunk-theme corral company-irony-c-headers company-irony command-log-mode column-enforce-mode bubbleberry-theme anchored-transpose afternoon-theme @ which-key))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
@@ -594,16 +594,16 @@ Use irony-mode.
 *** Clojure
 #+BEGIN_SRC emacs-lisp
 (add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'clojure-mode-hook 'clj-refactor-mode)
 (add-hook 'clojure-mode-hook
           (lambda ()
-            (local-set-key
-             (kbd "C-;")
-             (lambda ()
-               "Comment out the sexp at point."
-               (interactive)
-               (save-excursion
-                 (mark-sexp)
-                 (paredit-comment-dwim))))))
+            (local-set-key (kbd "C-;")
+                           (lambda ()
+                             "Comment out the sexp at point."
+                             (interactive)
+                             (save-excursion
+                               (mark-sexp)
+                               (paredit-comment-dwim))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1217,7 +1217,10 @@ Highlight parens levels in lisps.
 (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 #+END_SRC
-
+** which-key
+#+BEGIN_SRC emacs-lisp
+(which-key-mode 1)
+#+END_SRC
 ** whole-line-or-region
 Use whole line or region so C-w and M-w without an active mark kills the line.
 #+BEGIN_SRC emacs-lisp
@@ -1232,7 +1235,6 @@ Automatically and non-disruptively clean up whitespace on save.
 
 ** yasnippet
 #+BEGIN_SRC emacs-lisp
-(setq yas-snippet-dirs '("~/.emacs.d/snippets"))
 (yas-global-mode t) ;; Activate global mode before defining keys
 #+END_SRC
 
