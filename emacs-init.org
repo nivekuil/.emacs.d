@@ -229,8 +229,8 @@ Show column number in mode line.
 *** Autosave
 Set autosave directory so that all the autosaves are in one place, and not all over the filesystem.
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist `(("." . "/home/nivekuil/.emacs.d/backup")))
-  (setq auto-save-list-file-prefix "/home/nivekuil/.emacs.d/autosave/")
+  (setq backup-directory-alist `((".*" . "~/.emacs.d/backup")))
+  (setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
   (setq auto-save-file-name-transforms
         `((".*" , "/home/nivekuil/.emacs.d/autosave/" t)))
 #+END_SRC
@@ -600,7 +600,6 @@ Use irony-mode.
 *** Clojure
 #+BEGIN_SRC emacs-lisp
   (add-hook 'clojure-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook 'clj-refactor-mode)
   (add-hook 'clojure-mode-hook
             (lambda ()
               (local-set-key (kbd "C-;")
@@ -617,6 +616,13 @@ Use irony-mode.
             (lambda ()
               (local-set-key (kbd "C-l") 'cider-eval-defun-at-point)))
 #+END_SRC
+
+**** clj-refactor
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'clojure-mode-hook 'clj-refactor-mode)
+  (cljr-add-keybindings-with-prefix "C-c C-m")
+#+END_SRC
+
 *** Comint
 There should be no scroll margin in a shell buffer.
 #+BEGIN_SRC emacs-lisp
@@ -769,21 +775,21 @@ Add an "<el" expansion for emacs-lisp source blocks.
 
 **** Website
 When exporting to HTML, highlight the code within src blocks.
-    #+BEGIN_SRC emacs-lisp
-      (setq org-src-fontify-natively t)
-    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+#+END_SRC
 
 Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
-      #+BEGIN_SRC emacs-lisp
-        (eval-after-load "/home/nivekuil/docs/website/index.org"
-          (defun org-font-lock-ensure ()
-            (font-lock-fontify-buffer)))
-    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load "/home/nivekuil/docs/website/index.org"
+    (defun org-font-lock-ensure ()
+      (font-lock-fontify-buffer)))
+#+END_SRC
 
 Add more backends to =org-export=.
-          #+BEGIN_SRC emacs-lisp
-            (with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
-    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
+#+END_SRC
 
 The publish function.
 #+BEGIN_SRC emacs-lisp
@@ -793,7 +799,7 @@ The publish function.
       (find-file "~/docs/website/index.org")
       (org-html-export-to-html))
     (call-process-shell-command "~/scripts/publish-website.sh &"))
-    #+END_SRC
+#+END_SRC
 
 *** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
