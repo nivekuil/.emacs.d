@@ -43,6 +43,7 @@
 (global-set-key (kbd "C-M-r") 'query-replace-regexp)
 (global-set-key (kbd "C-M-d") 'kill-sexp)
 (global-set-key (kbd "C-h o") 'man)
+(global-set-key (kbd "M-SPC") 'fixup-whitespace-or-join-line)
 #+END_SRC
 
 Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be wasted on =universal-argument=.
@@ -50,6 +51,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-u") 'undo)
 (global-set-key (kbd "C-/") 'universal-argument)
 #+END_SRC
+
 
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
@@ -232,7 +234,7 @@ Set autosave directory so that all the autosaves are in one place, and not all o
   (setq backup-directory-alist `((".*" . "~/.emacs.d/backup")))
   (setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
   (setq auto-save-file-name-transforms
-        `((".*" , "/home/nivekuil/.emacs.d/autosave/" t)))
+        `((".*" , "~/.emacs.d/autosave/" t)))
 #+END_SRC
 
 Disable autosave based on number of characters typed.  Autosave after 10 seconds of idle.
@@ -301,17 +303,22 @@ Disable these keybindings for flyspell.
 (setq ispell-program-name "/usr/bin/hunspell")
 #+END_SRC
 
+*** Disable lockfiles
+Lockfiles are those symlinks starting with .# that are created every time when you start writing to a file and gets deleted when those changes are written to disk.  I don't think they're useful and they're causing annoyances (some race condition crashing boot-serve?) so disable them.
+#+BEGIN_SRC emacs-lisp
+  (setq create-lockfiles nil)
+#+END_SRC  
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-(setq browse-url-generic-program (executable-find "firefox-nightly"))
-(add-hook 'after-init-hook (lambda ()
-                             (defun browse-url (url &rest _)
-                               "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
-                               (interactive)
-                               (if (display-graphic-p)
-                                   (browse-url-generic url)
-                                 (eww-browse-url url)))))
+  (setq browse-url-generic-program (executable-find "firefox-nightly"))
+  (add-hook 'after-init-hook (lambda ()
+                               (defun browse-url (url &rest _)
+                                 "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
+                                 (interactive)
+                                 (if (display-graphic-p)
+                                     (browse-url-generic url)
+                                   (eww-browse-url url)))))
 #+END_SRC                                 
 
 ** Message buffer
@@ -342,7 +349,7 @@ Terminal emacs behaves differently from GTK emacs in a lot of annoying ways.
 Having M-[ bound will have a really annoying interaction with the bracketed paste mode of terminal emulators so unbind this key.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'after-init-hook (lambda nil (global-unset-key (kbd "M-["))))
-#+END_SRC  
+#+END_SRC
 * Custom Functions
 ** Commands
 *** Run current buffer in interpreter asynchronously
@@ -422,6 +429,16 @@ Cycle cursor between the beginning of indentation and beginning of the line.
       (back-to-indentation)
       (if (eq (point) original)
           (beginning-of-line))))
+
+  (defun beginning-of-line-or-indentation-p ()
+    (save-excursion
+      (let ((original (point)))
+        (back-to-indentation)
+        (if (eq (point) original)
+            t
+          (progn
+            (beginning-of-line)
+            (eq (point) original))))))
 #+END_SRC
 
 *** spit-scad-last-expression
@@ -503,6 +520,16 @@ Make the current window 100 columns wide.
     (save-buffer)
     (save-window-excursion
       (recompile)))
+#+END_SRC
+
+*** fixup-whitespace-or-join-line
+If at beginning of indentation, call join-line.  Otherwise, call fixup-whitespace.
+#+BEGIN_SRC emacs-lisp
+  (defun fixup-whitespace-or-join-line ()
+    (interactive)
+    (if (beginning-of-line-or-indentation-p)
+        (join-line)
+      (fixup-whitespace)))
 #+END_SRC
 * Mode settings
 ** Minor modes
@@ -788,8 +815,8 @@ Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
 
 Add more backends to =org-export=.
 #+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
-#+END_SRC
+  (with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
+  #+END_SRC
 
 The publish function.
 #+BEGIN_SRC emacs-lisp
@@ -799,7 +826,7 @@ The publish function.
       (find-file "~/docs/website/index.org")
       (org-html-export-to-html))
     (call-process-shell-command "~/scripts/publish-website.sh &"))
-#+END_SRC
+  #+END_SRC
 
 *** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
@@ -1062,8 +1089,6 @@ Show helm input within the helm window.
 Delete all whitespace instead of doing it one character at a time.
 #+BEGIN_SRC emacs-lisp
   (global-hungry-delete-mode 1)
-  (add-hook 'prog-mode-hook (lambda nil (hungry-delete-mode 1)))
-  (setq-default c-hungry-delete-key t)
 #+END_SRC
 
 ** magit
@@ -1202,21 +1227,21 @@ Disable the projectile mode line, if only because it slows TRAMP to a crawl.
   (require 'spaceline-config)
   (spaceline-emacs-theme)
   (spaceline-helm-mode)
-(spaceline-toggle-minor-modes-off)
-(spaceline-toggle-buffer-encoding-abbrev-off)
-(setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
+  (spaceline-toggle-minor-modes-off)
+  (spaceline-toggle-buffer-encoding-abbrev-off)
+  (setq spaceline-highlight-face-func 'spaceline-highlight-face-modified)
 #+END_SRC
 ** swiper
 Backspace should not end swiper.
 #+BEGIN_SRC emacs-lisp
-(setq ivy-on-del-error-function nil)
+  (setq ivy-on-del-error-function nil)
 #+END_SRC
 
 ** symon
 Mini system monitor that pops up in the minibuffer after a period of idleness.
 #+BEGIN_SRC emacs-lisp
-(setq symon-delay 30)
-(setq symon-sparkline-width 1)
+  (setq symon-delay 30)
+  (setq symon-sparkline-width 1)
 (setq symon-refresh-rate 2)
 ;; (symon-mode 1)
 #+END_SRC
