@@ -135,17 +135,17 @@ Use melpa as package repository.
 
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
-(package-initialize)
-#+END_SRC
+  (package-initialize)
+  #+END_SRC
 
 List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-(setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony jade company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet))
+  (setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
+  (require 'cl)
 (when (cl-notevery #'package-installed-p my-packages)
   (progn
     (package-refresh-contents)
@@ -174,7 +174,7 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-18"))
+(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-13"))
 #+END_SRC
 
 *** Frame title
@@ -842,13 +842,6 @@ JSON is a subset of YAML, so use yaml-mode to edit json files.
 
 #+BEGIN_SRC emacs-lisp
   (setq js-indent-level 2)
-#+END_SRC
-
-Use jade for cool features.
-#+BEGIN_SRC emacs-lisp
-  (require 'jade)
-  (add-hook 'js2-mode-hook #'jade-interaction-mode)
-  (add-hook 'js2-mode-hook #'tern-mode)
 #+END_SRC
 
 
