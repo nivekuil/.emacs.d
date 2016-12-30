@@ -1,4 +1,5 @@
 # -*- poly-org -*-
+#+STARTUP: showall
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -349,7 +350,14 @@ Terminal emacs behaves differently from GTK emacs in a lot of annoying ways.
 Having M-[ bound will have a really annoying interaction with the bracketed paste mode of terminal emulators so unbind this key.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'after-init-hook (lambda nil (global-unset-key (kbd "M-["))))
-#+END_SRC  
+#+END_SRC
+
+** pinentry
+Use emacs for pinentry (unlocking gpg keys).
+#+BEGIN_SRC emacs-lisp
+(setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+(pinentry-start)
+#+END_SRC
 * Custom Functions
 ** Commands
 *** Run current buffer in interpreter asynchronously
@@ -359,7 +367,7 @@ Having M-[ bound will have a really annoying interaction with the bracketed past
     (save-buffer)
     (cond ((equal (file-name-extension buffer-file-name) "py")
            (async-shell-command (concat "python " buffer-file-name)))))
-#+END_SRC
+#+END_SRC           
 
 *** find-file-sudo
 #+BEGIN_SRC emacs-lisp
@@ -941,6 +949,11 @@ Display a beacon when changing windows.
   (setq cider-default-repl-command "boot")
   (setq cider-repl-pop-to-buffer-on-connect nil)
 #+END_SRC
+
+Faster boot startup.
+#+BEGIN_SRC emacs-lisp
+  (setenv "BOOT_JVM_OPTIONS" "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none")
+#+END_SRC
 ** column-enforce-mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
@@ -1019,6 +1032,7 @@ Use flycheck for syntax checking.
   (setq flycheck-global-modes '(not emacs-lisp-mode))
   (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+  (eval-after-load 'flycheck '(flycheck-clojure-setup))
   (setq flycheck-display-errors-delay 0.4)
 
 
@@ -1053,12 +1067,17 @@ Make helm buffers appear on the bottom half of the window.
 Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
   (setq helm-apropos-fuzzy-match t)
-                                    #+END_SRC
+#+END_SRC
 
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
   (setq helm-echo-input-in-header-line t)
-    #+END_SRC
+#+END_SRC
+    
+Skip checking whether remote files opened through TRAMP exist so helm-mini doesn't lag.
+#+BEGIN_SRC emacs-lisp
+  (setq helm-buffer-skip-remote-checking t)
+#+END_SRC
 
 *** helm-web
 #+BEGIN_SRC emacs-lisp
