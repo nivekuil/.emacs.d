@@ -1,4 +1,5 @@
 # -*- poly-org -*-
+#+STARTUP: showall
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -770,14 +771,13 @@ Indent sections and hide multiple asterisks.
 Eval code blocks without prompting for confirmation.  It's unlikely that this will ever be a security concern.
 #+BEGIN_SRC emacs-lisp
   (setq org-confirm-babel-evaluate nil)
-    #+END_SRC
-
-                                                                                        #+BEGIN_SRC emacs-lisp
-                                                                                          (with-eval-after-load 'org (org-babel-do-load-languages
-                                                                                                                      'org-babel-load-languages
-                                                                                                                      '((sh . t)
-                                                                                                                        (emacs-lisp . t)
-                                                                                                                        (ipython . t))))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'org (org-babel-do-load-languages
+                              'org-babel-load-languages
+                              '((sh . t)
+                                (emacs-lisp . t)
+                                (ipython . t))))
     #+END_SRC
 
 **** org-src
@@ -1012,6 +1012,7 @@ Use flycheck for syntax checking.
   (setq flycheck-global-modes '(not emacs-lisp-mode))
   (add-hook 'flycheck-mode-hook #'flycheck-irony-setup)
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+  (eval-after-load 'flycheck '(flycheck-clojure-setup))
   (setq flycheck-display-errors-delay 0.4)
 
 
@@ -1051,7 +1052,12 @@ Use fuzzy matching with helm-apropos
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
   (setq helm-echo-input-in-header-line t)
-    #+END_SRC
+#+END_SRC
+
+Skip checking whether remote files opened through TRAMP exist so helm-mini doesn't lag.
+#+BEGIN_SRC emacs-lisp
+  (setq helm-buffer-skip-remote-checking t)
+#+END_SRC
 
 *** helm-web
 #+BEGIN_SRC emacs-lisp
@@ -1091,7 +1097,7 @@ mu4e is not part of elpa, so we have to require it manually instead of letting p
 
 Command run to sync mailboxes.  mbsync seems to have no timeout handling built in (and it gets stuck a lot), so we use the timeout utility to run it.
 #+BEGIN_SRC emacs-lisp
-  (setq mu4e-get-mail-command "timeout -s TERM 120 mbsync -a")
+  (setq mu4e-get-mail-command "timeout -s TERM 120 offlineimap")
 #+END_SRC
 
 Update mailboxes every 3 minutes.
@@ -1225,15 +1231,15 @@ Mini system monitor that pops up in the minibuffer after a period of idleness.
 #+BEGIN_SRC emacs-lisp
   (setq symon-delay 30)
   (setq symon-sparkline-width 1)
-(setq symon-refresh-rate 2)
-;; (symon-mode 1)
+  (setq symon-refresh-rate 2)
+  ;; (symon-mode 1)
 #+END_SRC
 
 ** rainbow-delimiters
 Highlight parens levels in lisps.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 #+END_SRC
 ** which-key
 #+BEGIN_SRC emacs-lisp
