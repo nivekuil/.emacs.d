@@ -1,5 +1,5 @@
 # -*- poly-org -*-
-#+STARTUP: showall
+#+STARTUP: content
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -52,8 +52,6 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-u") 'undo)
 (global-set-key (kbd "C-/") 'universal-argument)
 #+END_SRC
-
-
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-x m") 'mu4e)
@@ -63,7 +61,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
 (global-set-key (kbd "C-x f") 'anchored-transpose)
-(global-set-key (kbd "C-M-s") 'helm-do-grep-ag)
+(global-set-key (kbd "C-M-s") 'helm-do-ag)
 (global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
 #+END_SRC
 
@@ -136,17 +134,17 @@ Use melpa as package repository.
 
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
-(package-initialize)
-#+END_SRC
+  (package-initialize)
+                                                #+END_SRC
 
 List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-(setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony jade company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet))
+  (setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-clojure flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony jade company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
 #+BEGIN_SRC emacs-lisp
-(require 'cl)
+  (require 'cl)
 (when (cl-notevery #'package-installed-p my-packages)
   (progn
     (package-refresh-contents)
@@ -312,7 +310,7 @@ Lockfiles are those symlinks starting with .# that are created every time when y
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-  (setq browse-url-generic-program (executable-find "firefox-nightly"))
+  (setq browse-url-generic-program (executable-find "firefox-aurora"))
   (add-hook 'after-init-hook (lambda ()
                                (defun browse-url (url &rest _)
                                  "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -367,7 +365,7 @@ Use emacs for pinentry (unlocking gpg keys).
     (save-buffer)
     (cond ((equal (file-name-extension buffer-file-name) "py")
            (async-shell-command (concat "python " buffer-file-name)))))
-#+END_SRC           
+    #+END_SRC           
 
 *** find-file-sudo
 #+BEGIN_SRC emacs-lisp
@@ -577,11 +575,16 @@ Use auto-revert-mode for log files to update the output automatically
   (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 #+END_SRC
 
+Show the name of the function/org header that the cursor is currently within.  Looks really nice with spaceline.
+#+BEGIN_SRC emacs-lisp
+  (which-function-mode 1)
+#+END_SRC
+
 *** recentf-mode
 A useful feature that stores the most recently visited files, conveniently accessible via =helm-mini=.
 #+BEGIN_SRC emacs-lisp
   (recentf-mode)
-  (setq recentf-max-saved-items 80)
+  (setq recentf-max-saved-items 100)
   (setq recentf-auto-cleanup 50)
   (add-hook 'kill-emacs-hook 'recentf-save-list)
   (add-hook 'auto-save-hook 'recentf-save-list)
@@ -631,7 +634,10 @@ Use irony-mode.
   (add-hook 'irony-mode-hook
             (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
 #+END_SRC
-
+Change the default code style if desired.  Default is 2 space indents.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'irony-mode-hook (lambda nil (c-set-style "cc-mode")))
+#+END_SRC
 *** Clojure
 #+BEGIN_SRC emacs-lisp
   (add-hook 'clojure-mode-hook 'paredit-mode)
@@ -767,46 +773,46 @@ Use pretty symbols.
 Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook 'visual-line-mode)
-    #+END_SRC
+#+END_SRC
 
 Indent sections and hide multiple asterisks.
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t)
-    #+END_SRC
+#+END_SRC
 
 **** org-babel
 Eval code blocks without prompting for confirmation.  It's unlikely that this will ever be a security concern.
 #+BEGIN_SRC emacs-lisp
   (setq org-confirm-babel-evaluate nil)
-    #+END_SRC
+#+END_SRC
 
-                                                                                        #+BEGIN_SRC emacs-lisp
-                                                                                          (with-eval-after-load 'org (org-babel-do-load-languages
-                                                                                                                      'org-babel-load-languages
-                                                                                                                      '((sh . t)
-                                                                                                                        (emacs-lisp . t)
-                                                                                                                        (ipython . t))))
-    #+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'org (org-babel-do-load-languages
+                              'org-babel-load-languages
+                              '((sh . t)
+                                (emacs-lisp . t)
+                                (ipython . t))))
+#+END_SRC
 
 **** org-src
 Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO: submit patch? after-save-hook isn't called by org-edit-src-save so might be better to modify org-edit-src-save itself).
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
-    #+END_SRC
+#+END_SRC
 
 Disable syntax checking in src blocks.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-src-mode-hook
             (lambda ()
               (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)))
-    #+END_SRC
+#+END_SRC
 
 **** Macros
 Add an "<el" expansion for emacs-lisp source blocks.
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'org (add-to-list 'org-structure-template-alist
                                           '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")))
-    #+END_SRC
+#+END_SRC
 
 **** Website
 When exporting to HTML, highlight the code within src blocks.
@@ -824,7 +830,7 @@ Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
 Add more backends to =org-export=.
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
-  #+END_SRC
+#+END_SRC
 
 The publish function.
 #+BEGIN_SRC emacs-lisp
@@ -834,8 +840,12 @@ The publish function.
       (find-file "~/docs/website/index.org")
       (org-html-export-to-html))
     (call-process-shell-command "~/scripts/publish-website.sh &"))
-  #+END_SRC
+#+END_SRC
 
+**** org-agenda
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load "deft" `(add-to-list 'org-agenda-files deft-directory))
+#+END_SRC
 *** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
@@ -858,8 +868,6 @@ Use jade for cool features.
   (add-hook 'js2-mode-hook #'jade-interaction-mode)
   (add-hook 'js2-mode-hook #'tern-mode)
 #+END_SRC
-
-
 *** Rust
 #+BEGIN_SRC emacs-lisp
   (add-hook 'rust-mode-hook #'cargo-minor-mode)
@@ -1008,6 +1016,7 @@ Best package ever!
   (setq deft-text-mode 'org-mode)
   (setq deft-auto-save-interval 0)
   (setq deft-width-offset 3)
+
 #+END_SRC
 
 Use hl-line-mode in the deft buffer.
@@ -1091,7 +1100,7 @@ Skip checking whether remote files opened through TRAMP exist so helm-mini doesn
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
   (setq helm-ag-fuzzy-match t)
-  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --smart-case --no-heading --line-number %s %s %s")
+  (setq helm-ag-base-command "rg --vimgrep --no-heading")
 #+END_SRC
 
 ** hungry-delete-mode
@@ -1251,7 +1260,7 @@ Mini system monitor that pops up in the minibuffer after a period of idleness.
 #+BEGIN_SRC emacs-lisp
   (setq symon-delay 30)
   (setq symon-sparkline-width 1)
-(setq symon-refresh-rate 2)
+  (setq symon-refresh-rate 2)
 ;; (symon-mode 1)
 #+END_SRC
 
