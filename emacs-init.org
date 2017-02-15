@@ -347,14 +347,15 @@ Terminal emacs behaves differently from GTK emacs in a lot of annoying ways.
 
 Having M-[ bound will have a really annoying interaction with the bracketed paste mode of terminal emulators so unbind this key.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook (lambda nil (global-unset-key (kbd "M-["))))
-#+END_SRC
+  (add-hook 'after-init-hook (lambda nil (unless 'display-graphics-p
+                                           (global-unset-key (kbd "M-[")))))
+#+END_SRC                                           
 
 ** pinentry
 Use emacs for pinentry (unlocking gpg keys).
 #+BEGIN_SRC emacs-lisp
-(setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
-(pinentry-start)
+  (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+  (pinentry-start)
 #+END_SRC
 * Custom Functions
 ** Commands
@@ -582,10 +583,12 @@ Show the name of the function/org header that the cursor is currently within.  L
 
 *** recentf-mode
 A useful feature that stores the most recently visited files, conveniently accessible via =helm-mini=.
+Never cleanup recentf so it doesn't try to stat everything in the recentf list, which is inconvenient for network mounted files including ones accessed over TRAMP.
 #+BEGIN_SRC emacs-lisp
-  (recentf-mode)
+  (setq recentf-auto-cleanup 'never)
+  (recentf-mode 1)
   (setq recentf-max-saved-items 100)
-  (setq recentf-auto-cleanup 50)
+  
   (add-hook 'kill-emacs-hook 'recentf-save-list)
   (add-hook 'auto-save-hook 'recentf-save-list)
 #+END_SRC
@@ -965,10 +968,10 @@ Faster boot startup.
 ** column-enforce-mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-hook 'column-enforce-mode)
-  (add-hook 'c++-mode-hook 'column-enforce-mode)
-  (add-hook 'clojure-mode-hook 'column-enforce-mode)
-  (add-hook 'js-mode-hook 'column-enforce-mode)
+                                          ;(add-hook 'c-mode-hook 'column-enforce-mode)
+                                        ;(add-hook 'c++-mode-hook 'column-enforce-mode)
+                                        ;(add-hook 'clojure-mode-hook 'column-enforce-mode)
+                                        ;(add-hook 'js-mode-hook 'column-enforce-mode)
 #+END_SRC
 
 ** command-log-mode
@@ -1261,14 +1264,14 @@ Mini system monitor that pops up in the minibuffer after a period of idleness.
   (setq symon-delay 30)
   (setq symon-sparkline-width 1)
   (setq symon-refresh-rate 2)
-;; (symon-mode 1)
+  ;; (symon-mode 1)
 #+END_SRC
 
 ** rainbow-delimiters
 Highlight parens levels in lisps.
 #+BEGIN_SRC emacs-lisp
-(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+  (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 #+END_SRC
 ** which-key
 #+BEGIN_SRC emacs-lisp
