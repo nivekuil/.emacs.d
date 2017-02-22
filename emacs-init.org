@@ -61,7 +61,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-r") 'ace-window)
 (global-set-key (kbd "M-m") 'er/expand-region)
 (global-set-key (kbd "C-x f") 'anchored-transpose)
-(global-set-key (kbd "C-M-s") 'helm-do-ag)
+(global-set-key (kbd "C-M-s") 'helm-do-grep-ag)
 (global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
 #+END_SRC
 
@@ -1104,6 +1104,8 @@ Skip checking whether remote files opened through TRAMP exist so helm-mini doesn
 #+BEGIN_SRC emacs-lisp
   (setq helm-ag-fuzzy-match t)
   (setq helm-ag-base-command "rg --vimgrep --no-heading")
+  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --no-heading --line-number %s %s %s")
+
 #+END_SRC
 
 ** hungry-delete-mode
