@@ -1,5 +1,5 @@
 # -*- poly-org -*-
-#+STARTUP: showall
+#+STARTUP: content
 * Keybindings
 ** Switch keys for better Dvorak compatibility
 #+BEGIN_SRC emacs-lisp
@@ -52,11 +52,9 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "C-u") 'undo)
 (global-set-key (kbd "C-/") 'universal-argument)
 #+END_SRC
-
-
 ** Keybindings for external packages
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x m") 'mu4e)
+;;(global-set-key (kbd "C-x m") 'mu4e)
 (global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-x g") 'magit-status)
 (global-set-key (kbd "C-l") 'magit-log-all)
@@ -137,11 +135,11 @@ Use melpa as package repository.
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
   (package-initialize)
-  #+END_SRC
+                                                #+END_SRC  
 
 List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-  (setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet))
+  (setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-clojure flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler yaml-mode yasnippet toml-mode))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
@@ -175,7 +173,7 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-13"))
+;;(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-18"))
 #+END_SRC
 
 *** Frame title
@@ -312,7 +310,7 @@ Lockfiles are those symlinks starting with .# that are created every time when y
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-  (setq browse-url-generic-program (executable-find "firefox-nightly"))
+  (setq browse-url-generic-program (executable-find "firefox-aurora"))
   (add-hook 'after-init-hook (lambda ()
                                (defun browse-url (url &rest _)
                                  "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -344,13 +342,22 @@ Don't litter directories with history files.
 #+BEGIN_EXAMPLE
 (setq tramp-histfile-override "/tmp/.tramp_history")
 #+END_EXAMPLE
+
 ** Terminal
 Terminal emacs behaves differently from GTK emacs in a lot of annoying ways.
 
 Having M-[ bound will have a really annoying interaction with the bracketed paste mode of terminal emulators so unbind this key.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook (lambda nil (global-unset-key (kbd "M-["))))
-#+END_SRC  
+  (add-hook 'after-init-hook (lambda nil (unless (display-graphic-p)
+                                           (global-unset-key (kbd "M-[")))))
+#+END_SRC                                           
+
+** pinentry
+Use emacs for pinentry (unlocking gpg keys).
+#+BEGIN_SRC emacs-lisp
+  (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+  ;;(pinentry-start)
+#+END_SRC
 * Custom Functions
 ** Commands
 *** Run current buffer in interpreter asynchronously
@@ -360,7 +367,7 @@ Having M-[ bound will have a really annoying interaction with the bracketed past
     (save-buffer)
     (cond ((equal (file-name-extension buffer-file-name) "py")
            (async-shell-command (concat "python " buffer-file-name)))))
-#+END_SRC
+    #+END_SRC           
 
 *** find-file-sudo
 #+BEGIN_SRC emacs-lisp
@@ -489,12 +496,9 @@ Make the current window 100 columns wide.
     ;;          :password (with-temp-buffer
     ;;                      (insert-file-contents (concat user-emacs-directory "ercpass"))
     ;;                      (buffer-string)))
-    (erc-tls :server "nivekuil.com" :port 7000
+    (erc-tls :server "irc.tfbnw.net" :port 6443
              :nick "nivekuil"
-             :password (with-temp-buffer
-                         (insert-file-contents
-                          (concat user-emacs-directory "ercpass.gpg"))
-                         (buffer-string))))
+             :password "nivekuil:750a-592c-4e7b-3ec9"))
 #+END_SRC
 
 *** jump-to-last-edit
@@ -570,12 +574,19 @@ Use auto-revert-mode for log files to update the output automatically
   (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 #+END_SRC
 
+Show the name of the function/org header that the cursor is currently within.  Looks really nice with spaceline.
+#+BEGIN_SRC emacs-lisp
+  (which-function-mode 1)
+#+END_SRC
+
 *** recentf-mode
 A useful feature that stores the most recently visited files, conveniently accessible via =helm-mini=.
+Never cleanup recentf so it doesn't try to stat everything in the recentf list, which is inconvenient for network mounted files including ones accessed over TRAMP.
 #+BEGIN_SRC emacs-lisp
-  (recentf-mode)
-  (setq recentf-max-saved-items 80)
-  (setq recentf-auto-cleanup 50)
+  (setq recentf-auto-cleanup 'never)
+  (recentf-mode 1)
+  (setq recentf-max-saved-items 100)
+  
   (add-hook 'kill-emacs-hook 'recentf-save-list)
   (add-hook 'auto-save-hook 'recentf-save-list)
 #+END_SRC
@@ -624,7 +635,10 @@ Use irony-mode.
   (add-hook 'irony-mode-hook
             (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
 #+END_SRC
-
+Change the default code style if desired.  Default is 2 space indents.
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'irony-mode-hook (lambda nil (c-set-style "cc-mode")))
+#+END_SRC
 *** Clojure
 #+BEGIN_SRC emacs-lisp
   (add-hook 'clojure-mode-hook 'paredit-mode)
@@ -760,45 +774,46 @@ Use pretty symbols.
 Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-mode-hook 'visual-line-mode)
-    #+END_SRC
+#+END_SRC
 
 Indent sections and hide multiple asterisks.
 #+BEGIN_SRC emacs-lisp
   (setq org-startup-indented t)
-    #+END_SRC
+#+END_SRC
 
 **** org-babel
 Eval code blocks without prompting for confirmation.  It's unlikely that this will ever be a security concern.
 #+BEGIN_SRC emacs-lisp
   (setq org-confirm-babel-evaluate nil)
 #+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'org (org-babel-do-load-languages
                               'org-babel-load-languages
                               '((sh . t)
                                 (emacs-lisp . t)
                                 (ipython . t))))
-    #+END_SRC
+#+END_SRC
 
 **** org-src
 Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO: submit patch? after-save-hook isn't called by org-edit-src-save so might be better to modify org-edit-src-save itself).
 #+BEGIN_SRC emacs-lisp
   (setq org-src-window-setup 'current-window)
-    #+END_SRC
+#+END_SRC
 
 Disable syntax checking in src blocks.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'org-src-mode-hook
             (lambda ()
               (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)))
-    #+END_SRC
+#+END_SRC
 
 **** Macros
 Add an "<el" expansion for emacs-lisp source blocks.
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'org (add-to-list 'org-structure-template-alist
                                           '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")))
-    #+END_SRC
+#+END_SRC
 
 **** Website
 When exporting to HTML, highlight the code within src blocks.
@@ -816,7 +831,7 @@ Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
 Add more backends to =org-export=.
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
-  #+END_SRC
+#+END_SRC
 
 The publish function.
 #+BEGIN_SRC emacs-lisp
@@ -826,8 +841,12 @@ The publish function.
       (find-file "~/docs/website/index.org")
       (org-html-export-to-html))
     (call-process-shell-command "~/scripts/publish-website.sh &"))
-  #+END_SRC
+#+END_SRC
 
+**** org-agenda
+#+BEGIN_SRC emacs-lisp
+  (eval-after-load "deft" `(add-to-list 'org-agenda-files deft-directory))
+#+END_SRC
 *** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
@@ -844,7 +863,12 @@ JSON is a subset of YAML, so use yaml-mode to edit json files.
   (setq js-indent-level 2)
 #+END_SRC
 
-
+Use jade for cool features.
+#+BEGIN_SRC emacs-lisp
+  ;;(require 'jade)
+  ;;(add-hook 'js2-mode-hook #'jade-interaction-mode)
+  ;;(add-hook 'js2-mode-hook #'tern-mode)
+#+END_SRC
 *** Rust
 #+BEGIN_SRC emacs-lisp
   (add-hook 'rust-mode-hook #'cargo-minor-mode)
@@ -934,13 +958,18 @@ Display a beacon when changing windows.
   (setq cider-default-repl-command "boot")
   (setq cider-repl-pop-to-buffer-on-connect nil)
 #+END_SRC
+
+Faster boot startup.
+#+BEGIN_SRC emacs-lisp
+  (setenv "BOOT_JVM_OPTIONS" "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none")
+#+END_SRC
 ** column-enforce-mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-hook 'column-enforce-mode)
-  (add-hook 'c++-mode-hook 'column-enforce-mode)
-  (add-hook 'clojure-mode-hook 'column-enforce-mode)
-  (add-hook 'js-mode-hook 'column-enforce-mode)
+                                          ;(add-hook 'c-mode-hook 'column-enforce-mode)
+                                        ;(add-hook 'c++-mode-hook 'column-enforce-mode)
+                                        ;(add-hook 'clojure-mode-hook 'column-enforce-mode)
+                                        ;(add-hook 'js-mode-hook 'column-enforce-mode)
 #+END_SRC
 
 ** command-log-mode
@@ -948,8 +977,8 @@ Use column enforce mode to mark text past column 80.
 Use company mode for text and code completion.
 #+BEGIN_SRC emacs-lisp
   (global-company-mode)
-  (add-to-list 'company-backends 'company-irony)
-  (add-to-list 'company-backends 'company-irony-c-headers)
+  ;(add-to-list 'company-backends 'company-irony)
+  ;(add-to-list 'company-backends 'company-irony-c-headers)
   (add-to-list 'company-backends 'company-tern)
   (add-to-list 'company-backends 'company-elisp)
   (setq company-idle-delay 0.15)
@@ -988,6 +1017,7 @@ Best package ever!
   (setq deft-text-mode 'org-mode)
   (setq deft-auto-save-interval 0)
   (setq deft-width-offset 3)
+
 #+END_SRC
 
 Use hl-line-mode in the deft buffer.
@@ -1047,13 +1077,13 @@ Make helm buffers appear on the bottom half of the window.
 Use fuzzy matching with helm-apropos
 #+BEGIN_SRC emacs-lisp
   (setq helm-apropos-fuzzy-match t)
-                                    #+END_SRC
+#+END_SRC
 
 Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
   (setq helm-echo-input-in-header-line t)
 #+END_SRC
-
+    
 Skip checking whether remote files opened through TRAMP exist so helm-mini doesn't lag.
 #+BEGIN_SRC emacs-lisp
   (setq helm-buffer-skip-remote-checking t)
@@ -1071,7 +1101,9 @@ Skip checking whether remote files opened through TRAMP exist so helm-mini doesn
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
   (setq helm-ag-fuzzy-match t)
-  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --smart-case --no-heading --line-number %s %s %s")
+  (setq helm-ag-base-command "rg --vimgrep --no-heading")
+  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --no-heading --line-number %s %s %s")
+
 #+END_SRC
 
 ** hungry-delete-mode
@@ -1085,113 +1117,12 @@ Delete all whitespace instead of doing it one character at a time.
   (setq magit-last-seen-setup-instructions "1.4.0")
 #+END_SRC
 
-** mu4e
-mu4e is not part of elpa, so we have to require it manually instead of letting package-initialize handle it.
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e/")
-  (require 'mu4e)
-  (setq mu4e-headers-date-format "%b %d")
-  (setq mu4e-headers-time-format "%H:%M")
-  (setq mu4e-headers-fields '((:human-date . 7) (:from . 15) (:subject)))
-#+END_SRC
-
-Command run to sync mailboxes.  mbsync seems to have no timeout handling built in (and it gets stuck a lot), so we use the timeout utility to run it.
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-get-mail-command "timeout -s TERM 120 offlineimap")
-#+END_SRC
-
-Update mailboxes every 3 minutes.
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-update-interval 180)
-  (setq mu4e-hide-index-messages t)
-#+END_SRC
-
-Use zoho as default mailbox.
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-maildir       "~/.mail"              ;; top-level Maildir
-        mu4e-sent-folder   "/zoho/Sent"
-        mu4e-drafts-folder "/zoho/Drafts"
-        mu4e-trash-folder  "/zoho/Trash")
-
-#+END_SRC
-
-Enabling this will make mbsync not break with a maildir error about UIDs.  Offlineimap prefers this to be nil.
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-change-filenames-when-moving t)
-#+END_SRC
-
-Show images in emails.
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-view-show-images t)
-#+END_SRC
-
-Word wrap emails.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
-#+END_SRC
-
-Gmail and offlineimap leads to duplicate emails showing up in search filters since that's the way labels/virtual folders in Gmail are represented, so skip them.
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-headers-skip-duplicates t)
-#+END_SRC
-
-Use =mu4e-shr2text= found in the =mu4e-contrib= package to display rich text messages.
-#+BEGIN_SRC emacs-lisp
-  (require 'mu4e-contrib)
-  (setq mu4e-html2text-command 'mu4e-shr2text)
-#+END_SRC
-
-Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
-#+BEGIN_SRC emacs-lisp
-  (require 'smtpmail)
-  (setq user-mail-address (concat "kevin" "@nivekuil.com")
-        message-send-mail-function 'smtpmail-send-it
-        smtpmail-smtp-server "smtp.zoho.com"
-        smtpmail-stream-type 'starttls
-        smtpmail-smtp-service 587)      ;TLS port
-  (setq mu4e-maildir-shortcuts
-        '(("/zoho/Inbox" . ?j)))
-  ;; (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (defun my-mu4e-action-view-with-xwidget (msg)
-    "View the body of the message inside xwidget-webkit."
-    (unless (fboundp 'xwidget-webkit-browse-url)
-      (mu4e-error "No xwidget support available"))
-    (let* ((html (mu4e-message-field msg :body-html))
-           (txt (mu4e-message-field msg :body-txt))
-           (tmpfile (format "%s%x.html" temporary-file-directory (random t))))
-      (unless (or html txt)
-        (mu4e-error "No body part for this message"))
-      (with-temp-buffer
-        ;; simplistic -- but note that it's only an example...
-        (insert (or html (concat "<pre>" txt "</pre>")))
-        (write-file tmpfile)
-        (xwidget-webkit-browse-url (concat "file://" tmpfile) t))))
-
-  (add-to-list 'mu4e-view-actions
-               '("xViewXWidget" . my-mu4e-action-view-with-xwidget) t)
-#+END_SRC
-
-Start mu4e in the background.
-#+BEGIN_SRC emacs-lisp
-  ;;(add-hook 'after-init-hook 'mu4e)
-#+END_SRC
-
-Spellcheck emails.
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
-  (add-hook 'mu4e-compose-mode-hook 'visual-line-mode)
-  (add-hook 'mu4e-compose-mode-hook (lambda nil (auto-fill-mode -1)))
-#+END_SRC
-
-** mu4e-alert
-Use libnotify to send notifications about new emails.
-#+BEGIN_SRC emacs-lisp
-  (mu4e-alert-set-default-style 'notifications)
-  (mu4e-alert-enable-notifications)
-#+END_SRC
+# ** mu4e-alert
+# Use libnotify to send notifications about new emails.
+# #+BEGIN_SRC emacs-lisp
+#   (mu4e-alert-set-default-style 'notifications)
+#   (mu4e-alert-enable-notifications)
+# #+END_SRC
 
 ** polymode
 Override polymode key bindings.
@@ -1267,4 +1198,18 @@ Yasnippet blocks shell tab completion, so disable it in comint and term modes.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'comint-mode-hook (lambda () (yas-minor-mode -1)))
   (add-hook 'term-mode-hook (lambda () (yas-minor-mode -1)))
+#+END_SRC
+
+* fbstuff
+#+BEGIN_SRC emacs-lisp
+  (setq tramp-default-method "sshx")
+  (setq
+   tramp-password-prompt-regexp
+   (concat
+    "^.*"
+    (regexp-opt
+     '("passcode" "Passcode"
+       "password" "Password") t)
+    ".*:\0? *"))
+  (setq server-use-tcp t)
 #+END_SRC
