@@ -41,10 +41,11 @@
 (global-set-key (kbd "C-x b") 'helm-bookmarks)
 (global-set-key (kbd "C-x w") 'eww)
 (global-set-key (kbd "M-r") 'query-replace-regexp)
-(global-set-key (kbd "C-M-r") 'query-replace-regexp)
+(global-set-key (kbd "C-M-r") 'replace-regexp)
 (global-set-key (kbd "C-M-d") 'kill-sexp)
 (global-set-key (kbd "C-h o") 'man)
 (global-set-key (kbd "M-SPC") 'fixup-whitespace-or-join-line)
+(global-set-key (kbd "C-;") 'comment-dwim)
 #+END_SRC
 
 Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be wasted on =universal-argument=.
@@ -62,7 +63,7 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 (global-set-key (kbd "M-m") 'er/expand-region)
 (global-set-key (kbd "C-x f") 'anchored-transpose)
 (global-set-key (kbd "C-M-s") 'helm-do-grep-ag)
-(global-set-key (kbd "C-;") 'whole-line-or-region-comment-dwim)
+(global-set-key (kbd "M-;") 'whole-line-or-region-comment-dwim)
 #+END_SRC
 
 *** avy
@@ -81,8 +82,9 @@ Swap =undo= and =universal-argument=. =C-u= is in too good of a position to be w
 #+BEGIN_SRC emacs-lisp
 (add-hook 'flycheck-mode-hook
           (lambda ()
-            (local-set-key (kbd "C-M-n") #'flycheck-next-error)
-            (local-set-key (kbd "C-M-p") #'flycheck-previous-error)))
+            (unless (eq major-mode "clojurescript-mode")
+              (local-set-key (kbd "C-M-n") #'flycheck-next-error)
+              (local-set-key (kbd "C-M-p") #'flycheck-previous-error))))
 #+END_SRC
 
 *** helm
@@ -135,11 +137,11 @@ Use melpa as package repository.
 Load and activate packages.
 #+BEGIN_SRC emacs-lisp
   (package-initialize)
-                                                #+END_SRC  
+#+END_SRC
 
 List of packages to install.  This should be updated regularly (automatically).
 #+BEGIN_SRC emacs-lisp
-  (setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-clojure flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony jade company jazz-theme jinja2-mode js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue racer f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tronesque-theme tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet toml-mode))
+  (setq my-packages '(electric-operator @ ace-window afternoon-theme aggressive-indent anchored-transpose avy beacon bubbleberry-theme cargo clj-refactor cider clojure-mode column-enforce-mode command-log-mode company-irony company-irony-c-headers company-tern corral cyberpunk-theme darktooth-theme autothemer deft diminish draft-mode  edn elpy erc-hl-nicks expand-region find-file-in-project firecode-theme flycheck-clojure flycheck-irony flycheck-package flycheck-pos-tip flycheck-rust flycheck focus gnugo ascii-art-to-unicode helm-ag helm-projectile helm helm-core highlight-indentation htmlize hungry-delete hydra inflections irony-eldoc irony company jazz-theme  js2-mode json-rpc kooten-theme load-theme-buffer-local lush-theme magit git-commit magit-popup markdown-mode minesweeper monochrome-theme mu4e-alert ht alert log4e gntp multi multiple-cursors names noctilux-theme ob-ipython dash-functional org-plus-contrib package-lint paredit peg polymode popup pos-tip projectile pkg-info epl py-autopep8 pyvenv queue f rainbow-delimiters request rust-mode scss-mode simple-httpd smyx-theme solarized-theme soothe-theme spacegray-theme spaceline s powerline spinner string-utils list-utils stripe-buffer swiper ivy symon temp-buffer-browse tern tuareg caml ujelly-theme web-mode websocket which-key whole-line-or-region with-editor dash async writegood-mode ws-butler xpm yaml-mode yasnippet toml-mode lsp-mode racer))
 #+END_SRC
 
 If any packages from the above list are missing, refresh the package list and install them.
@@ -173,7 +175,8 @@ Pin packages to melpa-stable, since melpa versions will always have a higher ver
 
 *** Font
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'default-frame-alist '(font . "Ubuntu Mono-18"))
+;; (add-to-list 'default-frame-alist '(font . "Ubuntu Mono-18"))
+(add-hook 'after-init-hook (lambda nil (set-default-font "Input Mono-16.5")))
 #+END_SRC
 
 *** Frame title
@@ -288,6 +291,13 @@ By default Emacs GC'd every .76MB allocated, which is far too aggressive for a m
 (setq undo-strong-limit 1200000)
 #+END_SRC
 
+*** Paredit
+Use paredit in lisps.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'clojure-mode-hook 'paredit-mode)
+(add-hook 'clojurescript-mode-hook 'paredit-mode)
+(add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+#+END_SRC
 *** Save place in files
 #+BEGIN_SRC emacs-lisp
 (save-place-mode 1)
@@ -310,7 +320,7 @@ Lockfiles are those symlinks starting with .# that are created every time when y
 ** Web browsing
 Shadow the original browse-url function, making it work appropriate to the frame's environment (graphical or terminal).
 #+BEGIN_SRC emacs-lisp
-  (setq browse-url-generic-program (executable-find "firefox-aurora"))
+  (setq browse-url-generic-program (executable-find "firefox-beta"))
   (add-hook 'after-init-hook (lambda ()
                                (defun browse-url (url &rest _)
                                  "Shadow the original `browse-url' function, making it work appropriate to the frame's environment (graphical or terminal) by using either xdg-open or eww."
@@ -335,7 +345,7 @@ Timestamp each message.
 Don't pop up the async shell command buffer.
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'display-buffer-alist (cons "\\*Async Shell Command\\*.*" (cons #'display-buffer-no-window nil)))
-#+END_SRC
+#+END_SRC  
 
 ** TRAMP
 Don't litter directories with history files.
@@ -347,105 +357,94 @@ Terminal emacs behaves differently from GTK emacs in a lot of annoying ways.
 
 Having M-[ bound will have a really annoying interaction with the bracketed paste mode of terminal emulators so unbind this key.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'after-init-hook (lambda nil (unless (display-graphic-p)
-                                           (global-unset-key (kbd "M-[")))))
-#+END_SRC                                           
+(add-hook 'after-init-hook (lambda nil (unless (display-graphic-p)
+                                         (global-unset-key (kbd "M-[")))))
+#+END_SRC
 
 ** pinentry
 Use emacs for pinentry (unlocking gpg keys).
 #+BEGIN_SRC emacs-lisp
-  (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
-  (pinentry-start)
+(setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
+(pinentry-start)
 #+END_SRC
 * Custom Functions
 ** Commands
 *** Run current buffer in interpreter asynchronously
 #+BEGIN_SRC emacs-lisp
-  (defun run-async-script ()
-    (interactive)
-    (save-buffer)
-    (cond ((equal (file-name-extension buffer-file-name) "py")
-           (async-shell-command (concat "python " buffer-file-name)))))
-    #+END_SRC           
+(defun run-async-script ()
+  (interactive)
+  (save-buffer)
+  (cond ((equal (file-name-extension buffer-file-name) "py")
+         (async-shell-command (concat "python " buffer-file-name)))))
+#+END_SRC
 
 *** find-file-sudo
 #+BEGIN_SRC emacs-lisp
-  (defun find-file-sudo ()
-    "Reopen the current file as root, preserving point position."
-    (interactive)
-    (let ((p (point)))
-      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))
-      (goto-char p)))
+(defun find-file-sudo ()
+  "Reopen the current file as root, preserving point position."
+  (interactive)
+  (let ((p (point)))
+    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))
+    (goto-char p)))
 #+END_SRC
 
 *** open-next-line
 Behave like vi's o command
-Binding: C-o, C-RET, M-RET
 #+BEGIN_SRC emacs-lisp
-  (defun open-next-line ()
-    "Open a new line after the current one."
-    (interactive)
-    (end-of-line) (open-line 1) (forward-line) (indent-according-to-mode))
+(defun open-next-line ()
+  "Open a new line after the current one."
+  (interactive)
+  (end-of-line) (open-line 1) (forward-line) (indent-according-to-mode))
 #+END_SRC
 
 *** open-previous-line
 Behave like vi's O command
-Binding: M-o
 #+BEGIN_SRC emacs-lisp
-  (defun open-previous-line ()
-    "Open a new line before the current one."
-    (interactive)
-    (beginning-of-line) (open-line 1) (indent-according-to-mode))
-#+END_SRC
-
-*** mark-this-line
-Binding: M-m
-#+BEGIN_SRC emacs-lisp
-  (defun mark-this-line ()
-    "Mark the current line from indentation to end, leaving cursor at end."
-    (interactive)
-    (back-to-indentation) (set-mark-command nil) (end-of-line))
+(defun open-previous-line ()
+  "Open a new line before the current one."
+  (interactive)
+  (beginning-of-line) (open-line 1) (indent-according-to-mode))
 #+END_SRC
 
 *** correct-exponent-formatting-in-region
 #+BEGIN_SRC emacs-lisp
-  (defun correct-exponent-formatting-in-region (start end)
-    "Corrects formatting of exponents from copied text.
+(defun correct-exponent-formatting-in-region (start end)
+  "Corrects formatting of exponents from copied text.
   When yanking formatted text, the formatting of exponents will be lost,
   appearing as regular numbers instead.  This function adds carets to properly
   denote that they are exponents, including exponents of parenthetical
   expressions.  This function assumes that the input variable is never an
   exponent itself."
-    (interactive "*r")
-    (save-excursion
-      (save-restriction
-        (let ((character (read-string "Enter variable to add carets around: ")))
-          (narrow-to-region start end)
-          (goto-char (point-min))
-          (while (re-search-forward (concat "[" character ")]") nil t)
-            (when (looking-at-p "[[:digit:]]") (insert "^")))))))
+  (interactive "*r")
+  (save-excursion
+    (save-restriction
+      (let ((character (read-string "Enter variable to add carets around: ")))
+        (narrow-to-region start end)
+        (goto-char (point-min))
+        (while (re-search-forward (concat "[" character ")]") nil t)
+          (when (looking-at-p "[[:digit:]]") (insert "^")))))))
 #+END_SRC
 
 *** beginning-of-line-or-indentation
 Cycle cursor between the beginning of indentation and beginning of the line.
 
 #+BEGIN_SRC emacs-lisp
-  (defun beginning-of-line-or-indentation ()
-    (interactive)
+(defun beginning-of-line-or-indentation ()
+  (interactive)
+  (let ((original (point)))
+    (back-to-indentation)
+    (if (eq (point) original)
+        (beginning-of-line))))
+
+(defun beginning-of-line-or-indentation-p ()
+  (save-excursion
     (let ((original (point)))
       (back-to-indentation)
       (if (eq (point) original)
-          (beginning-of-line))))
-
-  (defun beginning-of-line-or-indentation-p ()
-    (save-excursion
-      (let ((original (point)))
-        (back-to-indentation)
-        (if (eq (point) original)
-            t
-          (progn
-            (beginning-of-line)
-            (eq (point) original))))))
+          t
+        (progn
+          (beginning-of-line)
+          (eq (point) original))))))
 #+END_SRC
 
 *** spit-scad-last-expression
@@ -478,415 +477,404 @@ Make the current window 80 columns wide.
 *** set-frame-width-100col
 Make the current window 100 columns wide.
 #+BEGIN_SRC emacs-lisp
-  (defun set-frame-width-100col (&optional cols)
-    (interactive "p")
-    (set-frame-width (selected-frame) (* 100 cols))
-    (set-frame-height (selected-frame) (x-display-pixel-height))
-    (if (> cols 0)
-        (set-frame-position (selected-frame) 0 0)
-      (set-frame-position (selected-frame) -1 0)))
+                 (defun set-frame-width-100col (&optional cols)
+                   (interactive "p")
+                   (set-frame-width (selected-frame) (* 100 cols))
+                   (set-frame-height (selected-frame) (x-display-pixel-height))
+                   (if (> cols 0)
+                       (set-frame-position (selected-frame) 0 0)
+                     (set-frame-position (selected-frame) -1 0)))
 #+END_SRC
 *** irc
 #+BEGIN_SRC emacs-lisp
-  (defun connect-to-irc ()
-    (interactive)
-    ;; (erc-tls :server "irc.freenode.net" :port 6697
-    ;;          :nick "nivekuil"
-    ;;          :password (with-temp-buffer
-    ;;                      (insert-file-contents (concat user-emacs-directory "ercpass"))
-    ;;                      (buffer-string)))
-    (erc-tls :server "nivekuil.com" :port 7000
-             :nick "nivekuil"
-             :password (with-temp-buffer
-                         (insert-file-contents
-                          (concat user-emacs-directory "ercpass.gpg"))
-                         (buffer-string))))
+                 (defun connect-to-irc ()
+                   (interactive)
+                   ;; (erc-tls :server "irc.freenode.net" :port 6697
+                   ;;          :nick "nivekuil"
+                   ;;          :password (with-temp-buffer
+                   ;;                      (insert-file-contents (concat user-emacs-directory "ercpass"))
+                   ;;                      (buffer-string)))
+                   (erc-tls :server "nivekuil.com" :port 7000
+                            :nick "nivekuil"
+                            :password (with-temp-buffer
+                                        (insert-file-contents
+                                         (concat user-emacs-directory "ercpass.gpg"))
+                                        (buffer-string))))
 #+END_SRC
 
 *** jump-to-last-edit
 #+BEGIN_SRC emacs-lisp
-  (defun jump-to-last-edit ()
-    "Go back to last add/delete edit"
-    (interactive)
-    (let* ((ubuf (cadr buffer-undo-list))
-           (beg (car ubuf))
-           (end (cdr ubuf)))
-      (cond
-       ((integerp beg) (goto-char beg))
-       ((stringp beg) (goto-char (abs end))
-        (message "DEL-> %s" (substring-no-properties beg)))
-       (t (message "No add/delete edit occurred")))))
+                 (defun jump-to-last-edit ()
+                   "Go back to last add/delete edit"
+                   (interactive)
+                   (let* ((ubuf (cadr buffer-undo-list))
+                          (beg (car ubuf))
+                          (end (cdr ubuf)))
+                     (cond
+                      ((integerp beg) (goto-char beg))
+                      ((stringp beg) (goto-char (abs end))
+                       (message "DEL-> %s" (substring-no-properties beg)))
+                      (t (message "No add/delete edit occurred")))))
 
-  (global-set-key (kbd "C-x u") 'jump-to-last-edit)
+                 (global-set-key (kbd "C-x u") 'jump-to-last-edit)
 #+END_SRC
 
 *** compile-dwim
 #+BEGIN_SRC emacs-lisp
-  (defun compile-dwim ()
-    (interactive)
-    (save-buffer)
-    (save-window-excursion
-      (recompile)))
+                 (defun compile-dwim ()
+                   (interactive)
+                   (save-buffer)
+                   (save-window-excursion
+                     (recompile)))
 #+END_SRC
 
 *** fixup-whitespace-or-join-line
 If at beginning of indentation, call join-line.  Otherwise, call fixup-whitespace.
 #+BEGIN_SRC emacs-lisp
-  (defun fixup-whitespace-or-join-line ()
-    (interactive)
-    (if (beginning-of-line-or-indentation-p)
-        (join-line)
-      (fixup-whitespace)))
+                 (defun fixup-whitespace-or-join-line ()
+                   (interactive)
+                   (if (beginning-of-line-or-indentation-p)
+                       (join-line)
+                     (fixup-whitespace)))
 #+END_SRC
 * Mode settings
 ** Minor modes
 Use subword mode in prog mode to move by camelCase.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'prog-mode-hook 'subword-mode)
+                 (add-hook 'prog-mode-hook 'subword-mode)
 #+END_SRC
 
 Use winner-mode to save window layout history (C-c left to undo window changes)
 #+BEGIN_SRC emacs-lisp
-  (winner-mode t)
+                 (winner-mode t)
 #+END_SRC
 
 Use hl line mode in dired, one of the few modes where it's more helpful than annoying.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'dired-mode-hook 'hl-line-mode)
-    #+END_SRC
+                 (add-hook 'dired-mode-hook 'hl-line-mode)
+#+END_SRC
 
 Use electric pair mode to automatically insert matching delimiters (sometimes annoying).
 #+BEGIN_SRC emacs-lisp
-  (electric-pair-mode)
-  (add-hook 'erc-mode-hook (lambda nil (electric-pair-local-mode 0)))
+                 (electric-pair-mode)
+                 (add-hook 'erc-mode-hook (lambda nil (electric-pair-local-mode 0)))
 #+END_SRC
 
 Use mouse avoidance mode so the rodent doesn't cover the actual cursor.  I don't even notice I have this mode enabled, which is a probably a positive sign.
 #+BEGIN_SRC emacs-lisp
-  (mouse-avoidance-mode 'exile)
+                 (mouse-avoidance-mode 'exile)
 #+END_SRC
 
 Tab inserts spaces only.
 #+BEGIN_SRC emacs-lisp
-  (setq-default indent-tabs-mode nil)
+                 (setq-default indent-tabs-mode nil)
 #+END_SRC
 
 Use auto-revert-mode for log files to update the output automatically
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
+                 (add-to-list 'auto-mode-alist '("\\.log\\'" . auto-revert-mode))
 #+END_SRC
 
 Show the name of the function/org header that the cursor is currently within.  Looks really nice with spaceline.
 #+BEGIN_SRC emacs-lisp
-  (which-function-mode 1)
+                 (which-function-mode 1)
 #+END_SRC
 
 *** recentf-mode
 A useful feature that stores the most recently visited files, conveniently accessible via =helm-mini=.
 Never cleanup recentf so it doesn't try to stat everything in the recentf list, which is inconvenient for network mounted files including ones accessed over TRAMP.
 #+BEGIN_SRC emacs-lisp
-  (setq recentf-auto-cleanup 'never)
-  (recentf-mode 1)
-  (setq recentf-max-saved-items 100)
-  
-  (add-hook 'kill-emacs-hook 'recentf-save-list)
-  (add-hook 'auto-save-hook 'recentf-save-list)
+                 (setq recentf-auto-cleanup 'never)
+                 (recentf-mode 1)
+                 (setq recentf-max-saved-items 100)
+                 
+                 (add-hook 'kill-emacs-hook 'recentf-save-list)
+                 (add-hook 'auto-save-hook 'recentf-save-list)
 #+END_SRC
 
 Ignore autoloaded files that clobber the recentf list after upgrading packages.
 #+BEGIN_SRC emacs-lisp
-  (setq recentf-exclude (list "/\\.git/.*\\'" ; Git contents
-                              "/elpa/.*\\'"   ; Package files
-                              "/itsalltext/"  ; It's all text temp files
-                              ".*\\.gz\\'"
-                              "TAGS"
-                              ".*-autoloads\\.el\\'"))
+                 (setq recentf-exclude (list "/\\.git/.*\\'" ; Git contents
+                                             "/elpa/.*\\'"   ; Package files
+                                             "/itsalltext/"  ; It's all text temp files
+                                             ".*\\.gz\\'"
+                                             "TAGS"
+                                             ".*-autoloads\\.el\\'"))
 #+END_SRC
 
 ** Major modes
 *** Assembly
 Configuration for SPARC assembly. Use ! as the comment char and only use tabs.
 #+BEGIN_SRC emacs-lisp
-  (setq asm-comment-char ?!)
-  (setq asm-mode-hook
-        (lambda ()
-          (setq indent-tabs-mode t)
-          (add-hook 'before-save-hook
-                    (lambda () (tabify (point-min) (point-max))) nil t)))
+                 (setq asm-comment-char ?!)
+                 (setq asm-mode-hook
+                       (lambda ()
+                         (setq indent-tabs-mode t)
+                         (add-hook 'before-save-hook
+                                   (lambda () (tabify (point-min) (point-max))) nil t)))
 #+END_SRC
 
 *** C/C++ (cpp)
 Use irony-mode.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'c++-mode-hook 'irony-mode)
-  (add-hook 'c-mode-hook 'irony-mode)
-  (add-hook 'objc-mode-hook 'irony-mode)
+                 (add-hook 'c++-mode-hook 'irony-mode)
+                 (add-hook 'c-mode-hook 'irony-mode)
+                 (add-hook 'objc-mode-hook 'irony-mode)
 
-  ;; replace the `completion-at-point' and `complete-symbol' bindings in
-  ;; irony-mode's buffers by irony-mode's function
-  (defun my-irony-mode-hook ()
-    (define-key irony-mode-map [remap completion-at-point]
-      'irony-completion-at-point-async)
-    (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async))
-  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  (add-hook 'irony-mode-hook 'irony-eldoc)
-  (setq irony-additional-clang-options '("-std=c++14"))
+                 ;; replace the `completion-at-point' and `complete-symbol' bindings in
+                 ;; irony-mode's buffers by irony-mode's function
+                 (defun my-irony-mode-hook ()
+                   (define-key irony-mode-map [remap completion-at-point]
+                     'irony-completion-at-point-async)
+                   (define-key irony-mode-map [remap complete-symbol]
+                     'irony-completion-at-point-async))
+                 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+                 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+                 (add-hook 'irony-mode-hook 'irony-eldoc)
+                 (setq irony-additional-clang-options '("-std=c++14"))
 
-  (add-hook 'irony-mode-hook
-            (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
+                 (add-hook 'irony-mode-hook
+                           (lambda nil (local-set-key (kbd "C-c C-c") 'compile-dwim)))
 #+END_SRC
 Change the default code style if desired.  Default is 2 space indents.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'irony-mode-hook (lambda nil (c-set-style "cc-mode")))
+                 ;; (add-hook 'irony-mode-hook (lambda nil (c-set-style "cc-mode")));
 #+END_SRC
 *** Clojure
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'clojure-mode-hook 'paredit-mode)
-  (add-hook 'clojure-mode-hook
-            (lambda ()
-              (local-set-key (kbd "C-;")
-                             (lambda ()
-                               "Comment out the sexp at point."
-                               (interactive)
-                               (save-excursion
-                                 (mark-sexp)
-                                 (paredit-comment-dwim))))))
+                 (add-hook 'clojure-mode-hook
+                           (lambda ()
+                             (local-set-key (kbd "C-;")
+                                            (lambda ()
+                                              "Comment out the sexp at point."
+                                              (interactive)
+                                              (save-excursion
+                                                (mark-sexp)
+                                                (paredit-comment-dwim))))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'clojure-mode-hook
-            (lambda ()
-              (local-set-key (kbd "C-l") 'cider-eval-defun-at-point)))
+                 (add-hook 'clojure-mode-hook
+                           (lambda ()
+                             (local-set-key (kbd "C-l") 'cider-eval-defun-at-point)))
+#+END_SRC
+
+Forms
+#+BEGIN_SRC emacs-lisp
 #+END_SRC
 
 **** clj-refactor
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'clojure-mode-hook 'clj-refactor-mode)
-  (cljr-add-keybindings-with-prefix "C-c C-m")
+                 (add-hook 'clojure-mode-hook
+                           (lambda () (clj-refactor-mode) (cljr-add-keybindings-with-prefix "C-c C-m")))
+                 
 #+END_SRC
 
 *** Comint
 There should be no scroll margin in a shell buffer.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'comint-mode-hook (lambda ()
-                                (set (make-local-variable 'scroll-margin) 0)))
-  (setq comint-prompt-read-only t)
+                 (add-hook 'comint-mode-hook (lambda ()
+                                               (set (make-local-variable 'scroll-margin) 0)))
+                 (setq comint-prompt-read-only t)
 #+END_SRC
 
 *** Conf
 Use tabs in Unix conf files.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'conf-mode (lambda () (setq indent-tabs-mode t)))
-#+END_SRC
-
-*** Emacs lisp  (elisp)
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+                 (add-hook 'conf-mode (lambda () (setq indent-tabs-mode t)))
 #+END_SRC
 
 *** Eww
 #+BEGIN_SRC emacs-lisp
-  (eval-after-load "eww"
-    '(progn (define-key eww-mode-map "n" 'next-line)
-            (define-key eww-mode-map "m" 'eww-follow-link)
-            (define-key eww-mode-map "p" 'previous-line)
-            (define-key eww-mode-map "N" 'eww-next-url)
-            (define-key eww-mode-map "P" 'eww-previous-url)))
-  (setq shr-color-visible-luminance-min 70)
+                 (eval-after-load "eww"
+                   '(progn (define-key eww-mode-map "n" 'next-line)
+                           (define-key eww-mode-map "m" 'eww-follow-link)
+                           (define-key eww-mode-map "p" 'previous-line)
+                           (define-key eww-mode-map "N" 'eww-next-url)
+                           (define-key eww-mode-map "P" 'eww-previous-url)))
+                 (setq shr-color-visible-luminance-min 70)
 #+END_SRC
 
 *** ERC
 Autojoin channels when ERC starts.
 #+BEGIN_SRC emacs-lisp
-  (setq erc-autojoin-channels-alist nil)
-  '(("freenode.net" "#ucsd"))
+                 (setq erc-autojoin-channels-alist nil)
+                 '(("freenode.net" "#ucsd"))
 #+END_SRC
 
 Add modules to be loaded.
 #+BEGIN_SRC emacs-lisp
-  (require 'erc)
-  (add-to-list 'erc-modules 'hl-nicks)
-  (add-to-list 'erc-modules 'notifications)
-  (add-to-list 'erc-modules 'spelling)
+                 (require 'erc)
+                 (add-to-list 'erc-modules 'hl-nicks)
+                 (add-to-list 'erc-modules 'notifications)
+                 (add-to-list 'erc-modules 'spelling)
 #+END_SRC
 
 Hide those annoying join/quit messages.
 #+BEGIN_SRC emacs-lisp
-  (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+                 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 #+END_SRC
 
 No scroll margin in ERC buffers.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'erc-mode-hook (lambda ()
-                             (set (make-local-variable 'scroll-margin) 1)))
+                 (add-hook 'erc-mode-hook (lambda ()
+                                            (set (make-local-variable 'scroll-margin) 1)))
 #+END_SRC
 
 Since we're using ZNC, DETACH instead of PART from a channel when killing its buffer.
 #+BEGIN_SRC emacs-lisp
-  (defun erc-detach ()
-    (erc-server-send (format "DETACH %s" (erc-default-target))
-                     nil (erc-default-target)))
+                 (defun erc-detach ()
+                   (erc-server-send (format "DETACH %s" (erc-default-target))
+                                    nil (erc-default-target)))
 
-  (setq erc-kill-buffer-hook #'(erc-detach))
-  (setq erc-kill-channel-hook #'(erc-detach))
-  (setq erc-kill-server-hook #'(erc-detach))
+                 (setq erc-kill-buffer-hook #'(erc-detach))
+                 (setq erc-kill-channel-hook #'(erc-detach))
+                 (setq erc-kill-server-hook #'(erc-detach))
 #+END_SRC
 
 *** Haskell
 #+BEGIN_SRC emacs-lisp
-  ;; (require 'haskell-interactive-mode)
-  ;; (require 'haskell-process)
-  ;; (add-hook 'haskell-mode-hook
-  ;; (progn
-  ;; (interactive-haskell-mode)
-  ;; (turn-on-haskell-indent)))
+                 ;; (require 'haskell-interactive-mode)
+                 ;; (require 'haskell-process)
+                 ;; (add-hook 'haskell-mode-hook
+                 ;; (progn
+                 ;; (interactive-haskell-mode)
+                 ;; (turn-on-haskell-indent)))
 
-  ;; (setq haskell-process-suggest-remove-import-lines t)
-  ;; (setq haskell-process-auto-import-loaded-modules t)
-  ;; (setq haskell-process-log t)
+                 ;; (setq haskell-process-suggest-remove-import-lines t)
+                 ;; (setq haskell-process-auto-import-loaded-modules t)
+                 ;; (setq haskell-process-log t)
 
-  #+END_SRC  
+#+END_SRC
 
 *** Help
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'help-mode-hook 'visual-line-mode)
+                 (add-hook 'help-mode-hook 'visual-line-mode)
 #+END_SRC
 *** LaTeX
 Automatically compile on save.  There's probably a better way to do this that avoids the undocumented variable =TeX-command-force=.
 
 #+BEGIN_SRC emacs-lisp
-  (setq TeX-command-force "LaTeX")
-  (add-hook 'LaTeX-mode-hook
-            (lambda () (add-hook 'after-save-hook
-                                 (lambda () (TeX-command-master -1)) nil t)))
+                 (setq TeX-command-force "LaTeX")
+                 (add-hook 'LaTeX-mode-hook
+                           (lambda () (add-hook 'after-save-hook
+                                                (lambda () (TeX-command-master -1)) nil t)))
 #+END_SRC
 
 Use pretty symbols.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'LaTeX-mode-hook 'prettify-symbols-mode)
-                                                                                    #+END_SRC  
+                 (add-hook 'LaTeX-mode-hook 'prettify-symbols-mode)
+#+END_SRC
 *** Python
 #+BEGIN_SRC emacs-lisp
-  (when (executable-find "ipython")
-    (setq python-shell-intrepreter "ipython"))
-    #+END_SRC
+                 (when (executable-find "ipython")
+                   (setq python-shell-intrepreter "ipython"))
+#+END_SRC
 *** Org-mode
 Use visual line mode to wrap lines in org mode.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'org-mode-hook 'visual-line-mode)
+                 (add-hook 'org-mode-hook 'visual-line-mode)
 #+END_SRC
 
 Indent sections and hide multiple asterisks.
 #+BEGIN_SRC emacs-lisp
-  (setq org-startup-indented t)
+                 (setq org-startup-indented t)
 #+END_SRC
 
 **** org-babel
 Eval code blocks without prompting for confirmation.  It's unlikely that this will ever be a security concern.
 #+BEGIN_SRC emacs-lisp
-  (setq org-confirm-babel-evaluate nil)
+                 (setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'org (org-babel-do-load-languages
-                              'org-babel-load-languages
-                              '((sh . t)
-                                (emacs-lisp . t)
-                                (ipython . t))))
+                 (with-eval-after-load 'org (org-babel-do-load-languages
+                                             'org-babel-load-languages
+                                             '((shell . t)
+                                               (emacs-lisp . t)
+                                               (gnuplot . t)
+                                               (ipython . t))))
 #+END_SRC
 
 **** org-src
 Editing source code blocks should happen in the same window.  The edit session should end after saving the org-src buffer (TODO: submit patch? after-save-hook isn't called by org-edit-src-save so might be better to modify org-edit-src-save itself).
 #+BEGIN_SRC emacs-lisp
-  (setq org-src-window-setup 'current-window)
+                 (setq org-src-window-setup 'current-window)
 #+END_SRC
 
 Disable syntax checking in src blocks.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'org-src-mode-hook
-            (lambda ()
-              (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)))
+                 (add-hook 'org-src-mode-hook
+                           (lambda ()
+                             (add-to-list 'flycheck-disabled-checkers 'emacs-lisp-checkdoc)))
 #+END_SRC
 
 **** Macros
 Add an "<el" expansion for emacs-lisp source blocks.
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'org (add-to-list 'org-structure-template-alist
-                                          '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")))
+                 (with-eval-after-load 'org (add-to-list 'org-structure-template-alist
+                                                         '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC")))
 #+END_SRC
 
 **** Website
 When exporting to HTML, highlight the code within src blocks.
 #+BEGIN_SRC emacs-lisp
-  (setq org-src-fontify-natively t)
+                 (setq org-src-fontify-natively t)
 #+END_SRC
 
 Workaround for a bug with HTML export on emacs-25. http://wenshanren.org/?p=768
 #+BEGIN_SRC emacs-lisp
-  (eval-after-load "/home/nivekuil/docs/website/index.org"
-    (defun org-font-lock-ensure ()
-      (font-lock-fontify-buffer)))
+                 (eval-after-load "/home/nivekuil/docs/website/index.org"
+                   (defun org-font-lock-ensure ()
+                     (font-lock-fontify-buffer)))
 #+END_SRC
 
 Add more backends to =org-export=.
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
+                 (with-eval-after-load 'org (add-to-list 'org-export-backends 'org))
 #+END_SRC
 
 The publish function.
 #+BEGIN_SRC emacs-lisp
-  (defun publish-website ()
-    (interactive)
-    (save-window-excursion
-      (find-file "~/docs/website/index.org")
-      (org-html-export-to-html))
-    (call-process-shell-command "~/scripts/publish-website.sh &"))
+                 (defun publish-website ()
+                   (interactive)
+                   (save-window-excursion
+                     (find-file "~/docs/website/index.org")
+                     (org-html-export-to-html))
+                   (call-process-shell-command "~/scripts/publish-website.sh &"))
 #+END_SRC
 
 **** org-agenda
 #+BEGIN_SRC emacs-lisp
-  (eval-after-load "deft" `(add-to-list 'org-agenda-files deft-directory))
+                 (eval-after-load "deft" `(add-to-list 'org-agenda-files deft-directory))
 #+END_SRC
 *** Javascript/HTML/CSS
 Use js2-mode for editing .js files.
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsx$" . js2-mode))
+                 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+                 (add-to-list 'auto-mode-alist '("\\.jsx$" . js2-mode))
 #+END_SRC
 
 JSON is a subset of YAML, so use yaml-mode to edit json files.
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.json$" . yaml-mode))
+                 (add-to-list 'auto-mode-alist '("\\.json$" . yaml-mode))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (setq js-indent-level 2)
-#+END_SRC
-
-Use jade for cool features.
-#+BEGIN_SRC emacs-lisp
-  (require 'jade)
-  (add-hook 'js2-mode-hook #'jade-interaction-mode)
-  (add-hook 'js2-mode-hook #'tern-mode)
+                 (setq js-indent-level 2)
 #+END_SRC
 *** Rust
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'rust-mode-hook #'cargo-minor-mode)
-  (add-hook 'rust-mode-hook #'racer-mode)
-  (add-hook 'racer-mode-hook #'company-mode)
-  (eval-after-load 'racer
-    (lambda nil (define-key rust-mode-map (kbd "C-c C-d") 'racer-describe)))
-  (add-hook 'rust-mode-hook
-            (lambda nil
-              (setq compile-command "cargo build")
-              (setq racer-rust-src-path
-                    (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
-                            "/lib/rustlib/src/rust/src"))
-              (local-set-key (kbd "C-c C-c") 'compile-dwim)))
+                 (add-hook 'rust-mode-hook #'cargo-minor-mode)
+                 (setenv "RUST_SRC_PATH"
+                         (concat (shell-command-to-string "printf %s $(rustc --print sysroot)")
+                                 "/lib/rustlib/src/rust/src"))
+                 ;;(add-hook 'rust-mode-hook #'racer-mode)
+                 (add-hook 'rust-mode-hook #'company-mode)
+                 (eval-after-load 'rust
+                   (lambda nil (define-key rust-mode-map (kbd "C-c C-d") 'racer-describe)))
+#+END_SRC
 
-  #+END_SRC
 *** SQL
 #+BEGIN_SRC emacs-lisp
 #+END_SRC
@@ -899,7 +887,7 @@ Set scroll margin in terminal to 0.
 
 *** Web
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
@@ -913,20 +901,20 @@ Set scroll margin in terminal to 0.
 *** xwidget-webkit
 Make the mouse wheel scroll the webkit xwidget, and add the standard keybinding to go back a page.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'xwidget-webkit-mode-hook
-            (lambda ()
-              (setq-local mwheel-scroll-up-function
-                          (lambda (&optional arg) (xwidget-webkit-scroll-up)))
-              (setq-local mwheel-scroll-down-function
-                          (lambda (&optional arg) (xwidget-webkit-scroll-down)))
-              (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
+(add-hook 'xwidget-webkit-mode-hook
+          (lambda ()
+            (setq-local mwheel-scroll-up-function
+                        (lambda (&optional arg) (xwidget-webkit-scroll-up)))
+            (setq-local mwheel-scroll-down-function
+                        (lambda (&optional arg) (xwidget-webkit-scroll-down)))
+            (local-set-key (kbd "M-<left>") #'xwidget-webkit-back)))
 
 #+END_SRC
 
 Reload automatically, handy for development. Should find a way to do this in background.
 #+BEGIN_SRC emacs-lisp
-  ;;(add-hook 'xwidget-webkit-mode-hook
-  ;;          (lambda () (run-with-timer 2 2 'xwidget-webkit-reload)))
+                 ;;(add-hook 'xwidget-webkit-mode-hook
+                 ;;          (lambda () (run-with-timer 2 2 'xwidget-webkit-reload)))
 #+END_SRC
 * Packages
 ** ace-window
@@ -935,13 +923,13 @@ Switch between windows by assigning a number to each one.
 ** aggressive-indent-mode
 Automatically fix indentation as you type.  Nice to have in lisp, but I find it more annoying than useful in other languages.
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+  ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
   (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
 #+END_SRC
 
 ** avy
 #+BEGIN_SRC emacs-lisp
-  (setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
+  (setq avy-keys '(?a ?o ?e ?u ?h ?t ?n ?s ?. ?p ?c ?r ?j ?k ?i ?d ?b ?m ?y))
   (setq avy-style 'at-full)
   (setq avy-background nil)
 #+END_SRC
@@ -963,15 +951,15 @@ Display a beacon when changing windows.
 
 Faster boot startup.
 #+BEGIN_SRC emacs-lisp
-  (setenv "BOOT_JVM_OPTIONS" "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none")
+(setenv "BOOT_JVM_OPTIONS" "-client -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xverify:none")
 #+END_SRC
 ** column-enforce-mode
 Use column enforce mode to mark text past column 80.
 #+BEGIN_SRC emacs-lisp
-                                          ;(add-hook 'c-mode-hook 'column-enforce-mode)
-                                        ;(add-hook 'c++-mode-hook 'column-enforce-mode)
-                                        ;(add-hook 'clojure-mode-hook 'column-enforce-mode)
-                                        ;(add-hook 'js-mode-hook 'column-enforce-mode)
+;;(add-hook 'c-mode-hook 'column-enforce-mode)
+;;(add-hook 'c++-mode-hook 'column-enforce-mode)
+;;(add-hook 'clojure-mode-hook 'column-enforce-mode)
+;;(add-hook 'js-mode-hook 'column-enforce-mode)
 #+END_SRC
 
 ** command-log-mode
@@ -1027,6 +1015,11 @@ Use hl-line-mode in the deft buffer.
   (add-hook 'deft-mode-hook (lambda () (hl-line-mode 1)))
 #+END_SRC
 
+** drag-stuff
+#+BEGIN_SRC emacs-lisp
+  (drag-stuff-global-mode 1)
+  (drag-stuff-define-keys)
+#+END_SRC
 ** elpy
 #+BEGIN_SRC emacs-lisp
   (elpy-enable)
@@ -1046,13 +1039,10 @@ Use flycheck for syntax checking.
   (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
   (eval-after-load 'flycheck '(flycheck-clojure-setup))
   (setq flycheck-display-errors-delay 0.4)
-
-
 #+END_SRC
 *** flycheck-pos-tip
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'flycheck
-    (flycheck-pos-tip-mode))
+  (with-eval-after-load 'flycheck (flycheck-pos-tip-mode))
   (setq flycheck-pos-tip-timeout 30)
 #+END_SRC
 ** helm
@@ -1085,7 +1075,7 @@ Show helm input within the helm window.
 #+BEGIN_SRC emacs-lisp
   (setq helm-echo-input-in-header-line t)
 #+END_SRC
-    
+                 
 Skip checking whether remote files opened through TRAMP exist so helm-mini doesn't lag.
 #+BEGIN_SRC emacs-lisp
   (setq helm-buffer-skip-remote-checking t)
@@ -1094,7 +1084,7 @@ Skip checking whether remote files opened through TRAMP exist so helm-mini doesn
 *** helm-web
 #+BEGIN_SRC emacs-lisp
   (setq helm-net-prefer-curl t)
-  #+END_SRC
+#+END_SRC
 
 *** helm-projectile
 #+BEGIN_SRC emacs-lisp
@@ -1104,7 +1094,7 @@ Skip checking whether remote files opened through TRAMP exist so helm-mini doesn
 #+BEGIN_SRC emacs-lisp
   (setq helm-ag-fuzzy-match t)
   (setq helm-ag-base-command "rg --vimgrep --no-heading")
-  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --no-heading --line-number %s %s %s")
+  (setq helm-grep-ag-command "TERM=eterm-color rg --color=always --no-heading --line-number --smart-case %s %s %s")
 
 #+END_SRC
 
@@ -1114,6 +1104,14 @@ Delete all whitespace instead of doing it one character at a time.
   (global-hungry-delete-mode 1)
 #+END_SRC
 
+** lsp-mode
+Support for the language server protocol, which I'm using with Rust.  Doesn't seem to work if you just call (global-lsp-mode t) by itself, need to tie it to rust-mode-hook.
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'lsp-mode (require 'lsp-flycheck))
+  (require 'lsp-rust)
+  (add-hook 'rust-mode-hook #'lsp-mode)
+
+#+END_SRC
 ** magit
 #+BEGIN_SRC emacs-lisp
   (setq magit-last-seen-setup-instructions "1.4.0")
@@ -1142,11 +1140,10 @@ Update mailboxes every 3 minutes.
 
 Use zoho as default mailbox.
 #+BEGIN_SRC emacs-lisp
-  (setq mu4e-maildir       "~/.mail"              ;; top-level Maildir
-        mu4e-sent-folder   "/zoho/Sent"
-        mu4e-drafts-folder "/zoho/Drafts"
-        mu4e-trash-folder  "/zoho/Trash")
-
+(setq mu4e-maildir       "~/.mail"              ;; top-level Maildir
+      mu4e-sent-folder   "/zoho/Sent"
+      mu4e-drafts-folder "/zoho/Drafts"
+      mu4e-trash-folder  "/zoho/Trash")
 #+END_SRC
 
 Enabling this will make mbsync not break with a maildir error about UIDs.  Offlineimap prefers this to be nil.
@@ -1159,6 +1156,11 @@ Show images in emails.
   (setq mu4e-view-show-images t)
 #+END_SRC
 
+Show email addresses.
+#+BEGIN_SRC emacs-lisp
+  (setq mu4e-view-show-addresses t)
+#+END_SRC
+
 Word wrap emails.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
@@ -1167,12 +1169,6 @@ Word wrap emails.
 Gmail and offlineimap leads to duplicate emails showing up in search filters since that's the way labels/virtual folders in Gmail are represented, so skip them.
 #+BEGIN_SRC emacs-lisp
   (setq mu4e-headers-skip-duplicates t)
-#+END_SRC
-
-Use =mu4e-shr2text= found in the =mu4e-contrib= package to display rich text messages.
-#+BEGIN_SRC emacs-lisp
-  (require 'mu4e-contrib)
-  (setq mu4e-html2text-command 'mu4e-shr2text)
 #+END_SRC
 
 Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo.gpg) for credentials.
@@ -1185,32 +1181,27 @@ Settings for sending mail using TLS encryption.  Use ~/.authinfo (or ~/.authinfo
         smtpmail-smtp-service 587)      ;TLS port
   (setq mu4e-maildir-shortcuts
         '(("/zoho/Inbox" . ?j)))
-  ;; (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
+;; (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun my-mu4e-action-view-with-xwidget (msg)
-    "View the body of the message inside xwidget-webkit."
-    (unless (fboundp 'xwidget-webkit-browse-url)
-      (mu4e-error "No xwidget support available"))
-    (let* ((html (mu4e-message-field msg :body-html))
-           (txt (mu4e-message-field msg :body-txt))
-           (tmpfile (format "%s%x.html" temporary-file-directory (random t))))
-      (unless (or html txt)
-        (mu4e-error "No body part for this message"))
-      (with-temp-buffer
-        ;; simplistic -- but note that it's only an example...
-        (insert (or html (concat "<pre>" txt "</pre>")))
-        (write-file tmpfile)
-        (xwidget-webkit-browse-url (concat "file://" tmpfile) t))))
+(defun my-mu4e-action-view-with-xwidget (msg)
+  "View the body of the message inside xwidget-webkit."
+  (unless (fboundp 'xwidget-webkit-browse-url)
+    (mu4e-error "No xwidget support available"))
+  (let* ((html (mu4e-message-field msg :body-html))
+         (txt (mu4e-message-field msg :body-txt))
+         (tmpfile (format "%s%x.html" temporary-file-directory (random t))))
+    (unless (or html txt)
+      (mu4e-error "No body part for this message"))
+    (with-temp-buffer
+      ;; simplistic -- but note that it's only an example...
+      (insert (or html (concat "<pre>" txt "</pre>")))
+      (write-file tmpfile)
+      (xwidget-webkit-browse-url (concat "file://" tmpfile) t))))
 
-  (add-to-list 'mu4e-view-actions
-               '("xViewXWidget" . my-mu4e-action-view-with-xwidget) t)
-#+END_SRC
-
-Start mu4e in the background.
-#+BEGIN_SRC emacs-lisp
-  ;;(add-hook 'after-init-hook 'mu4e)
+(add-to-list 'mu4e-view-actions
+             '("xViewXWidget" . my-mu4e-action-view-with-xwidget) t)
 #+END_SRC
 
 Spellcheck emails.
@@ -1244,7 +1235,6 @@ Disable the projectile mode line, if only because it slows TRAMP to a crawl.
 #+BEGIN_SRC emacs-lisp
   (setq projectile-mode-line nil)
 #+END_SRC
-
 ** spaceline
 #+BEGIN_SRC emacs-lisp
   (require 'spaceline-config)
@@ -1279,7 +1269,7 @@ Highlight parens levels in lisps.
 #+BEGIN_SRC emacs-lisp
   (which-key-mode 1)
   (setq which-key-idle-delay 1.5)
-#+END_SRC  
+#+END_SRC
 ** whole-line-or-region
 Use whole line or region so C-w and M-w without an active mark kills the line.
 #+BEGIN_SRC emacs-lisp
